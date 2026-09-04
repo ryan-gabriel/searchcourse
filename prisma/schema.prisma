@@ -1,0 +1,336 @@
+// SearchCourse Database Schema
+// Strict multi-tier architecture: Database -> Service -> Validation -> UI
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum ClickSource {
+  WEB
+  TELEGRAM
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  ALL_LEVELS
+}
+
+// ============================================
+// PLATFORM & CATEGORY
+// ============================================
+
+/// Course platforms (Udemy, Coursera, etc.)
+model Platform {
+  id        String   @id @default(cuid())
+  name      String   @unique // e.g., "Udemy", "Coursera"
+  slug      String   @unique // e.g., "udemy", "coursera"
+  logoUrl   String?
+  baseUrl   String // e.g., "https://www.udemy.com"
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  courses  Course[]
+  roadmaps Roadmap[]
+
+  @@index([slug])
+  @@index([isActive])
+}
+
+/// Course categories for filtering
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique // e.g., "Web Development"
+  slug        String   @unique // e.g., "web-development"
+  description String?
+  iconName    String? // Lucide icon name
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  courses  Course[]
+  roadmaps Roadmap[]
+
+  @@index([slug])
+  @@index([sortOrder])
+}
+
+// ============================================
+// COURSE & COUPON
+// ============================================
+
+/// Main course entity
+model Course {
+  id               String  @id @default(cuid())
+  externalId       String? @unique // Udemy course ID for sync dedup
+  title            String
+  slug             String  @unique
+  description      String? @db.Text
+  shortDescription String? @db.VarChar(320) // For meta descriptions
+  headline         String? @db.VarChar(500) // API headline
+  instructorName   String?
+  thumbnailUrl     String?
+
+  // Language
+  language         String? @db.VarChar(50) // e.g., "English", "Spanish"
+
+  // Pricing
+  originalPrice Decimal @db.Decimal(10, 2)
+  currency      String  @default("USD") @db.VarChar(3)
+
+  // Course metadata
+  level        CourseLevel @default(ALL_LEVELS)
+  rating       Decimal?    @db.Decimal(2, 1) // e.g., 4.5
+  reviewCount  Int         @default(0)
+  studentCount Int         @default(0)
+  duration     String? // e.g., "12h 30m"
+  lectureCount Int?
+
+  // URLs
+  directUrl    String // Direct link without affiliate
+  affiliateUrl String? // Affiliate link (null until approved)
+
+  // Instructor extended info
+  instructorBio String? @db.Text
+
+  // Status
+  isActive       Boolean  @default(true)
+  isFeatured     Boolean  @default(false)
+  isPosted       Boolean  @default(false) // Telegram broadcast flag
+  lastVerifiedAt DateTime @default(now())
+
+  // Relations
+  platformId String
+  platform   Platform @relation(fields: [platformId], references: [id], onDelete: Cascade)
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  coupons          Coupon[]
+  clickEvents      ClickEvent[]
+  roadmapSteps     RoadmapStep[]
+  learningOutcomes CourseLearningOutcome[]
+  syllabusSections CourseSyllabusSection[]
+
+  // Full-text search index
+  @@index([title])
+  @@index([slug])
+  @@index([platformId])
+  @@index([categoryId])
+  @@index([isActive, isFeatured])
+  @@index([isPosted])
+  @@index([externalId])
+  @@index([rating(sort: Desc)])
+  @@index([createdAt(sort: Desc)])
+}
+
+/// Active coupons/discounts for courses (TTL managed)
+model Coupon {
+  id            String  @id @default(cuid())
+  code          String? // Coupon code (null if auto-applied)
+  discountType  String  @default("PERCENTAGE") // PERCENTAGE, FIXED
+  discountValue Decimal @db.Decimal(10, 2) // e.g., 85 for 85% off, or 50 for $50 off
+  finalPrice    Decimal @db.Decimal(10, 2) // Calculated final price
+
+  // Validity
+  expiresAt DateTime?
+  isActive  Boolean   @default(true)
+
+  // Metadata
+  source     String? // Where the coupon was found
+  verifiedAt DateTime @default(now())
+
+  // Relations
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([courseId])
+  @@index([isActive, expiresAt])
+  @@index([discountValue(sort: Desc)])
+}
+
+// ============================================
+// CAREER ROADMAP ENGINE
+// ============================================
+
+/// Learning path / roadmap
+model Roadmap {
+  id          String  @id @default(cuid())
+  title       String // e.g., "Full-Stack Developer Roadmap"
+  slug        String  @unique
+  description String? @db.Text
+  subtitle    String? @db.VarChar(100) // e.g., "Beginner to Pro"
+  iconName    String? // Lucide icon name
+
+  // Estimated metrics
+  estimatedHours Int?
+  courseCount    Int  @default(0)
+
+  // Filter fields for roadmaps page
+  level            CourseLevel @default(BEGINNER)
+  hasJobGuarantee  Boolean     @default(false)
+  hasCertificate   Boolean     @default(false)
+  hasFreeResources Boolean     @default(false)
+  isShortPath      Boolean     @default(false) // Under 3 months
+
+  // Skill tags displayed as dots on cards (JSON array of strings)
+  skillTags String[] @default([])
+
+  // Status
+  isActive   Boolean @default(true)
+  isFeatured Boolean @default(false)
+  sortOrder  Int     @default(0)
+
+  // Category relation for filtering
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  steps      RoadmapStep[]
+  platform   Platform?     @relation(fields: [platformId], references: [id])
+  platformId String?
+
+  @@index([slug])
+  @@index([isActive, isFeatured])
+  @@index([sortOrder])
+  @@index([categoryId])
+  @@index([level])
+}
+
+/// Individual step in a roadmap
+model RoadmapStep {
+  id          String  @id @default(cuid())
+  title       String // Step title (can differ from course title)
+  description String? // Why this course is in the path
+  orderIndex  Int // Order in the roadmap (0-based)
+
+  // Relations
+  roadmapId String
+  roadmap   Roadmap @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  courseId  String
+  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([roadmapId, orderIndex])
+  @@unique([roadmapId, courseId])
+  @@index([roadmapId])
+  @@index([courseId])
+}
+
+// ============================================
+// SITE SETTINGS
+// ============================================
+
+/// Global site settings (singleton)
+model SiteSettings {
+  id String @id @default("site-settings")
+
+  // Stats displayed on homepage/about
+  coursesVerified String @default("500+")
+  studentSavings  String @default("$45k+")
+  uptime          String @default("99.9%")
+  acceptanceRate  String @default("4%")
+  hostingCost     String @default("$0.00")
+  priceMonitoring String @default("24/7")
+
+  // Mission content for about page
+  missionTitle       String  @default("Signal over Noise")
+  missionSubtitle    String? @db.VarChar(255)
+  missionDescription String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================
+// COURSE EXTENDED CONTENT
+// ============================================
+
+/// "What you'll learn" items for a course
+model CourseLearningOutcome {
+  id        String   @id @default(cuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  text      String   @db.VarChar(500)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([courseId, sortOrder])
+}
+
+/// Syllabus section for a course
+model CourseSyllabusSection {
+  id        String   @id @default(cuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title     String
+  duration  String? // e.g., "2h 45m"
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  items CourseSyllabusItem[]
+
+  @@index([courseId, sortOrder])
+}
+
+/// Individual item within a syllabus section
+model CourseSyllabusItem {
+  id        String                @id @default(cuid())
+  sectionId String
+  section   CourseSyllabusSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  title     String
+  sortOrder Int                   @default(0)
+
+  @@index([sectionId, sortOrder])
+}
+
+// ============================================
+// ANALYTICS
+// ============================================
+
+/// Click tracking for affiliate analytics
+model ClickEvent {
+  id     String      @id @default(cuid())
+  source ClickSource @default(WEB)
+
+  // Optional metadata
+  userAgent String? @db.VarChar(512)
+  referer   String? @db.VarChar(512)
+  ipHash    String? @db.VarChar(64) // Hashed for privacy
+  country   String? @db.VarChar(2) // ISO country code
+
+  // Relations
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([courseId])
+  @@index([source])
+  @@index([createdAt(sort: Desc)])
+  @@index([country])
+}
+
+// ============================================
+// NOTE: Admin authentication is now handled by Supabase Auth
+// with is_admin claim in user_metadata. No AdminUser table needed.
+// ============================================
