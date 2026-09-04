@@ -3,7 +3,6 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { SlidersHorizontal, X, Star } from 'lucide-react';
 import { SortDropdown } from './SortDropdown';
-import { CourseGrid } from '@/components/course';
 import { CourseGridSkeleton } from '@/components/ui/Skeleton';
 import { searchCourses, getAllPlatforms, getAllCategories } from '@/services';
 import { CourseSearchSchema } from '@/validations';

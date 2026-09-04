@@ -103,7 +103,6 @@ export async function searchRoadmaps(params: RoadmapSearchParams) {
             take: limit,
             include: {
                 _count: { select: { steps: true } },
-                // @ts-ignore - Property exists in generated client
                 category: { select: { id: true, name: true, slug: true } },
             },
         }),

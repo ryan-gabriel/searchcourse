@@ -24,7 +24,6 @@ export interface SiteSettingsUpdateInput {
  * Get site settings (creates default if missing)
  */
 export async function getSiteSettings() {
-    // @ts-ignore - Property exists in generated client, editor sync issue
     return prisma.siteSettings.upsert({
         where: { id: SETTINGS_ID },
         update: {},
@@ -38,7 +37,6 @@ export async function getSiteSettings() {
  * Update site settings
  */
 export async function updateSiteSettings(data: SiteSettingsUpdateInput) {
-    // @ts-ignore - Property exists in generated client, editor sync issue
     return prisma.siteSettings.upsert({
         where: { id: SETTINGS_ID },
         update: data,

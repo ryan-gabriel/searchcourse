@@ -139,8 +139,9 @@ async function sendTelegramMessage(text: string): Promise<boolean> {
             disable_web_page_preview: false,
         });
         return true;
-    } catch (error: any) {
-        console.error('  ❌ Telegram send failed:', error?.response?.data || error.message);
+    } catch (error) {
+        const e = error as { response?: { data?: unknown }; message?: string };
+        console.error('  ❌ Telegram send failed:', e?.response?.data || e?.message);
         return false;
     }
 }

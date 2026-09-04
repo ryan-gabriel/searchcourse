@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { Filter, X } from 'lucide-react';
 import Link from 'next/link';
 import { Category } from '@prisma/client';
@@ -15,7 +14,6 @@ interface RoadmapFiltersProps {
 }
 
 export function RoadmapFilters({ searchParams, categories }: RoadmapFiltersProps) {
-    const router = useRouter();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         e.target.form?.requestSubmit();

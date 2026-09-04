@@ -400,12 +400,10 @@ export async function getCourseWithFullDetails(
             orderBy: { discountValue: 'desc' },
             take: 1,
         },
-        // @ts-ignore - Property exists in generated client, editor sync issue
         learningOutcomes: {
             orderBy: { sortOrder: 'asc' },
             select: { id: true, text: true, sortOrder: true },
         },
-        // @ts-ignore - Property exists in generated client, editor sync issue
         syllabusSections: {
             orderBy: { sortOrder: 'asc' },
             include: {

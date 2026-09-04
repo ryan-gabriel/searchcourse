@@ -9,7 +9,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, Clock, Check, ExternalLink, Copy, CheckCircle2, Circle } from 'lucide-react';
+import { Star, Clock, Check, ExternalLink, Copy } from 'lucide-react';
 import { cn, formatPrice, calculateDiscountPercentage } from '@/lib/utils';
 import type { RoadmapStepWithCourse } from '@/services/roadmap.service';
 

@@ -68,7 +68,6 @@ interface UdemyCourseDetail {
 const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
 const RAPIDAPI_HOST = process.env.RAPIDAPI_HOST || 'udemy-coupons1.p.rapidapi.com';
 const IMPACT_AFFILIATE_BASE = process.env.IMPACT_AFFILIATE_BASE || '';
-const SITE_BASE_URL = process.env.SITE_BASE_URL || 'https://searchcourse.com';
 
 if (!RAPIDAPI_KEY) {
     console.error('❌ RAPIDAPI_KEY environment variable is required');
