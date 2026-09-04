@@ -1,5 +1,5 @@
 /**
- * Next.js Middleware
+ * Next.js Proxy (formerly Middleware)
  *
  * Protects /admin routes with Supabase Auth.
  * Only users with is_admin: true in user_metadata can access.
@@ -8,7 +8,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     // Only protect /admin routes
     if (!request.nextUrl.pathname.startsWith('/admin')) {
         return NextResponse.next();
