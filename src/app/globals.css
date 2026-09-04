@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #faf9f7;
+  --foreground: #1a1917;
+  --surface: #ffffff;
+  --surface-muted: #f1efe9;
+  --border: #e5e1d8;
+  --accent: #1a1917;
+  --accent-ink: #faf9f7;
+  --price: #0b7a3b;
+}
+
+.dark {
+  --background: #141311;
+  --foreground: #f4f2ec;
+  --surface: #1d1b18;
+  --surface-muted: #262320;
+  --border: #35322c;
+  --accent: #f4f2ec;
+  --accent-ink: #141311;
+  --price: #57c77d;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-price: var(--price);
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out both;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: opacity 0.15s ease;
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.btn-primary:hover {
+  opacity: 0.85;
+}
+.btn-secondary {
+  background: var(--surface-muted);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover {
+  opacity: 0.85;
+}
