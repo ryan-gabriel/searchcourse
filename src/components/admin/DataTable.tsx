@@ -8,7 +8,7 @@ export interface Column<T> {
   cell?: (row: T) => React.ReactNode;
 }
 
-export function DataTable<T extends Record<string, unknown>>({
+export function DataTable<T>({
   columns,
   data,
   keyField,
