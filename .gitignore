@@ -10,7 +10,7 @@ test-results/
 
 # next.js
 .next/
-out/
+/out/
 next-env.d.ts
 
 # production
