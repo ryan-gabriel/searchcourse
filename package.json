@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "sync": "tsx src/jobs/sync.ts",
+    "reset": "tsx src/jobs/reset.ts",
     "telegram": "tsx src/jobs/telegram.ts",
     "cleanup": "tsx src/jobs/cleanup.ts",
     "postinstall": "prisma generate",

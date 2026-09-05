@@ -1,64 +1,53 @@
 /**
  * Udemy Course Sync Script
  *
- * 1. Fetches coupon list from RapidAPI Udemy Coupons endpoint
- * 2. For each new course, fetches course details
- * 3. Upserts courses into database using externalId for de-duplication
- * 4. Creates associated coupon records
+ * 1. Fetches the coupon feed page by page (10 items/page)
+ * 2. For each course, upserts it into the database using externalId (item.id) for dedup
+ * 3. Creates/refreshes the associated Coupon (100% off -> finalPrice $0)
+ *
+ * Stops when a page returns fewer than 10 items (feed end).
+ *
+ * Feed shape (JSON array, one page at a time):
+ * {
+ *   id, sku, pic, title, coupon, org_price, desc_text,
+ *   category, language, platform, rating, duration, expiry, savedtime
+ * }
  *
  * Environment Variables Required:
  * - DATABASE_URL
  * - RAPIDAPI_KEY
- * - RAPIDAPI_HOST
- * - IMPACT_AFFILIATE_BASE (optional)
+ * - RAPIDAPI_HOST      (feed host, e.g. paid-udemy-course-for-free.p.rapidapi.com)
+ * - RAPIDAPI_PATH      (endpoint path; defaults to "/")
+ * - RAPIDAPI_MAX_PAGES (page cap per run; defaults to 25 -> 250 courses, ~25 req)
+ * - IMPACT_AFFILIATE_BASE (optional; your Impact deep-link prefix, e.g. https://trk.udemy.com/c/...)
  */
 
 import axios from 'axios';
+import { pathToFileURL } from 'url';
 import { prisma } from "@/lib/prisma";
 import { generateSlug } from "@/lib/slug.utils";
 import { mapCategory } from './lib/categories';
+import { parsePrice, extractCoupon, buildAffiliateUrl, formatDuration } from './lib/affiliate';
 
 // ============================================
 // TYPES
 // ============================================
 
-interface UdemyCouponItem {
-    courseId: number;
+interface UdemyFeedItem {
+    id: string;               // Course ID (external dedup key)
+    sku?: string;
+    pic?: string;
     title: string;
-    image: string;
-    url: string;
-    couponCode: string;
-    discountPercentage: number;
-    originalPrice: number;
-    discountedPrice: number;
-    validUntil: string;
-    instructorName?: string;
-    rating?: number;
-    studentsCount?: number;
+    coupon: string;           // Full Udemy URL including couponCode
+    org_price?: string;       // e.g. "$9.99"
+    desc_text?: string;
     category?: string;
-}
-
-interface UdemyCouponResponse {
-    results: UdemyCouponItem[];
-    totalPages: number;
-    currentPage: number;
-}
-
-interface UdemyCourseDetail {
-    title: string;
-    headline?: string;
-    description?: string;
     language?: string;
-    instructorName?: string;
-    instructorBio?: string;
-    primaryCategory?: string;
+    platform?: string;
     rating?: number;
-    numReviews?: number;
-    numStudents?: number;
-    numLectures?: number;
-    contentLength?: string;
-    image?: string;
-    url?: string;
+    duration?: number;        // Hours
+    expiry?: string;
+    savedtime?: string;
 }
 
 // ============================================
@@ -66,7 +55,10 @@ interface UdemyCourseDetail {
 // ============================================
 
 const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
-const RAPIDAPI_HOST = process.env.RAPIDAPI_HOST || 'udemy-coupons1.p.rapidapi.com';
+const RAPIDAPI_HOST = process.env.RAPIDAPI_HOST || '';
+const RAPIDAPI_PATH = process.env.RAPIDAPI_PATH || '/';
+const RAPIDAPI_MAX_PAGES = parseInt(process.env.RAPIDAPI_MAX_PAGES || '25', 10);
+const FEED_PAGE_SIZE = 10;
 const IMPACT_AFFILIATE_BASE = process.env.IMPACT_AFFILIATE_BASE || '';
 
 if (!RAPIDAPI_KEY) {
@@ -74,54 +66,33 @@ if (!RAPIDAPI_KEY) {
     process.exit(1);
 }
 
-const apiHeaders = {
+const apiHeaders: Record<string, string> = {
     'x-rapidapi-key': RAPIDAPI_KEY,
-    'x-rapidapi-host': RAPIDAPI_HOST,
 };
-
-// ============================================
-// HELPERS
-// ============================================
-
-function buildAffiliateUrl(directUrl: string): string | null {
-    if (!IMPACT_AFFILIATE_BASE) return null;
-    const encodedUrl = encodeURIComponent(directUrl);
-    return `${IMPACT_AFFILIATE_BASE}?u=${encodedUrl}`;
-}
-
-function sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+if (RAPIDAPI_HOST) {
+    apiHeaders['x-rapidapi-host'] = RAPIDAPI_HOST;
 }
 
 // ============================================
 // API FUNCTIONS
 // ============================================
 
-async function fetchCoupons(page: number = 1): Promise<UdemyCouponResponse> {
-    const { data } = await axios.get(
-        `https://${RAPIDAPI_HOST}/api/coupons.php`,
-        {
-            headers: apiHeaders,
-            params: { page, store: 'Udemy' },
-        }
-    );
-    return data;
+function sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function fetchCourseDetails(courseId: number): Promise<UdemyCourseDetail | null> {
-    try {
-        const { data } = await axios.get(
-            `https://${RAPIDAPI_HOST}/api/course.php`,
-            {
-                headers: apiHeaders,
-                params: { courseId },
-            }
-        );
-        return data;
-    } catch (error) {
-        console.warn(`⚠️ Failed to fetch details for course ${courseId}`, error);
-        return null;
-    }
+function feedUrl(page: number): string {
+    const path = RAPIDAPI_PATH && RAPIDAPI_PATH !== '/' ? RAPIDAPI_PATH : '';
+    const separator = path.includes('?') ? '&' : '?';
+    return `https://${RAPIDAPI_HOST}${path}${separator}page=${page}`;
+}
+
+async function fetchFeed(page: number): Promise<UdemyFeedItem[]> {
+    const { data } = await axios.get(feedUrl(page), { headers: apiHeaders });
+
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.results)) return data.results;
+    throw new Error('Feed response was neither an array nor { results: [...] }');
 }
 
 // ============================================
@@ -148,143 +119,100 @@ async function getOrCreateUdemyPlatform(): Promise<string> {
     return created.id;
 }
 
-async function syncPage(page: number, platformId: string): Promise<number> {
-    console.log(`📄 Fetching coupon page ${page}...`);
-    const response = await fetchCoupons(page);
+async function syncItem(item: UdemyFeedItem, platformId: string): Promise<boolean> {
+    const externalId = String(item.id).trim();
+    const title = item.title?.trim();
 
-    if (!response.results || response.results.length === 0) {
-        console.log('  No results on this page.');
-        return 0;
+    if (!externalId || !title) {
+        console.warn('  ⚠️ Skipping item with missing id/title:', JSON.stringify(item));
+        return false;
     }
 
-    let syncedCount = 0;
+    const slug = generateSlug(title);
+    const { directUrl, couponCode } = extractCoupon(item.coupon);
 
-    for (const item of response.results) {
-        try {
-            const externalId = String(item.courseId);
-            const slug = generateSlug(item.title);
-            const directUrl = item.url.startsWith('http')
-                ? item.url
-                : `https://www.udemy.com${item.url}`;
+    if (!IMPACT_AFFILIATE_BASE) {
+        console.warn('  ⚠️ IMPACT_AFFILIATE_BASE is not set - courses will NOT be commissionable');
+    }
+    const affiliateUrl = buildAffiliateUrl(directUrl, couponCode);
 
-            // Check if course already exists by externalId
-            const existing = await prisma.course.findUnique({
-                where: { externalId },
-                select: { id: true },
-            });
+    const baseData = {
+        title,
+        thumbnailUrl: item.pic || null,
+        originalPrice: parsePrice(item.org_price),
+        rating: item.rating ?? null,
+        instructorName: null,
+        description: item.desc_text || null,
+        language: item.language || null,
+        duration: formatDuration(item.duration),
+        directUrl,
+        affiliateUrl,
+        lastVerifiedAt: new Date(),
+    };
 
-            let courseId: string;
+    const existing = await prisma.course.findUnique({
+        where: { externalId },
+        select: { id: true },
+    });
 
-            if (existing) {
-                // Update existing course
-                courseId = existing.id;
-                await prisma.course.update({
-                    where: { id: courseId },
-                    data: {
-                        title: item.title,
-                        thumbnailUrl: item.image,
-                        originalPrice: item.originalPrice,
-                        rating: item.rating || undefined,
-                        studentCount: item.studentsCount || 0,
-                        instructorName: item.instructorName || undefined,
-                        directUrl,
-                        affiliateUrl: buildAffiliateUrl(directUrl),
-                        lastVerifiedAt: new Date(),
-                    },
-                });
-                console.log(`  ♻️ Updated: ${item.title.substring(0, 50)}...`);
-            } else {
-                // Fetch extended details for new courses
-                let details: UdemyCourseDetail | null = null;
-                await sleep(300); // Rate limit courtesy
-                details = await fetchCourseDetails(item.courseId);
+    let courseId: string;
 
-                const categoryId = await mapCategory(
-                    details?.primaryCategory || item.category
-                );
+    if (existing) {
+        await prisma.course.update({
+            where: { id: existing.id },
+            data: baseData,
+        });
+        courseId = existing.id;
+        console.log(`  ♻️ Updated: ${title.substring(0, 50)}...`);
+    } else {
+        const categoryId = await mapCategory(item.category);
 
-                // Create new course
-                const newCourse = await prisma.course.create({
-                    data: {
-                        externalId,
-                        title: item.title,
-                        slug: await ensureUniqueSlug(slug),
-                        description: details?.description || null,
-                        shortDescription: null,
-                        headline: details?.headline || null,
-                        instructorName: details?.instructorName || item.instructorName || null,
-                        instructorBio: details?.instructorBio || null,
-                        thumbnailUrl: details?.image || item.image || null,
-                        language: details?.language || null,
-                        originalPrice: item.originalPrice,
-                        currency: 'USD',
-                        level: 'ALL_LEVELS',
-                        rating: details?.rating || item.rating || null,
-                        reviewCount: details?.numReviews || 0,
-                        studentCount: details?.numStudents || item.studentsCount || 0,
-                        duration: details?.contentLength || null,
-                        lectureCount: details?.numLectures || null,
-                        directUrl,
-                        affiliateUrl: buildAffiliateUrl(directUrl),
-                        isActive: true,
-                        isFeatured: false,
-                        isPosted: false,
-                        platformId,
-                        categoryId,
-                    },
-                });
-
-                courseId = newCourse.id;
-                console.log(`  ✅ Created: ${item.title.substring(0, 50)}...`);
-            }
-
-            // Upsert coupon if coupon code exists
-            if (item.couponCode) {
-                const expiresAt = item.validUntil
-                    ? new Date(item.validUntil)
-                    : null;
-
-                // Delete old expired coupons for this course
-                await prisma.coupon.deleteMany({
-                    where: {
-                        courseId,
-                        isActive: true,
-                        code: { not: item.couponCode },
-                    },
-                });
-
-                // Create or update the coupon
-                await prisma.coupon.upsert({
-                    where: {
-                        id: `${courseId}-${item.couponCode}`, // Use composite for upsert
-                    },
-                    update: {
-                        discountValue: item.discountPercentage,
-                        finalPrice: item.discountedPrice,
-                        expiresAt,
-                        isActive: true,
-                        verifiedAt: new Date(),
-                    },
-                    create: {
-                        code: item.couponCode,
-                        discountType: 'PERCENTAGE',
-                        discountValue: item.discountPercentage,
-                        finalPrice: item.discountedPrice,
-                        expiresAt,
-                        isActive: true,
-                        source: 'udemy-api-sync',
-                        courseId,
-                    },
-                });
-            }
-
-            syncedCount++;
-        } catch (error) {
-            console.error(`  ❌ Failed to sync: ${item.title?.substring(0, 50)}`, error);
-        }
+        const newCourse = await prisma.course.create({
+            data: {
+                externalId,
+                slug: await ensureUniqueSlug(slug),
+                headline: null,
+                shortDescription: null,
+                instructorBio: null,
+                currency: 'USD',
+                level: 'ALL_LEVELS',
+                reviewCount: 0,
+                studentCount: 0,
+                lectureCount: null,
+                isActive: true,
+                isFeatured: false,
+                isPosted: false,
+                platformId,
+                categoryId,
+                ...baseData,
+            },
+        });
+        courseId = newCourse.id;
+        console.log(`  ✅ Created: ${title.substring(0, 50)}...`);
     }
 
-    return syncedCount;
+    if (couponCode) {
+        const expiresAt = item.expiry ? new Date(item.expiry) : null;
+
+        await prisma.coupon.deleteMany({
+            where: { courseId, isActive: true },
+        });
+
+        await prisma.coupon.create({
+            data: {
+                code: couponCode,
+                discountType: 'PERCENTAGE',
+                discountValue: 100,
+                finalPrice: 0,
+                expiresAt,
+                isActive: true,
+                source: 'udemy-api-sync',
+                courseId,
+            },
+        });
+    }
+
+    return true;
 }
 
 async function ensureUniqueSlug(slug: string): Promise<string> {
@@ -316,20 +244,40 @@ async function main() {
         const platformId = await getOrCreateUdemyPlatform();
         console.log(`📦 Using platform ID: ${platformId}`);
 
-        let totalSynced = 0;
-        const maxPages = 5; // Limit pages per run to avoid excessive API calls
+        console.log(`📥 Syncing feed from ${RAPIDAPI_HOST}...`);
 
-        for (let page = 1; page <= maxPages; page++) {
-            const synced = await syncPage(page, platformId);
-            totalSynced += synced;
+        let syncedCount = 0;
+        let page = 0;
 
-            if (synced === 0) break; // No more results
+        while (page < RAPIDAPI_MAX_PAGES) {
+            console.log(`📄 Fetching page ${page}...`);
+            const items = await fetchFeed(page);
 
-            await sleep(1000); // Rate limit between pages
+            if (items.length === 0) {
+                console.log('  Page empty - end of feed.');
+                break;
+            }
+
+            for (const item of items) {
+                try {
+                    const ok = await syncItem(item, platformId);
+                    if (ok) syncedCount++;
+                } catch (error) {
+                    console.error(`  ❌ Failed to sync: ${item?.title?.substring(0, 50)}`, error);
+                }
+            }
+
+            if (items.length < FEED_PAGE_SIZE) {
+                console.log(`  Partial page (${items.length} items) - end of feed.`);
+                break;
+            }
+
+            page++;
+            if (page % 5 === 0) await sleep(300); // Mild rate-limit courtesy
         }
 
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-        console.log(`\n✅ Sync complete! ${totalSynced} courses processed in ${elapsed}s`);
+        console.log(`\n✅ Sync complete! ${syncedCount} courses processed in ${elapsed}s`);
     } catch (error) {
         console.error('❌ Sync failed:', error);
         process.exit(1);
@@ -338,4 +286,7 @@ async function main() {
     }
 }
 
-main();
+const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+if (isMain) {
+    main();
+}

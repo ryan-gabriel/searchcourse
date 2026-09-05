@@ -19,6 +19,25 @@ interface RouteContext {
     params: Promise<{ id: string }>;
 }
 
+/**
+ * True for Impact/affiliate tracking domains (trk.*, imp.i*, impact.com).
+ * These links route through the affiliate network, so the course URL must not
+ * be rewritten after generation - attribution is bound to the original target.
+ */
+function isAffiliateUrl(url: string): boolean {
+    try {
+        const hostname = new URL(url).hostname.toLowerCase();
+        return (
+            hostname.startsWith('trk.') ||
+            hostname.startsWith('imp.') ||
+            hostname === 'impact.com' ||
+            hostname.endsWith('.impact.com')
+        );
+    } catch {
+        return false;
+    }
+}
+
 export async function GET(
     request: NextRequest,
     context: RouteContext
@@ -64,9 +83,11 @@ export async function GET(
     // Use affiliate URL if available, otherwise direct URL
     let redirectUrl = course.affiliateUrl || course.directUrl;
 
-    // Append coupon code if available
+    // Append coupon code only for plain Udemy direct URLs.
+    // Affiliate URLs (trk.udemy.com / imp.*) already embed the coupon inside
+    // the encoded target; mutating them would break Impact attribution.
     const couponCode = course.coupons[0]?.code;
-    if (couponCode && redirectUrl.includes('udemy.com')) {
+    if (couponCode && redirectUrl.includes('udemy.com') && !isAffiliateUrl(redirectUrl)) {
         // Udemy-specific coupon URL format
         const url = new URL(redirectUrl);
         url.searchParams.set('couponCode', couponCode);
