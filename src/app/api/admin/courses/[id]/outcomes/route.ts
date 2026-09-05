@@ -7,12 +7,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { updateCourseLearningOutcomes } from '@/services';
 import { z } from 'zod';
+import { requireAdmin } from '@/lib/admin-guard';
 
 const UpdateSchema = z.object({
     outcomes: z.array(z.object({
-        text: z.string().min(1),
+        text: z.string().min(1).max(500),
         sortOrder: z.number().int(),
-    })),
+    })).max(500),
 });
 
 interface RouteParams {
@@ -20,6 +21,9 @@ interface RouteParams {
 }
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
+
     try {
         const { id } = await params;
         const body = await request.json();

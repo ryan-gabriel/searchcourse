@@ -9,12 +9,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getRoadmapById, updateRoadmap, deleteRoadmap } from '@/services';
 import { RoadmapUpdateSchema } from '@/validations';
+import { requireAdmin } from '@/lib/admin-guard';
 
 interface RouteParams {
     params: Promise<{ id: string }>;
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
+
     try {
         const { id } = await params;
         const roadmap = await getRoadmapById(id);
@@ -37,6 +41,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 }
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
+
     try {
         const { id } = await params;
         const body = await request.json();
@@ -47,7 +54,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     } catch (error) {
         if (error instanceof Error && error.name === 'ZodError') {
             return NextResponse.json(
-                { message: 'Validation error', errors: error },
+                { message: 'Validation error', errors: (error as { issues?: unknown }).issues },
                 { status: 400 }
             );
         }
@@ -60,6 +67,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 }
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
+
     try {
         const { id } = await params;
         await deleteRoadmap(id);

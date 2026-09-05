@@ -6,8 +6,12 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getClickAnalytics } from '@/services';
+import { requireAdmin } from '@/lib/admin-guard';
 
 export async function GET(request: NextRequest) {
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
+
     try {
         const { searchParams } = new URL(request.url);
         const range = searchParams.get('range') || '7d';

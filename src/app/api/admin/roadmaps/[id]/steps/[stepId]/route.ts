@@ -6,12 +6,16 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { removeRoadmapStep } from '@/services';
+import { requireAdmin } from '@/lib/admin-guard';
 
 interface RouteParams {
     params: Promise<{ id: string; stepId: string }>;
 }
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
+
     try {
         const { stepId } = await params;
         await removeRoadmapStep(stepId);

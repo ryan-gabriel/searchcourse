@@ -8,20 +8,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSiteSettings, updateSiteSettings } from '@/services/settings.service';
 import { z } from 'zod';
+import { requireAdmin } from '@/lib/admin-guard';
 
 const SettingsSchema = z.object({
-    coursesVerified: z.string().optional(),
-    studentSavings: z.string().optional(),
-    uptime: z.string().optional(),
-    acceptanceRate: z.string().optional(),
-    hostingCost: z.string().optional(),
-    priceMonitoring: z.string().optional(),
-    missionTitle: z.string().optional(),
-    missionSubtitle: z.string().optional(),
-    missionDescription: z.string().optional(),
+    coursesVerified: z.string().max(100).optional(),
+    studentSavings: z.string().max(100).optional(),
+    uptime: z.string().max(100).optional(),
+    acceptanceRate: z.string().max(100).optional(),
+    hostingCost: z.string().max(100).optional(),
+    priceMonitoring: z.string().max(100).optional(),
+    missionTitle: z.string().max(200).optional(),
+    missionSubtitle: z.string().max(255).optional(),
+    missionDescription: z.string().max(5000).optional(),
 });
 
 export async function GET() {
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
+
     try {
         const settings = await getSiteSettings();
         return NextResponse.json(settings);
@@ -35,6 +39,9 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
+
     try {
         const body = await request.json();
         const data = SettingsSchema.parse(body);

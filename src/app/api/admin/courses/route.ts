@@ -8,8 +8,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { searchCourses, createCourse } from '@/services';
 import { CourseSearchSchema, CourseCreateSchema } from '@/validations';
+import { requireAdmin } from '@/lib/admin-guard';
 
 export async function GET(request: NextRequest) {
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
+
     try {
         const { searchParams } = new URL(request.url);
 
@@ -34,6 +38,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
+
     try {
         const body = await request.json();
         const data = CourseCreateSchema.parse(body);
@@ -43,7 +50,7 @@ export async function POST(request: NextRequest) {
     } catch (error) {
         if (error instanceof Error && error.name === 'ZodError') {
             return NextResponse.json(
-                { message: 'Validation error', errors: error },
+                { message: 'Validation error', errors: (error as { issues?: unknown }).issues },
                 { status: 400 }
             );
         }
