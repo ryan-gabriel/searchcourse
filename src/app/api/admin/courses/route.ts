@@ -15,8 +15,8 @@ export async function GET(request: NextRequest) {
 
         const params = CourseSearchSchema.parse({
             query: searchParams.get('query') || undefined,
-            platformId: searchParams.get('platformId') || undefined,
-            categoryId: searchParams.get('categoryId') || undefined,
+            platform: searchParams.get('platform') || undefined,
+            category: searchParams.get('category') || undefined,
             level: searchParams.get('level') || undefined,
             page: searchParams.get('page') || 1,
             limit: searchParams.get('limit') || 12,

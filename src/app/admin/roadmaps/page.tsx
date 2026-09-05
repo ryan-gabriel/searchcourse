@@ -12,6 +12,7 @@ interface Roadmap {
     iconName: string | null;
     estimatedHours: number | null;
     courseCount: number;
+    sortOrder: number;
     level: string;
     skillTags: string[];
     hasJobGuarantee: boolean;
@@ -81,7 +82,7 @@ export default function RoadmapsPage() {
         setFormData({
             title: roadmap.title, slug: roadmap.slug, description: roadmap.description || '',
             iconName: roadmap.iconName || '', estimatedHours: roadmap.estimatedHours?.toString() || '',
-            isActive: roadmap.isActive, isFeatured: roadmap.isFeatured, sortOrder: 0,
+            isActive: roadmap.isActive, isFeatured: roadmap.isFeatured, sortOrder: roadmap.sortOrder,
             level: roadmap.level || 'ALL_LEVELS',
             hasJobGuarantee: roadmap.hasJobGuarantee || false, hasCertificate: roadmap.hasCertificate || false,
             hasFreeResources: roadmap.hasFreeResources || false, isShortPath: roadmap.isShortPath || false,
@@ -165,6 +166,10 @@ export default function RoadmapsPage() {
             cell: (roadmap) => <span className="text-sm">{roadmap.estimatedHours ? `${roadmap.estimatedHours}h` : '-'}</span>,
         },
         {
+            header: 'Sort', accessorKey: 'sortOrder',
+            cell: (roadmap) => <span className="text-sm text-foreground opacity-60">{roadmap.sortOrder}</span>,
+        },
+        {
             header: 'Status', accessorKey: 'isActive',
             cell: (roadmap) => (
                 <div className="flex gap-1">
@@ -203,7 +208,24 @@ export default function RoadmapsPage() {
             {isLoading ? (
                 <div className="text-center py-12 text-foreground opacity-50">Loading roadmaps...</div>
             ) : (
-                <DataTable columns={columns} data={roadmaps} keyField="id" />
+                <DataTable
+                    columns={columns}
+                    data={roadmaps}
+                    keyField="id"
+                    renderActions={(roadmap) => (
+                        <>
+                            <Link href={`/admin/roadmaps/${roadmap.id}/steps`} className="p-1.5 rounded hover:bg-accent/10 transition-colors" title="Manage Steps">
+                                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+                            </Link>
+                            <button onClick={() => openEditModal(roadmap)} className="p-1.5 rounded hover:bg-surface-muted transition-colors" title="Edit">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                            </button>
+                            <button onClick={() => setDeleteId(roadmap.id)} className="p-1.5 rounded hover:bg-accent hover:text-accent-ink transition-colors" title="Delete">
+                                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            </button>
+                        </>
+                    )}
+                />
             )}
 
             {pagination.totalPages > 1 && (
@@ -215,23 +237,6 @@ export default function RoadmapsPage() {
                     </div>
                 </div>
             )}
-
-            <div className="flex items-center gap-2 text-sm text-foreground opacity-60">
-                <span>Actions:</span>
-                {roadmaps.map((roadmap) => (
-                    <div key={roadmap.id} className="flex gap-1">
-                        <Link href={`/admin/roadmaps/${roadmap.id}/steps`} className="p-1.5 rounded hover:bg-accent/10 transition-colors" title="Manage Steps">
-                            <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
-                        </Link>
-                        <button onClick={() => openEditModal(roadmap)} className="p-1.5 rounded hover:bg-surface-muted transition-colors" title="Edit">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                        </button>
-                        <button onClick={() => setDeleteId(roadmap.id)} className="p-1.5 rounded hover:bg-accent hover:text-accent-ink transition-colors" title="Delete">
-                            <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                        </button>
-                    </div>
-                ))}
-            </div>
 
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingRoadmap ? 'Edit Roadmap' : 'Add Roadmap'} size="md"
                 footer={

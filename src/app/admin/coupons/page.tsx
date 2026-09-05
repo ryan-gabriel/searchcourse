@@ -103,7 +103,7 @@ export default function CouponsPage() {
         setFormData({
             courseId: coupon.course.id, code: coupon.code || '', discountType: coupon.discountType,
             discountValue: coupon.discountValue, finalPrice: coupon.finalPrice,
-            expiresAt: coupon.expiresAt ? new Date(coupon.expiresAt).toISOString().slice(0, 16) : '',
+            expiresAt: coupon.expiresAt ? toDatetimeLocal(coupon.expiresAt) : '',
             isActive: coupon.isActive, source: coupon.source || '',
         });
         setErrors({});
@@ -186,6 +186,12 @@ export default function CouponsPage() {
         return new Date(expiresAt) < new Date();
     };
 
+    const toDatetimeLocal = (date: Date | string) => {
+        const d = new Date(date);
+        const pad = (n: number) => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    };
+
     const columns: Column<CouponWithCourse>[] = [
         {
             header: 'Course', accessorKey: 'course',
@@ -261,7 +267,21 @@ export default function CouponsPage() {
             {isLoading ? (
                 <div className="text-center py-12 text-foreground opacity-50">Loading coupons...</div>
             ) : (
-                <DataTable columns={columns} data={coupons} keyField="id" />
+                <DataTable
+                    columns={columns}
+                    data={coupons}
+                    keyField="id"
+                    renderActions={(coupon) => (
+                        <>
+                            <button onClick={() => openEditModal(coupon)} className="p-1.5 rounded hover:bg-surface-muted transition-colors" title="Edit">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                            </button>
+                            <button onClick={() => setDeleteId(coupon.id)} className="p-1.5 rounded hover:bg-accent hover:text-accent-ink transition-colors" title="Delete">
+                                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            </button>
+                        </>
+                    )}
+                />
             )}
 
             {pagination.totalPages > 1 && (
@@ -273,20 +293,6 @@ export default function CouponsPage() {
                     </div>
                 </div>
             )}
-
-            <div className="flex items-center gap-2 text-sm text-foreground opacity-60">
-                <span>Actions:</span>
-                {coupons.map((coupon) => (
-                    <div key={coupon.id} className="flex gap-1">
-                        <button onClick={() => openEditModal(coupon)} className="p-1.5 rounded hover:bg-surface-muted transition-colors" title="Edit">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                        </button>
-                        <button onClick={() => setDeleteId(coupon.id)} className="p-1.5 rounded hover:bg-accent hover:text-accent-ink transition-colors" title="Delete">
-                            <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                        </button>
-                    </div>
-                ))}
-            </div>
 
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingCoupon ? 'Edit Coupon' : 'Add Coupon'} size="md"
                 footer={

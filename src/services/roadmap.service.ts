@@ -126,6 +126,7 @@ export async function searchRoadmaps(params: RoadmapSearchParams) {
             description: r.description,
             iconName: r.iconName,
             estimatedHours: r.estimatedHours,
+            sortOrder: r.sortOrder,
             courseCount: r._count.steps,
             level: r.level,
             skillTags: r.skillTags,

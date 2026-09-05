@@ -333,6 +333,34 @@ export async function getCourseById(id: string) {
 }
 
 /**
+ * Get course content for the admin content editor
+ * Includes learning outcomes and syllabus sections
+ */
+export async function getCourseContent(id: string) {
+    return prisma.course.findUnique({
+        where: { id },
+        select: {
+            id: true,
+            title: true,
+            slug: true,
+            learningOutcomes: {
+                orderBy: { sortOrder: 'asc' },
+                select: { id: true, text: true, sortOrder: true },
+            },
+            syllabusSections: {
+                orderBy: { sortOrder: 'asc' },
+                include: {
+                    items: {
+                        orderBy: { sortOrder: 'asc' },
+                        select: { id: true, title: true, sortOrder: true },
+                    },
+                },
+            },
+        },
+    });
+}
+
+/**
  * Get featured courses for homepage
  */
 export async function getFeaturedCourses(limit: number = 8) {

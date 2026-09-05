@@ -12,10 +12,12 @@ export function DataTable<T>({
   columns,
   data,
   keyField,
+  renderActions,
 }: {
   columns: Column<T>[];
   data: T[];
   keyField: keyof T;
+  renderActions?: (row: T) => React.ReactNode;
 }) {
   return (
     <div className="overflow-x-auto rounded-lg border border-border">
@@ -25,6 +27,7 @@ export function DataTable<T>({
             {columns.map((c) => (
               <th key={String(c.accessorKey)} className="px-4 py-3 font-medium">{c.header}</th>
             ))}
+            {renderActions && <th className="px-4 py-3 font-medium">Actions</th>}
           </tr>
         </thead>
         <tbody>
@@ -35,6 +38,11 @@ export function DataTable<T>({
                   {c.cell ? c.cell(row) : String(row[c.accessorKey])}
                 </td>
               ))}
+              {renderActions && (
+                <td className="px-4 py-3">
+                  <div className="flex gap-1">{renderActions(row)}</div>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

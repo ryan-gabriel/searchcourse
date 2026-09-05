@@ -36,6 +36,9 @@ export interface DashboardStats {
 }
 
 export interface ClickAnalytics {
+    totalClicks: number;
+    todayClicks: number;
+    weekClicks: number;
     dailyClicks: { date: string; count: number }[];
     topCourses: { courseId: string; title: string; clicks: number }[];
     sourceBreakdown: { source: string; count: number }[];
@@ -132,14 +135,25 @@ export async function getClickAnalytics(days: number = 30): Promise<ClickAnalyti
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
-    // Get clicks for the period
-    const clicks = await prisma.clickEvent.findMany({
-        where: { createdAt: { gte: startDate } },
-        include: {
-            course: { select: { id: true, title: true } },
-        },
-        orderBy: { createdAt: 'desc' },
-    });
+    // Get clicks for the period, plus all-time total for the summary cards
+    const [clicks, totalClicks] = await Promise.all([
+        prisma.clickEvent.findMany({
+            where: { createdAt: { gte: startDate } },
+            include: {
+                course: { select: { id: true, title: true } },
+            },
+            orderBy: { createdAt: 'desc' },
+        }),
+        prisma.clickEvent.count(),
+    ]);
+
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfWeek = new Date(startOfDay);
+    startOfWeek.setDate(startOfWeek.getDate() - startOfDay.getDay());
+
+    const todayClicks = clicks.filter((click) => click.createdAt >= startOfDay).length;
+    const weekClicks = clicks.filter((click) => click.createdAt >= startOfWeek).length;
 
     // Daily clicks aggregation
     const dailyMap = new Map<string, number>();
@@ -187,6 +201,9 @@ export async function getClickAnalytics(days: number = 30): Promise<ClickAnalyti
         .slice(0, 10);
 
     return {
+        totalClicks,
+        todayClicks,
+        weekClicks,
         dailyClicks,
         topCourses,
         sourceBreakdown,

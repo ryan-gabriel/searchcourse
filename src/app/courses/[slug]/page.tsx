@@ -65,7 +65,7 @@ export default async function CourseDetailPage(props: PageProps) {
           )
         : 0;
 
-    const affiliateUrl = course.affiliateUrl || `/api/out/${course.id}`;
+    const affiliateUrl = `/api/out/${course.id}`;
 
     return (
         <div className="min-h-screen bg-background">
@@ -201,7 +201,7 @@ export default async function CourseDetailPage(props: PageProps) {
                             ) : null}
                             {course.directUrl && (
                                 <Link
-                                    href={course.directUrl}
+                                    href={affiliateUrl}
                                     target="_blank"
                                     className="absolute inset-0 bg-black/40 hover:bg-black/30 transition-colors flex items-center justify-center group"
                                 >

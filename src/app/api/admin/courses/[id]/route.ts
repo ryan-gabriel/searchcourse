@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getCourseById, updateCourse, deleteCourse } from '@/services';
+import { getCourseContent, updateCourse, deleteCourse } from '@/services';
 import { CourseUpdateSchema } from '@/validations';
 
 interface RouteParams {
@@ -17,7 +17,7 @@ interface RouteParams {
 export async function GET(request: NextRequest, { params }: RouteParams) {
     try {
         const { id } = await params;
-        const course = await getCourseById(id);
+        const course = await getCourseContent(id);
 
         if (!course) {
             return NextResponse.json(
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
         return NextResponse.json(course);
     } catch (error) {
-        console.error('Error fetching course:', error);
+        console.error('Error fetching course content:', error);
         return NextResponse.json(
             { message: 'Failed to fetch course' },
             { status: 500 }
