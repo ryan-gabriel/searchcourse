@@ -66,6 +66,19 @@ if (!RAPIDAPI_KEY) {
     process.exit(1);
 }
 
+// Allowlist the RapidAPI feed host to prevent SSRF / API-key exfiltration if the
+// environment is ever compromised. Hosts must be *.p.rapidapi.com (or the
+// concrete rapidapi.com API endpoints).
+if (!RAPIDAPI_HOST) {
+    console.error('❌ RAPIDAPI_HOST environment variable is required');
+    process.exit(1);
+}
+const RAPIDAPI_HOST_ALLOWED = /^(?:[a-z0-9-]+\.)*p\.rapidapi\.com$/i;
+if (!RAPIDAPI_HOST_ALLOWED.test(RAPIDAPI_HOST)) {
+    console.error(`❌ RAPIDAPI_HOST "${RAPIDAPI_HOST}" is not an allowed RapidAPI host`);
+    process.exit(1);
+}
+
 const apiHeaders: Record<string, string> = {
     'x-rapidapi-key': RAPIDAPI_KEY,
 };
