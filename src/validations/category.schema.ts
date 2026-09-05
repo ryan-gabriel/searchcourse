@@ -16,7 +16,7 @@ export type CategoryUpdateInput = z.infer<typeof CategoryUpdateSchema>;
 
 export const CategorySearchSchema = z.object({
   query: z.string().max(100).optional(),
-  page: z.coerce.number().int().min(1).default(1),
+  page: z.coerce.number().int().min(1).max(1_000_000).default(1),
   limit: z.coerce.number().int().min(1).max(500).default(20),
 });
 export type CategorySearchParams = z.infer<typeof CategorySearchSchema>;

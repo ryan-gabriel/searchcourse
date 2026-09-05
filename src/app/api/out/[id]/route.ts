@@ -38,6 +38,56 @@ function isAffiliateUrl(url: string): boolean {
     }
 }
 
+/**
+ * Defense-in-depth: only redirect to http(s) https:// URLs whose hostname is a
+ * known course platform or our affiliate network. Blocks javascript:/data:
+ * schemes and arbitrary phishing domains even if a course record is tampered
+ * with at the DB layer.
+ */
+function isAllowedRedirectTarget(url: string): boolean {
+    let hostname: string;
+    try {
+        const u = new URL(url);
+        if (u.protocol !== 'http:' && u.protocol !== 'https:') return false;
+        hostname = u.hostname.toLowerCase();
+    } catch {
+        return false;
+    }
+
+    // Affiliate tracking networks
+    if (
+        hostname.startsWith('trk.') ||
+        hostname.startsWith('imp.') ||
+        hostname === 'impact.com' ||
+        hostname.endsWith('.impact.com')
+    ) {
+        return true;
+    }
+
+    // Known course platforms
+    const allowedHosts = [
+        'udemy.com',
+        'www.udemy.com',
+        'coursera.org',
+        'www.coursera.org',
+        'skillshare.com',
+        'www.skillshare.com',
+        'linkedin.com',
+        'www.linkedin.com',
+        'udacity.com',
+        'www.udacity.com',
+        'pluralsight.com',
+        'www.pluralsight.com',
+        'datacamp.com',
+        'www.datacamp.com',
+        'codecademy.com',
+        'www.codecademy.com',
+        'educative.io',
+        'www.educative.io',
+    ];
+    return allowedHosts.includes(hostname);
+}
+
 export async function GET(
     request: NextRequest,
     context: RouteContext
@@ -92,6 +142,14 @@ export async function GET(
         const url = new URL(redirectUrl);
         url.searchParams.set('couponCode', couponCode);
         redirectUrl = url.toString();
+    }
+
+    // Fail closed: never redirect anywhere except known platforms/affiliates.
+    if (!isAllowedRedirectTarget(redirectUrl)) {
+        console.error(`Blocked redirect to disallowed target for course ${id}: ${redirectUrl}`);
+        return NextResponse.redirect(new URL('/', request.url), {
+            headers: getRateLimitHeaders(rateLimitResult),
+        });
     }
 
     // Redirect with rate limit headers

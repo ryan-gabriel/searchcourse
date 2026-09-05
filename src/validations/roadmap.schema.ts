@@ -14,7 +14,7 @@ export const RoadmapCreateSchema = z.object({
   hasCertificate: z.boolean().default(false),
   hasFreeResources: z.boolean().default(false),
   isShortPath: z.boolean().default(false),
-  skillTags: z.array(z.string()).default([]),
+  skillTags: z.array(z.string().max(50)).max(50).default([]),
 });
 export type RoadmapCreateInput = z.infer<typeof RoadmapCreateSchema>;
 
@@ -47,7 +47,7 @@ export const RoadmapSearchSchema = z.object({
   hasCertificate: z.coerce.boolean().optional(),
   hasFreeResources: z.coerce.boolean().optional(),
   isShortPath: z.coerce.boolean().optional(),
-  page: z.coerce.number().int().min(1).default(1),
+  page: z.coerce.number().int().min(1).max(1_000_000).default(1),
   limit: z.coerce.number().int().min(1).max(20).default(10),
 });
 export type RoadmapSearchParams = z.infer<typeof RoadmapSearchSchema>;

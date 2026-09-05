@@ -14,7 +14,15 @@ function LoginForm() {
     const searchParams = useSearchParams();
 
     const supabase = createSupabaseBrowserClient();
-    const redirectTo = searchParams.get('redirectTo') || '/admin';
+    const redirectParam = searchParams.get('redirectTo');
+    // Only allow internal single-slash paths (block //host, /\ and external schemes)
+    const redirectTo =
+        redirectParam &&
+        redirectParam.startsWith('/') &&
+        !redirectParam.startsWith('//') &&
+        !redirectParam.startsWith('/\\')
+            ? redirectParam
+            : '/admin';
 
     useEffect(() => {
         const checkAuth = async () => {

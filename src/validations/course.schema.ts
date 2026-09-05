@@ -1,26 +1,27 @@
 import { z } from "zod";
+import { httpUrlOptionalSchema, httpUrlSchema } from "@/lib/url";
 
 export const CourseLevelEnum = z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED", "ALL_LEVELS"]);
 export type CourseLevel = z.infer<typeof CourseLevelEnum>;
 
 export const CourseLearningOutcomeSchema = z.object({
   id: z.string().cuid().optional(),
-  text: z.string().min(1),
+  text: z.string().min(1).max(500),
   sortOrder: z.number().int().default(0),
 });
 
 export const CourseSyllabusItemSchema = z.object({
   id: z.string().cuid().optional(),
-  title: z.string().min(1),
+  title: z.string().min(1).max(500),
   sortOrder: z.number().int().default(0),
 });
 
 export const CourseSyllabusSectionSchema = z.object({
   id: z.string().cuid().optional(),
-  title: z.string().min(1),
-  duration: z.string().optional(),
+  title: z.string().min(1).max(500),
+  duration: z.string().max(100).optional(),
   sortOrder: z.number().int().default(0),
-  items: z.array(CourseSyllabusItemSchema).default([]),
+  items: z.array(CourseSyllabusItemSchema).max(500).default([]),
 });
 
 export const CourseSearchSchema = z.object({
@@ -32,7 +33,7 @@ export const CourseSearchSchema = z.object({
   maxPrice: z.number().min(0).optional(),
   hasDiscount: z.boolean().optional(),
   isFeatured: z.boolean().optional(),
-  page: z.coerce.number().int().min(1).default(1),
+  page: z.coerce.number().int().min(1).max(1_000_000).default(1),
   limit: z.coerce.number().int().min(1).max(500).default(12),
   sortBy: z.enum(["rating", "price", "date", "discount", "popular"]).default("date"),
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
@@ -49,7 +50,7 @@ export const CourseCreateSchema = z.object({
   language: z.string().max(50).optional().nullable(),
   instructorName: z.string().max(100).optional().nullable(),
   instructorBio: z.string().max(5000).optional().nullable(),
-  thumbnailUrl: z.string().url().optional().nullable(),
+  thumbnailUrl: httpUrlOptionalSchema,
   originalPrice: z.number().min(0),
   currency: z.string().length(3).default("USD"),
   level: CourseLevelEnum.default("ALL_LEVELS"),
@@ -58,8 +59,8 @@ export const CourseCreateSchema = z.object({
   studentCount: z.number().int().min(0).default(0),
   duration: z.string().max(20).optional().nullable(),
   lectureCount: z.number().int().min(0).optional().nullable(),
-  directUrl: z.string().url(),
-  affiliateUrl: z.string().url().optional().nullable(),
+  directUrl: httpUrlSchema,
+  affiliateUrl: httpUrlOptionalSchema,
   isActive: z.boolean().default(true),
   isFeatured: z.boolean().default(false),
   isPosted: z.boolean().default(false),

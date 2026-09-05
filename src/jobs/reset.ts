@@ -8,6 +8,10 @@
  *   CourseSyllabusItem -> CourseSyllabusSection -> CourseLearningOutcome
  *   -> RoadmapStep -> ClickEvent -> Coupon -> Course
  *
+ * SAFETY GUARDS (required to run):
+ * - Must NOT be NODE_ENV=production (blocked by default).
+ * - Must be explicitly confirmed with RESET_CONFIRM=YES.
+ *
  * Environment Variables Required:
  * - DATABASE_URL
  */
@@ -15,6 +19,18 @@
 import { prisma } from "@/lib/prisma";
 
 async function main() {
+    // Fail closed: never allow a wipe in production or without explicit confirmation.
+    if (process.env.NODE_ENV === "production") {
+        console.error("❌ Refusing to reset: NODE_ENV is production.");
+        process.exit(1);
+    }
+    if (process.env.RESET_CONFIRM !== "YES") {
+        console.error(
+            "❌ Refusing to reset: set RESET_CONFIRM=YES to confirm this destructive operation."
+        );
+        process.exit(1);
+    }
+
     console.log('🗑️  Starting database reset...');
     const startTime = Date.now();
 

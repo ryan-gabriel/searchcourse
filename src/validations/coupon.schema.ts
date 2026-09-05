@@ -25,7 +25,7 @@ export const CouponSearchSchema = z.object({
   isActive: z.coerce.boolean().optional(),
   minDiscount: z.number().min(0).max(100).optional(),
   notExpired: z.coerce.boolean().default(true),
-  page: z.coerce.number().int().min(1).default(1),
+  page: z.coerce.number().int().min(1).max(1_000_000).default(1),
   limit: z.coerce.number().int().min(1).max(500).default(20),
 });
 export type CouponSearchParams = z.infer<typeof CouponSearchSchema>;
