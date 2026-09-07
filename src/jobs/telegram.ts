@@ -46,6 +46,17 @@ function sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function getTelegramErrorMessage(error: unknown): string {
+    if (axios.isAxiosError(error)) {
+        return error.response?.data?.description || error.message;
+    }
+    return error instanceof Error ? error.message : 'Unknown error';
+}
+
+function toNumber(value: unknown): number {
+    return Number(value);
+}
+
 // ============================================
 // TELEGRAM API
 // ============================================
@@ -60,8 +71,7 @@ async function sendTelegramMessage(text: string): Promise<boolean> {
         });
         return true;
     } catch (error) {
-        const e = error as { response?: { data?: unknown }; message?: string };
-        console.error('  ❌ Telegram send failed:', e?.response?.data || e?.message);
+        console.error('  ❌ Telegram send failed:', getTelegramErrorMessage(error));
         return false;
     }
 }
@@ -165,12 +175,12 @@ async function main() {
 
             const message = formatCourseMessage({
                 ...course,
-                originalPrice: Number(course.originalPrice),
-                rating: course.rating ? Number(course.rating) : null,
-                coupons: course.coupons.map((c: { finalPrice: unknown; discountValue: unknown; expiresAt: Date | null; code: string | null }) => ({
+                originalPrice: toNumber(course.originalPrice),
+                rating: course.rating ? toNumber(course.rating) : null,
+                coupons: course.coupons.map((c) => ({
                     ...c,
-                    finalPrice: Number(c.finalPrice),
-                    discountValue: Number(c.discountValue),
+                    finalPrice: toNumber(c.finalPrice),
+                    discountValue: toNumber(c.discountValue),
                 })),
             });
 
