@@ -4,6 +4,7 @@
  * Dashboard statistics and analytics data.
  */
 
+import { TIME } from '@/lib/constants';
 import prisma from '@/lib/prisma';
 
 // ============================================
@@ -58,7 +59,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     const startOfWeek = new Date(startOfDay);
     startOfWeek.setDate(startOfWeek.getDate() - startOfDay.getDay());
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const threeDaysFromNow = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+    const threeDaysFromNow = new Date(now.getTime() + TIME.THREE_DAYS_MS);
 
     const [
         totalCourses,

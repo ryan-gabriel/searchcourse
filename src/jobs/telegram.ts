@@ -13,6 +13,7 @@
  */
 
 import axios from 'axios';
+import { BROADCAST } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import { formatCourseMessage } from "@/lib/telegramFormat";
 import { shouldBroadcastCoupon } from "@/lib/broadcastGuard";
@@ -34,8 +35,8 @@ const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
 // Broadcast coupon guard (hours). Skip coupons expiring within
 // BROADCAST_MIN_EXPIRY_HOURS, and coupons whose feed snapshot
 // (verifiedAt = feed savedtime) is older than BROADCAST_MAX_VERIFIED_AGE_HOURS.
-const BROADCAST_MIN_EXPIRY_HOURS = parseInt(process.env.BROADCAST_MIN_EXPIRY_HOURS || '12', 10);
-const BROADCAST_MAX_VERIFIED_AGE_HOURS = parseInt(process.env.BROADCAST_MAX_VERIFIED_AGE_HOURS || '24', 10);
+const BROADCAST_MIN_EXPIRY_HOURS = BROADCAST.MIN_EXPIRY_HOURS;
+const BROADCAST_MAX_VERIFIED_AGE_HOURS = BROADCAST.MAX_VERIFIED_AGE_HOURS;
 
 // ============================================
 // HELPERS
