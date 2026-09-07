@@ -6,25 +6,14 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { removeRoadmapStep } from '@/services';
-import { requireAdmin } from '@/lib/admin-guard';
+import { withAdmin } from '@/lib/admin-route';
 
 interface RouteParams {
-    params: Promise<{ id: string; stepId: string }>;
+    params: Promise<{ id: string; stepId?: string }>;
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
-    const unauthorized = await requireAdmin();
-    if (unauthorized) return unauthorized;
-
-    try {
-        const { stepId } = await params;
-        await removeRoadmapStep(stepId);
-        return NextResponse.json({ success: true });
-    } catch (error) {
-        console.error('Error removing roadmap step:', error);
-        return NextResponse.json(
-            { message: 'Failed to remove step' },
-            { status: 500 }
-        );
-    }
-}
+export const DELETE = withAdmin(async (request: NextRequest, ctx?: RouteParams) => {
+    const { stepId } = await ctx!.params;
+    await removeRoadmapStep(stepId!);
+    return NextResponse.json({ success: true });
+}, 'Failed to remove step');

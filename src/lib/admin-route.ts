@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin-guard';
 import { ZodError } from 'zod';
 
-type RouteHandler = (request: NextRequest, ctx?: { params: Promise<{ id: string }> }) => Promise<NextResponse>;
+type RouteHandler = (request: NextRequest, ctx?: { params: Promise<{ id: string; stepId?: string }> }) => Promise<NextResponse>;
 
 export function withAdmin(handler: RouteHandler, errorMessage = 'Internal server error'): RouteHandler {
   return async (request, ctx) => {
