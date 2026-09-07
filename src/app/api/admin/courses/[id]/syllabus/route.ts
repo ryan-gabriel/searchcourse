@@ -7,7 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { updateCourseSyllabus } from '@/services';
 import { z } from 'zod';
-import { requireAdmin } from '@/lib/admin-guard';
+import { withAdmin } from '@/lib/admin-route';
 
 const UpdateSchema = z.object({
     sections: z.array(z.object({
@@ -25,23 +25,12 @@ interface RouteParams {
     params: Promise<{ id: string }>;
 }
 
-export async function PUT(request: NextRequest, { params }: RouteParams) {
-    const unauthorized = await requireAdmin();
-    if (unauthorized) return unauthorized;
+export const PUT = withAdmin(async (request: NextRequest, ctx?: RouteParams) => {
+    const { id } = await ctx!.params;
+    const body = await request.json();
+    const { sections } = UpdateSchema.parse(body);
 
-    try {
-        const { id } = await params;
-        const body = await request.json();
-        const { sections } = UpdateSchema.parse(body);
-
-        // Map frontend structure to service expectation if needed, but schema matches
-        const result = await updateCourseSyllabus(id, sections);
-        return NextResponse.json(result);
-    } catch (error) {
-        console.error('Error updating syllabus:', error);
-        return NextResponse.json(
-            { message: 'Failed to update syllabus' },
-            { status: 500 }
-        );
-    }
-}
+    // Map frontend structure to service expectation if needed, but schema matches
+    const result = await updateCourseSyllabus(id, sections);
+    return NextResponse.json(result);
+}, 'Failed to update syllabus');

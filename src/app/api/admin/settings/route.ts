@@ -8,7 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSiteSettings, updateSiteSettings } from '@/services/settings.service';
 import { z } from 'zod';
-import { requireAdmin } from '@/lib/admin-guard';
+import { withAdmin } from '@/lib/admin-route';
 
 const SettingsSchema = z.object({
     coursesVerified: z.string().max(100).optional(),
@@ -22,37 +22,15 @@ const SettingsSchema = z.object({
     missionDescription: z.string().max(5000).optional(),
 });
 
-export async function GET() {
-    const unauthorized = await requireAdmin();
-    if (unauthorized) return unauthorized;
+export const GET = withAdmin(async () => {
+    const settings = await getSiteSettings();
+    return NextResponse.json(settings);
+}, 'Failed to fetch settings');
 
-    try {
-        const settings = await getSiteSettings();
-        return NextResponse.json(settings);
-    } catch (error) {
-        console.error('Error fetching settings:', error);
-        return NextResponse.json(
-            { message: 'Failed to fetch settings' },
-            { status: 500 }
-        );
-    }
-}
+export const PUT = withAdmin(async (request: NextRequest) => {
+    const body = await request.json();
+    const data = SettingsSchema.parse(body);
 
-export async function PUT(request: NextRequest) {
-    const unauthorized = await requireAdmin();
-    if (unauthorized) return unauthorized;
-
-    try {
-        const body = await request.json();
-        const data = SettingsSchema.parse(body);
-
-        const settings = await updateSiteSettings(data);
-        return NextResponse.json(settings);
-    } catch (error) {
-        console.error('Error updating settings:', error);
-        return NextResponse.json(
-            { message: 'Failed to update settings' },
-            { status: 500 }
-        );
-    }
-}
+    const settings = await updateSiteSettings(data);
+    return NextResponse.json(settings);
+}, 'Failed to update settings');
