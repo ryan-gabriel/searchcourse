@@ -15,6 +15,7 @@
     "reset": "tsx src/jobs/reset.ts",
     "telegram": "tsx src/jobs/telegram.ts",
     "cleanup": "tsx src/jobs/cleanup.ts",
+    "verify": "tsx src/jobs/verify.ts",
     "check-coupon": "tsx src/jobs/checkCoupon.ts",
     "postinstall": "prisma generate",
     "test": "vitest run",

@@ -144,3 +144,25 @@ git commit -m "feat: add coupon verification core with pure classification"
 - [ ] **Step 3: Run full checks:** `npm run typecheck && npm run lint && npm run test`
 - [ ] **Step 4: Delete spike scripts** now superseded (`spike-*.mjs`, related `spike-*.png`).
 - [ ] **Step 5: Commit**
+
+---
+
+## CI Hardening (follow-up, 2026-09-07)
+
+- Verified the browser path runs in GitHub Actions (`@playwright/test` -> `playwright`
+  dep, devDeps installed, `--with-deps chromium`, `VERIFY_BROWSER_CHANNEL: none`).
+- Unknown: whether the runner IP passes Udemy's bot protection (datacenter IPs
+  are often flagged). If blocked, every coupon returns UNDETERMINED and a full
+  budget run would burn the 15-min job timeout.
+- Changes shipped:
+  1. `CouponVerdict.blocked` flag + `nextBlockedStreak` helper; `verify.ts`
+     aborts after `VERIFY_BLOCKED_THRESHOLD` (default 3) consecutive blocked
+     pages. Blocked runs now end in ~1 min instead of ~21 min.
+  2. `sync.yml` uses hardcoded conservative CI defaults (25 coupons, 15s
+     timeout, no secrets fallback).
+  3. New `verify-probe.yml` (`workflow_dispatch`) runs `npm run verify` against
+     5 coupons to empirically test the runner; trigger manually, read the log.
+  4. New `"verify"` npm script (verification only, no expiry deletes).
+- Next step: run the probe workflow; if the runner passes, scale sync.yml budget
+  up; if not, run `npm run verify` from a non-datacenter host or decouple into
+  its own longer-running workflow.

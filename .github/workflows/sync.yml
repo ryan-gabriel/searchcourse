@@ -30,9 +30,10 @@ jobs:
       - name: Run Cleanup
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          VERIFY_MAX_COUPONS: ${{ secrets.VERIFY_MAX_COUPONS || '50' }}
-          VERIFY_TIMEOUT_MS: ${{ secrets.VERIFY_TIMEOUT_MS || '25000' }}
-          VERIFY_RATE_LIMIT_MS: ${{ secrets.VERIFY_RATE_LIMIT_MS || '500' }}
+          VERIFY_MAX_COUPONS: 25
+          VERIFY_TIMEOUT_MS: 15000
+          VERIFY_RATE_LIMIT_MS: 250
           VERIFY_HEADLESS: 'true'
           VERIFY_BROWSER_CHANNEL: none
+          VERIFY_BLOCKED_THRESHOLD: 3
         run: npm run cleanup

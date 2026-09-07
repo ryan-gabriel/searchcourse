@@ -1,0 +1,39 @@
+name: Verify Coupons (probe)
+
+# Manual-only probe to see whether the GitHub Actions runner can pass Udemy's
+# bot protection. Runs verification alone (no feed sync, no expiry cleanup)
+# against a small budget and prints per-coupon status + evidence.
+#
+# Trigger it from Actions -> "Verify Coupons (probe)" -> Run workflow.
+# Look for lines like:
+#   [1/5] INVALID      "Course ..." (invalid signal: "This discount code ...")
+#   [2/5] UNDETERMINED "Course ..." (page blocked by bot protection)
+# If several are "page blocked by bot protection", the runner IP is flagged.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  verify-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm install --no-audit --no-fund
+      - run: npx prisma generate
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: Run Verification Probe
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          VERIFY_MAX_COUPONS: 5
+          VERIFY_TIMEOUT_MS: 15000
+          VERIFY_RATE_LIMIT_MS: 250
+          VERIFY_HEADLESS: 'true'
+          VERIFY_BROWSER_CHANNEL: none
+          VERIFY_BLOCKED_THRESHOLD: 3
+        run: npm run verify
