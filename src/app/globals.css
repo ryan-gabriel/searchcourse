@@ -72,24 +72,98 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.5rem;
+  gap: 0.5rem;
   font-weight: 500;
-  transition: opacity 0.15s ease;
+  border-radius: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 .btn-primary {
   background: var(--accent);
   color: var(--accent-ink);
 }
 .btn-primary:hover {
-  opacity: 0.85;
+  opacity: 0.9;
 }
 .btn-secondary {
-  background: var(--surface-muted);
+  background: transparent;
   color: var(--foreground);
   border: 1px solid var(--border);
 }
 .btn-secondary:hover {
-  opacity: 0.85;
+  background: var(--surface-muted);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--foreground);
+  padding: 0.5rem 0.75rem;
+}
+.btn-ghost:hover {
+  background: var(--surface-muted);
+}
+.btn-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  border-radius: 0.375rem;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  padding: 1.25rem;
+  transition: all 0.2s ease;
+}
+.card-elevated {
+  background: var(--surface-elevated);
+  border: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: var(--surface-muted);
+  color: var(--foreground);
+}
+.badge-accent {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.badge-price {
+  color: var(--price);
+  font-weight: 600;
+}
+.input {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  color: var(--foreground);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.input::placeholder {
+  color: var(--muted);
+}
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
 @keyframes slideUp {
