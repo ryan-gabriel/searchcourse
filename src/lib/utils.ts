@@ -14,9 +14,27 @@ export function slugify(text: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
+const CURRENCY_LOCALES: Record<string, string> = {
+  USD: "en-US",
+  EUR: "de-DE",
+  GBP: "en-GB",
+  IDR: "id-ID",
+  JPY: "ja-JP",
+  INR: "en-IN",
+  CAD: "en-CA",
+  AUD: "en-AU",
+  BRL: "pt-BR",
+  MXN: "es-MX",
+  RUB: "ru-RU",
+  KRW: "ko-KR",
+  CNY: "zh-CN",
+  TRY: "tr-TR",
+};
+
 export function formatPrice(price: number | string, currency: string = "USD"): string {
   const value = typeof price === "string" ? Number(price) : price;
-  return new Intl.NumberFormat("en-US", {
+  const locale = CURRENCY_LOCALES[currency] || "en-US";
+  return new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
     minimumFractionDigits: 0,

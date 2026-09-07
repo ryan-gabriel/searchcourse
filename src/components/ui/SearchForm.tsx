@@ -34,7 +34,7 @@ export function SearchForm({
     };
 
     return (
-        <form onSubmit={handleSubmit} className={`relative ${className}`}>
+        <form onSubmit={handleSubmit} role="search" aria-label="Search courses" className={`relative ${className}`}>
             <div className="relative flex items-center bg-surface border border-border rounded-xl overflow-hidden">
                 <div className="pl-4 text-foreground opacity-50">
                     <Search className="w-5 h-5" />

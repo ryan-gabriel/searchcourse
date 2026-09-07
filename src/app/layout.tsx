@@ -108,9 +108,17 @@ export default function RootLayout({
   return (
     <html lang="en" className="light" suppressHydrationWarning>
       <body className={`${GeistSans.variable} antialiased min-h-screen flex flex-col`}>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-accent focus:text-accent-ink focus:text-sm focus:font-medium"
+        >
+          Skip to main content
+        </a>
         <ThemeProvider>
           <Header />
-          <main className="flex-1">{children}</main>
+          <main id="main-content" className="flex-1 outline-none">
+            {children}
+          </main>
           <Footer />
         </ThemeProvider>
       </body>
