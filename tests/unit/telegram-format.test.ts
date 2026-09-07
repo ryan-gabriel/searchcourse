@@ -73,7 +73,7 @@ describe("formatCourseMessage", () => {
 
   it("includes the branded link and expires line", () => {
     const message = formatCourseMessage(baseCourse);
-    expect(message).toContain("[Get this course](https://searchcourse.com/go/microsoft-excel-basics)");
+    expect(message).toContain("[Get this course](https://searchcourse.vercel.app/go/microsoft-excel-basics)");
     expect(message).toContain("*Expires in 24h*");
   });
 

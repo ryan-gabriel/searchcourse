@@ -1,4 +1,4 @@
-const SITE_BASE_URL = process.env.SITE_BASE_URL || 'https://searchcourse.com';
+const SITE_BASE_URL = process.env.SITE_BASE_URL || 'https://searchcourse.vercel.app';
 
 function escapeMarkdown(text: string): string {
     return text.replace(/[_*[\]()~`>#+\-=|{}.!\\]/g, '\\$&');
