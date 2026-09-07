@@ -4,16 +4,6 @@ export function cn(...inputs: ClassValue[]): string {
   return clsx(inputs);
 }
 
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
 const CURRENCY_LOCALES: Record<string, string> = {
   USD: "en-US",
   EUR: "de-DE",
@@ -40,6 +30,10 @@ export function formatPrice(price: number | string, currency: string = "USD"): s
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   }).format(value);
+}
+
+export function formatPriceSimple(price: number): string {
+  return price === 0 ? 'FREE' : `$${price.toFixed(2)}`;
 }
 
 export function calculateDiscountPercentage(originalPrice: number, finalPrice: number): number {

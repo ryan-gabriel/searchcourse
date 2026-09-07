@@ -8,6 +8,7 @@
  * - DATABASE_URL
  */
 
+import { CLEANUP, TIME } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 
 async function main() {
@@ -15,8 +16,7 @@ async function main() {
     const startTime = Date.now();
 
     try {
-        const cutoff = new Date();
-        cutoff.setHours(cutoff.getHours() - 24);
+        const cutoff = new Date(Date.now() - CLEANUP.EXPIRED_COUPON_RETENTION_HOURS * TIME.ONE_HOUR_MS);
 
         // 1. Delete expired coupons (expired > 24 hours ago)
         const deleted = await prisma.coupon.deleteMany({

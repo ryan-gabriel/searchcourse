@@ -9,77 +9,37 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCourseContent, updateCourse, deleteCourse } from '@/services';
 import { CourseUpdateSchema } from '@/validations';
-import { requireAdmin } from '@/lib/admin-guard';
+import { withAdmin } from '@/lib/admin-route';
 
 interface RouteParams {
     params: Promise<{ id: string }>;
 }
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
-    const unauthorized = await requireAdmin();
-    if (unauthorized) return unauthorized;
+export const GET = withAdmin(async (request: NextRequest, ctx?: RouteParams) => {
+    const { id } = await ctx!.params;
+    const course = await getCourseContent(id);
 
-    try {
-        const { id } = await params;
-        const course = await getCourseContent(id);
-
-        if (!course) {
-            return NextResponse.json(
-                { message: 'Course not found' },
-                { status: 404 }
-            );
-        }
-
-        return NextResponse.json(course);
-    } catch (error) {
-        console.error('Error fetching course content:', error);
+    if (!course) {
         return NextResponse.json(
-            { message: 'Failed to fetch course' },
-            { status: 500 }
+            { message: 'Course not found' },
+            { status: 404 }
         );
     }
-}
 
-export async function PUT(request: NextRequest, { params }: RouteParams) {
-    const unauthorized = await requireAdmin();
-    if (unauthorized) return unauthorized;
+    return NextResponse.json(course);
+}, 'Failed to fetch course');
 
-    try {
-        const { id } = await params;
-        const body = await request.json();
-        const data = CourseUpdateSchema.parse({ ...body, id });
+export const PUT = withAdmin(async (request: NextRequest, ctx?: RouteParams) => {
+    const { id } = await ctx!.params;
+    const body = await request.json();
+    const data = CourseUpdateSchema.parse({ ...body, id });
 
-        const course = await updateCourse(data);
-        return NextResponse.json(course);
-    } catch (error) {
-        if (error instanceof Error && error.name === 'ZodError') {
-            console.error('Validation error:', error);
-            return NextResponse.json(
-                { message: 'Validation error', errors: (error as { issues?: unknown }).issues },
-                { status: 400 }
-            );
-        }
-        console.error('Error updating course:', error);
-        return NextResponse.json(
-            { message: 'Failed to update course' },
-            { status: 500 }
-        );
-    }
-}
+    const course = await updateCourse(data);
+    return NextResponse.json(course);
+}, 'Failed to update course');
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
-    const unauthorized = await requireAdmin();
-    if (unauthorized) return unauthorized;
-
-    try {
-        const { id } = await params;
-        await deleteCourse(id);
-        return NextResponse.json({ success: true });
-    } catch (error) {
-        console.error('Error deleting course:', error);
-        return NextResponse.json(
-            { message: 'Failed to delete course' },
-            { status: 500 }
-        );
-    }
-}
+export const DELETE = withAdmin(async (request: NextRequest, ctx?: RouteParams) => {
+    const { id } = await ctx!.params;
+    await deleteCourse(id);
+    return NextResponse.json({ success: true });
+}, 'Failed to delete course');

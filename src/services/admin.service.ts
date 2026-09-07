@@ -4,6 +4,7 @@
  * Dashboard statistics and analytics data.
  */
 
+import { DASHBOARD, TIME } from '@/lib/constants';
 import prisma from '@/lib/prisma';
 
 // ============================================
@@ -33,6 +34,12 @@ export interface DashboardStats {
         thisWeek: number;
         thisMonth: number;
     };
+    recentClicks: {
+        id: string;
+        source: string;
+        createdAt: Date;
+        course: { title: string; slug: string };
+    }[];
 }
 
 export interface ClickAnalytics {
@@ -58,7 +65,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     const startOfWeek = new Date(startOfDay);
     startOfWeek.setDate(startOfWeek.getDate() - startOfDay.getDay());
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const threeDaysFromNow = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+    const threeDaysFromNow = new Date(now.getTime() + TIME.THREE_DAYS_MS);
 
     const [
         totalCourses,
@@ -75,6 +82,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
         todayClicks,
         weekClicks,
         monthClicks,
+        recentClicks,
     ] = await Promise.all([
         prisma.course.count(),
         prisma.course.count({ where: { isActive: true } }),
@@ -100,6 +108,13 @@ export async function getDashboardStats(): Promise<DashboardStats> {
         prisma.clickEvent.count({ where: { createdAt: { gte: startOfDay } } }),
         prisma.clickEvent.count({ where: { createdAt: { gte: startOfWeek } } }),
         prisma.clickEvent.count({ where: { createdAt: { gte: startOfMonth } } }),
+        prisma.clickEvent.findMany({
+            take: DASHBOARD.RECENT_CLICKS_LIMIT,
+            orderBy: { createdAt: 'desc' },
+            include: {
+                course: { select: { title: true, slug: true } },
+            },
+        }),
     ]);
 
     return {
@@ -125,6 +140,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
             thisWeek: weekClicks,
             thisMonth: monthClicks,
         },
+        recentClicks,
     };
 }
 

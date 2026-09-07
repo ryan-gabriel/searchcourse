@@ -24,6 +24,25 @@ export const CourseSyllabusSectionSchema = z.object({
   items: z.array(CourseSyllabusItemSchema).max(500).default([]),
 });
 
+export const CourseOutcomeUpdateSchema = z.object({
+  outcomes: z.array(z.object({
+    text: z.string().min(1).max(500),
+    sortOrder: z.number().int(),
+  })).max(500),
+});
+
+export const CourseSyllabusUpdateSchema = z.object({
+  sections: z.array(z.object({
+    title: z.string().min(1).max(500),
+    duration: z.string().max(100).optional(),
+    sortOrder: z.number().int(),
+    items: z.array(z.object({
+      title: z.string().min(1).max(500),
+      sortOrder: z.number().int(),
+    })).max(500),
+  })).max(500),
+});
+
 export const CourseSearchSchema = z.object({
   query: z.string().max(200).optional(),
   platform: z.string().max(100).optional(),

@@ -1,4 +1,5 @@
 import { LRUCache } from "lru-cache";
+import { RATE_LIMIT } from "@/lib/constants";
 
 interface RateLimitConfig {
   limit: number;
@@ -12,14 +13,20 @@ export interface RateLimitResult {
   resetTime: number;
 }
 
-const defaultConfig: RateLimitConfig = { limit: 30, windowMs: 60000 };
+const defaultConfig: RateLimitConfig = {
+  limit: RATE_LIMIT.DEFAULT_LIMIT,
+  windowMs: RATE_LIMIT.WINDOW_MS,
+};
 
 const caches = new Map<string, LRUCache<string, number[]>>();
 
 function getCache(endpoint: string) {
   let cache = caches.get(endpoint);
   if (!cache) {
-    cache = new LRUCache<string, number[]>({ max: 10000, ttl: 60000 });
+    cache = new LRUCache<string, number[]>({
+      max: RATE_LIMIT.CACHE_MAX,
+      ttl: RATE_LIMIT.WINDOW_MS,
+    });
     caches.set(endpoint, cache);
   }
   return cache;
@@ -55,15 +62,15 @@ export function getRateLimitHeaders(result: RateLimitResult): Record<string, str
 
 function rateLimitSearch(identifier: string) {
   return rateLimit(identifier, "search", {
-    limit: Number(process.env.RATE_LIMIT_SEARCH) || 30,
-    windowMs: 60000,
+    limit: RATE_LIMIT.SEARCH_LIMIT,
+    windowMs: RATE_LIMIT.WINDOW_MS,
   });
 }
 
 function rateLimitClick(identifier: string) {
   return rateLimit(identifier, "click", {
-    limit: Number(process.env.RATE_LIMIT_CLICK) || 60,
-    windowMs: 60000,
+    limit: RATE_LIMIT.CLICK_LIMIT,
+    windowMs: RATE_LIMIT.WINDOW_MS,
   });
 }
 

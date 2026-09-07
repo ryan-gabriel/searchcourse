@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { escapeMarkdown, formatDiscount, formatPrice, formatCourseMessage } from "@/lib/telegramFormat";
+import { escapeMarkdown, formatDiscount, formatCourseMessage } from "@/lib/telegramFormat";
+import { formatPriceSimple } from "@/lib/utils";
 
 describe("escapeMarkdown (MarkdownV2 reserved characters)", () => {
   const reserved = "_*[]()~`>#+-=|{}.!\\";
@@ -16,13 +17,13 @@ describe("escapeMarkdown (MarkdownV2 reserved characters)", () => {
   });
 });
 
-describe("formatPrice", () => {
+describe("formatPriceSimple", () => {
   it("returns FREE for zero", () => {
-    expect(formatPrice(0)).toBe("FREE");
+    expect(formatPriceSimple(0)).toBe("FREE");
   });
 
   it("formats two decimals with a dollar sign", () => {
-    expect(formatPrice(9.99)).toBe("$9.99");
+    expect(formatPriceSimple(9.99)).toBe("$9.99");
   });
 });
 

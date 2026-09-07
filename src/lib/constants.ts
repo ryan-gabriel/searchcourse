@@ -1,0 +1,31 @@
+export const RATE_LIMIT = {
+  WINDOW_MS: 60_000,
+  DEFAULT_LIMIT: 30,
+  SEARCH_LIMIT: Number(process.env.RATE_LIMIT_SEARCH) || 30,
+  CLICK_LIMIT: Number(process.env.RATE_LIMIT_CLICK) || 60,
+  CACHE_MAX: 10_000,
+} as const;
+
+export const TIME = {
+  ONE_HOUR_MS: 60 * 60 * 1000,
+  ONE_DAY_MS: 24 * 60 * 60 * 1000,
+  THREE_DAYS_MS: 3 * 24 * 60 * 60 * 1000,
+  ONE_WEEK_MS: 7 * 24 * 60 * 60 * 1000,
+} as const;
+
+export const CLEANUP = {
+  EXPIRED_COUPON_RETENTION_HOURS: 24,
+} as const;
+
+export const BROADCAST = {
+  MIN_EXPIRY_HOURS: Number(process.env.BROADCAST_MIN_EXPIRY_HOURS) || 12,
+  MAX_VERIFIED_AGE_HOURS: Number(process.env.BROADCAST_MAX_VERIFIED_AGE_HOURS) || 24,
+  RATE_LIMIT_MS: 1500,
+  MAX_COURSES_PER_RUN: 10,
+} as const;
+
+export const DASHBOARD = {
+  RECENT_CLICKS_LIMIT: 10,
+  EXPIRING_SOON_DAYS: 3,
+  CLICK_ANALYTICS_DEFAULT_DAYS: 30,
+} as const;

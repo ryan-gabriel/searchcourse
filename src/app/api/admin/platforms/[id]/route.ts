@@ -9,76 +9,37 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPlatformById, updatePlatform, deletePlatform } from '@/services';
 import { PlatformUpdateSchema } from '@/validations';
-import { requireAdmin } from '@/lib/admin-guard';
+import { withAdmin } from '@/lib/admin-route';
 
 interface RouteParams {
     params: Promise<{ id: string }>;
 }
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
-    const unauthorized = await requireAdmin();
-    if (unauthorized) return unauthorized;
+export const GET = withAdmin(async (request: NextRequest, ctx?: RouteParams) => {
+    const { id } = await ctx!.params;
+    const platform = await getPlatformById(id);
 
-    try {
-        const { id } = await params;
-        const platform = await getPlatformById(id);
-
-        if (!platform) {
-            return NextResponse.json(
-                { message: 'Platform not found' },
-                { status: 404 }
-            );
-        }
-
-        return NextResponse.json(platform);
-    } catch (error) {
-        console.error('Error fetching platform:', error);
+    if (!platform) {
         return NextResponse.json(
-            { message: 'Failed to fetch platform' },
-            { status: 500 }
+            { message: 'Platform not found' },
+            { status: 404 }
         );
     }
-}
 
-export async function PUT(request: NextRequest, { params }: RouteParams) {
-    const unauthorized = await requireAdmin();
-    if (unauthorized) return unauthorized;
+    return NextResponse.json(platform);
+}, 'Failed to fetch platform');
 
-    try {
-        const { id } = await params;
-        const body = await request.json();
-        const data = PlatformUpdateSchema.parse({ ...body, id });
+export const PUT = withAdmin(async (request: NextRequest, ctx?: RouteParams) => {
+    const { id } = await ctx!.params;
+    const body = await request.json();
+    const data = PlatformUpdateSchema.parse({ ...body, id });
 
-        const platform = await updatePlatform(data);
-        return NextResponse.json(platform);
-    } catch (error) {
-        if (error instanceof Error && error.name === 'ZodError') {
-            return NextResponse.json(
-                { message: 'Validation error', errors: (error as { issues?: unknown }).issues },
-                { status: 400 }
-            );
-        }
-        console.error('Error updating platform:', error);
-        return NextResponse.json(
-            { message: 'Failed to update platform' },
-            { status: 500 }
-        );
-    }
-}
+    const platform = await updatePlatform(data);
+    return NextResponse.json(platform);
+}, 'Failed to update platform');
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
-    const unauthorized = await requireAdmin();
-    if (unauthorized) return unauthorized;
-
-    try {
-        const { id } = await params;
-        await deletePlatform(id);
-        return NextResponse.json({ success: true });
-    } catch (error) {
-        console.error('Error deleting platform:', error);
-        return NextResponse.json(
-            { message: 'Failed to delete platform' },
-            { status: 500 }
-        );
-    }
-}
+export const DELETE = withAdmin(async (request: NextRequest, ctx?: RouteParams) => {
+    const { id } = await ctx!.params;
+    await deletePlatform(id);
+    return NextResponse.json({ success: true });
+}, 'Failed to delete platform');

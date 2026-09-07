@@ -13,6 +13,7 @@
  */
 
 import axios from 'axios';
+import { BROADCAST } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import { formatCourseMessage } from "@/lib/telegramFormat";
 import { shouldBroadcastCoupon } from "@/lib/broadcastGuard";
@@ -34,8 +35,8 @@ const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
 // Broadcast coupon guard (hours). Skip coupons expiring within
 // BROADCAST_MIN_EXPIRY_HOURS, and coupons whose feed snapshot
 // (verifiedAt = feed savedtime) is older than BROADCAST_MAX_VERIFIED_AGE_HOURS.
-const BROADCAST_MIN_EXPIRY_HOURS = parseInt(process.env.BROADCAST_MIN_EXPIRY_HOURS || '12', 10);
-const BROADCAST_MAX_VERIFIED_AGE_HOURS = parseInt(process.env.BROADCAST_MAX_VERIFIED_AGE_HOURS || '24', 10);
+const BROADCAST_MIN_EXPIRY_HOURS = BROADCAST.MIN_EXPIRY_HOURS;
+const BROADCAST_MAX_VERIFIED_AGE_HOURS = BROADCAST.MAX_VERIFIED_AGE_HOURS;
 
 // ============================================
 // HELPERS
@@ -43,6 +44,17 @@ const BROADCAST_MAX_VERIFIED_AGE_HOURS = parseInt(process.env.BROADCAST_MAX_VERI
 
 function sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function getTelegramErrorMessage(error: unknown): string {
+    if (axios.isAxiosError(error)) {
+        return error.response?.data?.description || error.message;
+    }
+    return error instanceof Error ? error.message : 'Unknown error';
+}
+
+function toNumber(value: unknown): number {
+    return Number(value);
 }
 
 // ============================================
@@ -59,8 +71,7 @@ async function sendTelegramMessage(text: string): Promise<boolean> {
         });
         return true;
     } catch (error) {
-        const e = error as { response?: { data?: unknown }; message?: string };
-        console.error('  ❌ Telegram send failed:', e?.response?.data || e?.message);
+        console.error('  ❌ Telegram send failed:', getTelegramErrorMessage(error));
         return false;
     }
 }
@@ -164,12 +175,12 @@ async function main() {
 
             const message = formatCourseMessage({
                 ...course,
-                originalPrice: Number(course.originalPrice),
-                rating: course.rating ? Number(course.rating) : null,
-                coupons: course.coupons.map((c: { finalPrice: unknown; discountValue: unknown; expiresAt: Date | null; code: string | null }) => ({
+                originalPrice: toNumber(course.originalPrice),
+                rating: course.rating ? toNumber(course.rating) : null,
+                coupons: course.coupons.map((c) => ({
                     ...c,
-                    finalPrice: Number(c.finalPrice),
-                    discountValue: Number(c.discountValue),
+                    finalPrice: toNumber(c.finalPrice),
+                    discountValue: toNumber(c.discountValue),
                 })),
             });
 
