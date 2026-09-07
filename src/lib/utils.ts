@@ -32,6 +32,10 @@ export function formatPrice(price: number | string, currency: string = "USD"): s
   }).format(value);
 }
 
+export function formatPriceSimple(price: number): string {
+  return price === 0 ? 'FREE' : `$${price.toFixed(2)}`;
+}
+
 export function calculateDiscountPercentage(originalPrice: number, finalPrice: number): number {
   if (!originalPrice || originalPrice <= 0) return 0;
   return Math.round(((originalPrice - finalPrice) / originalPrice) * 100);

@@ -1,11 +1,9 @@
+import { formatPriceSimple } from '@/lib/utils';
+
 const SITE_BASE_URL = process.env.SITE_BASE_URL || 'https://searchcourse.vercel.app';
 
 function escapeMarkdown(text: string): string {
     return text.replace(/[_*[\]()~`>#+\-=|{}.!\\]/g, '\\$&');
-}
-
-function formatPrice(price: number): string {
-    return price === 0 ? 'FREE' : `$${price.toFixed(2)}`;
 }
 
 function formatDiscount(discountValue: number): string {
@@ -43,8 +41,8 @@ function formatCourseMessage(course: {
 
     // Price info
     if (coupon) {
-        const original = formatPrice(course.originalPrice);
-        const final = formatPrice(coupon.finalPrice);
+        const original = formatPriceSimple(course.originalPrice);
+        const final = formatPriceSimple(coupon.finalPrice);
         lines.push(`💰 ~~${escapeMarkdown(original)}~~ → *${escapeMarkdown(final)}* \\(${escapeMarkdown(formatDiscount(coupon.discountValue))}\\)`);
     }
 
@@ -88,4 +86,4 @@ function formatCourseMessage(course: {
     return lines.join('\n');
 }
 
-export { escapeMarkdown, formatPrice, formatDiscount, formatCourseMessage };
+export { escapeMarkdown, formatDiscount, formatCourseMessage };
