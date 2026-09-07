@@ -68,9 +68,9 @@ export default async function HomePage() {
       <ScrollReveal>
       <section className="bg-background pt-20 pb-24 lg:pt-32 lg:pb-32">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl md:text-6xl font-extrabold text-foreground mb-6 tracking-tight leading-[1.1]">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-foreground mb-6 tracking-tight leading-[1.1]">
             Master New Skills. <br className="hidden md:block" />
-            <span className="text-foreground/50">We Filter the Noise.</span>
+            <span className="text-muted">We Filter the Noise.</span>
           </h1>
 
           <p className="text-lg md:text-xl text-foreground/60 max-w-2xl mx-auto mb-10 leading-relaxed">
@@ -105,19 +105,19 @@ export default async function HomePage() {
           <div className="grid grid-cols-3 gap-8 text-center divide-x divide-border">
             <div>
               <p className="text-3xl font-bold text-foreground mb-1">{stats.coursesVerified}</p>
-              <p className="text-xs font-medium text-foreground/50 uppercase tracking-wider">
+              <p className="text-xs font-medium text-muted uppercase tracking-wider">
                 Courses Verified
               </p>
             </div>
             <div>
               <p className="text-3xl font-bold text-foreground mb-1">{stats.studentSavings}</p>
-              <p className="text-xs font-medium text-foreground/50 uppercase tracking-wider">
+              <p className="text-xs font-medium text-muted uppercase tracking-wider">
                 Student Savings
               </p>
             </div>
             <div>
               <p className="text-3xl font-bold text-foreground mb-1">{stats.uptime}</p>
-              <p className="text-xs font-medium text-foreground/50 uppercase tracking-wider">
+              <p className="text-xs font-medium text-muted uppercase tracking-wider">
                 Uptime
               </p>
             </div>
@@ -133,7 +133,7 @@ export default async function HomePage() {
           <div className="flex items-center justify-between mb-10">
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-2">Explore Categories</h2>
-              <p className="text-foreground/50">
+              <p className="text-muted">
                 Curated learning paths for modern technologies.
               </p>
             </div>
@@ -160,7 +160,7 @@ export default async function HomePage() {
                   <h3 className="font-bold text-foreground mb-1 group-hover:text-foreground/80 transition-colors">
                     {cat.name}
                   </h3>
-                  <p className="text-xs text-foreground/50">
+                  <p className="text-xs text-muted">
                     {cat._count?.courses ?? 0} Courses
                   </p>
                 </Link>
@@ -226,7 +226,7 @@ export default async function HomePage() {
                     </span>
                   </div>
                   <h3 className="font-bold text-foreground mb-2">{roadmap.title}</h3>
-                  <p className="text-sm text-foreground/50">
+                  <p className="text-sm text-muted">
                     {roadmap.estimatedHours ? `${roadmap.estimatedHours}h` : 'Flexible'}{' '}
                     &middot; {roadmap.courseCount} Modules
                   </p>
@@ -248,7 +248,7 @@ export default async function HomePage() {
                 <h2 className="text-3xl font-bold text-foreground mb-2">
                   Top Picks of the Month
                 </h2>
-                <p className="text-foreground/50 flex items-center gap-2">
+                <p className="text-muted flex items-center gap-2">
                   <Shield className="w-4 h-4 text-foreground/40" />
                   Manually verified for quality &amp; discount accuracy.
                 </p>

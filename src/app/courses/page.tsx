@@ -337,7 +337,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
                             </p>
 
                             <div className="flex items-center gap-2">
-                                <span className="text-sm text-foreground/50">Sort by:</span>
+                                <span className="text-sm text-muted">Sort by:</span>
                                 <SortDropdown
                                     currentSort={currentSort}
                                     options={sortOptions}
@@ -394,7 +394,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
                                             </div>
 
                                             <div className="p-5">
-                                                <div className="text-xs text-foreground/50 font-medium mb-2">
+                                                <div className="text-xs text-muted font-medium mb-2">
                                                     {course.platform.name}
                                                 </div>
                                                 <h3 className="font-semibold text-foreground mb-2 line-clamp-2 leading-snug">
@@ -406,7 +406,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
                                                     </Link>
                                                 </h3>
                                                 {course.instructorName && (
-                                                    <p className="text-sm text-foreground/50 mb-3">
+                                                    <p className="text-sm text-muted mb-3">
                                                         {course.instructorName}
                                                     </p>
                                                 )}
@@ -470,7 +470,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
                                     <h3 className="text-xl font-semibold text-foreground mb-2">
                                         No courses found
                                     </h3>
-                                    <p className="text-foreground/50 mb-6">
+                                    <p className="text-muted mb-6">
                                         Try adjusting your filters or search terms.
                                     </p>
                                     <Link

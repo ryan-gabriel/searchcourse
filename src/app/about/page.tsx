@@ -176,7 +176,7 @@ export default async function AboutPage() {
                                 <div className="text-4xl font-extrabold text-foreground mb-2">
                                     {stat.value}
                                 </div>
-                                <div className="text-sm font-medium text-foreground/50 uppercase tracking-wide">
+                                <div className="text-sm font-medium text-muted uppercase tracking-wide">
                                     {stat.label}
                                 </div>
                             </div>
@@ -229,7 +229,7 @@ export default async function AboutPage() {
                             </p>
                         </div>
                         <div className="hidden md:block">
-                            <div className="flex items-center gap-2 text-xs font-mono text-foreground/50 bg-surface-muted px-3 py-1.5 rounded-md border border-border">
+                            <div className="flex items-center gap-2 text-xs font-mono text-muted bg-surface-muted px-3 py-1.5 rounded-md border border-border">
                                 <span className="w-2 h-2 rounded-full bg-price"></span>
                                 System Operational
                             </div>
@@ -248,7 +248,7 @@ export default async function AboutPage() {
                                 <h3 className="font-semibold text-foreground mb-2">
                                     {item.title}
                                 </h3>
-                                <p className="text-xs text-foreground/50 leading-relaxed">
+                                <p className="text-xs text-muted leading-relaxed">
                                     {item.description}
                                 </p>
                             </div>

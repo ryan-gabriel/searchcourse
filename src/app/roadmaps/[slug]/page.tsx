@@ -92,14 +92,14 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
                     <nav className="flex items-center gap-2 text-sm">
                         <Link
                             href="/"
-                            className="text-foreground/50 hover:text-foreground"
+                            className="text-muted hover:text-foreground"
                         >
                             Home
                         </Link>
                         <ChevronRight className="w-4 h-4 text-foreground/40" />
                         <Link
                             href="/roadmaps"
-                            className="text-foreground/50 hover:text-foreground"
+                            className="text-muted hover:text-foreground"
                         >
                             Roadmaps
                         </Link>
@@ -157,7 +157,7 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
                                     <h3 className="font-semibold text-foreground mb-1">
                                         {prop.title}
                                     </h3>
-                                    <p className="text-sm text-foreground/50">
+                                    <p className="text-sm text-muted">
                                         {prop.description}
                                     </p>
                                 </div>
@@ -211,18 +211,18 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
                                                                 </h3>
 
                                                                 {course.instructorName && (
-                                                                    <p className="text-sm text-foreground/50 mb-2">
+                                                                    <p className="text-sm text-muted mb-2">
                                                                         by{' '}
                                                                         {course.instructorName}
                                                                     </p>
                                                                 )}
 
                                                                 <div className="flex flex-wrap items-center gap-3 text-sm">
-                                                                    <span className="text-foreground/50">
+                                                                    <span className="text-muted">
                                                                         {course.platform.name}
                                                                     </span>
                                                                     {course.duration && (
-                                                                        <span className="text-foreground/50">
+                                                                        <span className="text-muted">
                                                                             {course.duration}
                                                                         </span>
                                                                     )}
@@ -281,7 +281,7 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
                                     <h3 className="text-xl font-semibold text-foreground mb-2">
                                         Courses Coming Soon
                                     </h3>
-                                    <p className="text-foreground/50">
+                                    <p className="text-muted">
                                         This roadmap is being curated. Check back soon!
                                     </p>
                                 </div>
@@ -298,7 +298,7 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
                                     </h3>
                                     <div className="space-y-3">
                                         <div className="flex items-center justify-between text-sm">
-                                            <span className="text-foreground/50">
+                                            <span className="text-muted">
                                                 Total Courses
                                             </span>
                                             <span className="font-medium text-foreground">
@@ -307,7 +307,7 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
                                         </div>
                                         {roadmap.estimatedHours && (
                                             <div className="flex items-center justify-between text-sm">
-                                                <span className="text-foreground/50">
+                                                <span className="text-muted">
                                                     Est. Duration
                                                 </span>
                                                 <span className="font-medium text-foreground">
@@ -316,7 +316,7 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
                                             </div>
                                         )}
                                         <div className="flex items-center justify-between text-sm">
-                                            <span className="text-foreground/50">
+                                            <span className="text-muted">
                                                 Total Cost
                                             </span>
                                             <span className="font-medium text-foreground">
@@ -328,7 +328,7 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
                                         </div>
                                         {roadmap.totalSavings > 0 && (
                                             <div className="flex items-center justify-between text-sm">
-                                                <span className="text-foreground/50">
+                                                <span className="text-muted">
                                                     You Save
                                                 </span>
                                                 <span className="font-medium text-price">
@@ -357,7 +357,7 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
                                 <div className="px-6 pb-6">
                                     <Link
                                         href="/roadmaps"
-                                        className="block text-center text-sm text-foreground/50 hover:text-foreground"
+                                        className="block text-center text-sm text-muted hover:text-foreground"
                                     >
                                         &larr; Browse all roadmaps
                                     </Link>
@@ -371,7 +371,7 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
             <div className="lg:hidden fixed bottom-0 left-0 right-0 p-4 bg-surface border-t border-border z-30">
                 <div className="flex items-center justify-between gap-4">
                     <div>
-                        <p className="text-sm text-foreground/50">
+                        <p className="text-sm text-muted">
                             {roadmap.courseCount} courses &middot;{' '}
                             {formatPrice(roadmap.totalDiscountedPrice, 'USD')}
                         </p>

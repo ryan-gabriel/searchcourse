@@ -96,7 +96,7 @@ export const metadata: Metadata = {
   referrer: 'origin-when-cross-origin',
   category: 'education',
   other: {
-    'theme-color': '#141311',
+    'theme-color': '#12110f',
   },
 };
 

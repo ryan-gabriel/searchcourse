@@ -163,7 +163,7 @@ export default async function RoadmapsPage(props: RoadmapsPageProps) {
                                                         {roadmap.title}
                                                     </h3>
                                                     {roadmap.description && (
-                                                        <p className="text-sm text-foreground/50 line-clamp-2">
+                                                        <p className="text-sm text-muted line-clamp-2">
                                                             {roadmap.description}
                                                         </p>
                                                     )}
@@ -191,7 +191,7 @@ export default async function RoadmapsPage(props: RoadmapsPageProps) {
 
                                             {roadmap.totalSavings > 0 && (
                                                 <div className="flex items-center justify-between pt-4 border-t border-border">
-                                                    <span className="text-sm text-foreground/50">
+                                                    <span className="text-sm text-muted">
                                                         Bundle Savings
                                                     </span>
                                                     <span className="text-sm font-semibold text-price">
@@ -213,7 +213,7 @@ export default async function RoadmapsPage(props: RoadmapsPageProps) {
                                 <h3 className="text-xl font-semibold text-foreground mb-2">
                                     No roadmaps found
                                 </h3>
-                                <p className="text-foreground/50 mb-6">
+                                <p className="text-muted mb-6">
                                     Try adjusting your filters or search query.
                                 </p>
                                 <Link href="/roadmaps" className="text-foreground hover:underline">

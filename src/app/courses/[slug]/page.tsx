@@ -74,7 +74,7 @@ export default async function CourseDetailPage(props: PageProps) {
                     <nav className="flex items-center gap-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide">
                         <Link
                             href="/courses"
-                            className="text-foreground/50 hover:text-foreground"
+                            className="text-muted hover:text-foreground"
                         >
                             Courses
                         </Link>
@@ -83,7 +83,7 @@ export default async function CourseDetailPage(props: PageProps) {
                             <>
                                 <Link
                                     href={`/courses?category=${course.category.slug}`}
-                                    className="text-foreground/50 hover:text-foreground"
+                                    className="text-muted hover:text-foreground"
                                 >
                                     {course.category.name}
                                 </Link>
@@ -132,7 +132,7 @@ export default async function CourseDetailPage(props: PageProps) {
                                                 />
                                             ))}
                                         </div>
-                                        <span className="text-foreground/50">
+                                        <span className="text-muted">
                                             ({formatCompactNumber(course.reviewCount)} ratings)
                                         </span>
                                     </div>
@@ -166,7 +166,7 @@ export default async function CourseDetailPage(props: PageProps) {
                                         {course.instructorName.charAt(0)}
                                     </div>
                                     <div>
-                                        <p className="text-sm text-foreground/50">
+                                        <p className="text-sm text-muted">
                                             Created by
                                         </p>
                                         <p className="font-medium text-foreground">
@@ -176,7 +176,7 @@ export default async function CourseDetailPage(props: PageProps) {
                                 </div>
                             )}
 
-                            <div className="flex flex-wrap items-center gap-4 text-sm text-foreground/50">
+                            <div className="flex flex-wrap items-center gap-4 text-sm text-muted">
                                 <span className="inline-flex items-center gap-1">
                                     Available on {course.platform.name}
                                 </span>
@@ -322,7 +322,7 @@ export default async function CourseDetailPage(props: PageProps) {
                                         <p className="font-semibold text-foreground mb-2">
                                             Course Rating
                                         </p>
-                                        <p className="text-sm text-foreground/50">
+                                        <p className="text-sm text-muted">
                                             Trusted by{' '}
                                             {formatCompactNumber(course.studentCount)} students
                                         </p>
@@ -344,7 +344,7 @@ export default async function CourseDetailPage(props: PageProps) {
                                         <h3 className="text-lg font-semibold text-foreground">
                                             {course.instructorName}
                                         </h3>
-                                        <p className="text-sm text-foreground/50 mb-3 font-medium">
+                                        <p className="text-sm text-muted mb-3 font-medium">
                                             Course Instructor
                                         </p>
                                         <p className="text-sm text-foreground/60 leading-relaxed">

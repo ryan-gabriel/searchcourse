@@ -25,7 +25,7 @@ export function CourseCardSkeleton() {
     return (
         <div className="bg-surface-elevated rounded-2xl overflow-hidden border border-border">
             {/* Thumbnail */}
-            <Skeleton className="h-44 w-full rounded-none" />
+            <Skeleton className="h-48 w-full rounded-none" />
 
             <div className="p-5 space-y-4">
                 {/* Platform badge */}
@@ -61,7 +61,7 @@ export function CourseCardSkeleton() {
 
 export function CourseGridSkeleton({ count = 8 }: { count?: number }) {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {Array.from({ length: count }).map((_, i) => (
                 <CourseCardSkeleton key={i} />
             ))}

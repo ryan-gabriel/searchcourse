@@ -104,12 +104,14 @@ export function Header() {
                 {/* Mobile Navigation */}
                 <div
                     id="mobile-navigation"
+                    inert={!mobileMenuOpen || undefined}
+                    aria-hidden={!mobileMenuOpen || undefined}
                     className={cn(
                         'md:hidden overflow-hidden transition-all duration-300 ease-in-out',
                         mobileMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'
                     )}
                 >
-                    <div className={cn('py-4 border-t border-border', !mobileMenuOpen && 'hidden')}>
+                    <div className="py-4 border-t border-border">
                         <div className="flex flex-col gap-1">
                             {navItems.map((item) => (
                                 <Link

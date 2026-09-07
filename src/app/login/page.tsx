@@ -72,7 +72,7 @@ function LoginForm() {
                             <Lock className="w-8 h-8" />
                         </div>
                         <h1 className="text-2xl font-bold text-foreground">Admin Access</h1>
-                        <p className="text-foreground/50 text-sm mt-2">
+                        <p className="text-muted text-sm mt-2">
                             Authorized personnel only
                         </p>
                     </div>

@@ -68,7 +68,7 @@ export function CourseAccordion({ sections }: CourseAccordionProps) {
                                     {section.title}
                                 </span>
                                 {section.duration && (
-                                    <span className="ml-auto text-sm text-foreground/50">
+                                    <span className="ml-auto text-sm text-muted">
                                         {section.duration}
                                     </span>
                                 )}
@@ -87,7 +87,7 @@ export function CourseAccordion({ sections }: CourseAccordionProps) {
                                 <div className="flex items-center gap-3">
                                     <ChevronDown
                                         className={cn(
-                                            'w-5 h-5 text-foreground/50 transition-transform',
+                                            'w-5 h-5 text-muted transition-transform',
                                             openSections.has(index) && 'rotate-180'
                                         )}
                                     />
@@ -95,7 +95,7 @@ export function CourseAccordion({ sections }: CourseAccordionProps) {
                                         {section.title}
                                     </span>
                                 </div>
-                                <div className="text-sm text-foreground/50">
+                                <div className="text-sm text-muted">
                                     {section.lectures} lectures &middot; {section.duration}
                                 </div>
                             </button>
