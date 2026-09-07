@@ -34,3 +34,6 @@ yarn-error.log*
 
 # sdd workspace
 .superpowers/
+
+# worktrees
+.worktrees/
