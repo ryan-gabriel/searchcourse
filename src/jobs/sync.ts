@@ -18,7 +18,7 @@
  * - RAPIDAPI_KEY
  * - RAPIDAPI_HOST      (feed host, e.g. paid-udemy-course-for-free.p.rapidapi.com)
  * - RAPIDAPI_PATH      (endpoint path; defaults to "/")
- * - RAPIDAPI_MAX_PAGES (page cap per run; defaults to 25 -> 250 courses, ~25 req)
+ * - RAPIDAPI_MAX_PAGES (page cap per run; defaults to 1 -> 10 courses, 1 req)
  * - IMPACT_AFFILIATE_BASE (optional; your Impact deep-link prefix, e.g. https://trk.udemy.com/c/...)
  */
 
@@ -57,7 +57,7 @@ interface UdemyFeedItem {
 const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
 const RAPIDAPI_HOST = process.env.RAPIDAPI_HOST || '';
 const RAPIDAPI_PATH = process.env.RAPIDAPI_PATH || '/';
-const RAPIDAPI_MAX_PAGES = parseInt(process.env.RAPIDAPI_MAX_PAGES || '25', 10);
+const RAPIDAPI_MAX_PAGES = parseInt(process.env.RAPIDAPI_MAX_PAGES || '1', 10);
 const FEED_PAGE_SIZE = 10;
 const IMPACT_AFFILIATE_BASE = process.env.IMPACT_AFFILIATE_BASE || '';
 

@@ -9,21 +9,12 @@
  */
 
 import { prisma } from "@/lib/prisma";
-import { runVerification } from "./verify";
 
 async function main() {
     console.log('🧹 Starting expired coupon cleanup...');
     const startTime = Date.now();
 
     try {
-        // 0. Live-check active coupons against Udemy BEFORE the time-based pass,
-        //    so coupons that died early (exhausted before their listed end date)
-        //    are deactivated before they reach the broadcast pipeline.
-        const verification = await runVerification();
-        console.log(
-            `🔍 Verified ${verification.checked} coupons: ${verification.valid} valid, ${verification.invalid} invalid (deactivated), ${verification.undetermined} undetermined`,
-        );
-
         const cutoff = new Date();
         cutoff.setHours(cutoff.getHours() - 24);
 
