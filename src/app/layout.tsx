@@ -1,14 +1,9 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { GeistSans } from 'geist/font/sans';
 import './globals.css';
 import { ThemeProvider } from '@/components/layout/ThemeProvider';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-geist-sans',
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
@@ -112,7 +107,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="light" suppressHydrationWarning>
-      <body className={`${inter.variable} antialiased min-h-screen flex flex-col`}>
+      <body className={`${GeistSans.variable} antialiased min-h-screen flex flex-col`}>
         <ThemeProvider>
           <Header />
           <main className="flex-1">{children}</main>

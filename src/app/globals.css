@@ -6,22 +6,26 @@
   --background: #faf9f7;
   --foreground: #1a1917;
   --surface: #ffffff;
-  --surface-muted: #f1efe9;
-  --border: #e5e1d8;
+  --surface-muted: #f0ece4;
+  --border: #ddd8cc;
   --accent: #1a1917;
   --accent-ink: #faf9f7;
   --price: #0b7a3b;
+  --surface-elevated: #ffffff;
+  --muted: #6b6560;
 }
 
 .dark {
-  --background: #141311;
+  --background: #12110f;
   --foreground: #f4f2ec;
-  --surface: #1d1b18;
-  --surface-muted: #262320;
-  --border: #35322c;
+  --surface: #1c1a17;
+  --surface-muted: #242220;
+  --border: #3a3731;
   --accent: #f4f2ec;
-  --accent-ink: #141311;
+  --accent-ink: #12110f;
   --price: #57c77d;
+  --surface-elevated: #22201d;
+  --muted: #9e9a94;
 }
 
 @theme inline {
@@ -33,6 +37,8 @@
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
   --color-price: var(--price);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-muted: var(--muted);
   --font-sans: var(--font-geist-sans), system-ui, sans-serif;
 }
 
@@ -84,4 +90,40 @@ body {
 }
 .btn-secondary:hover {
   opacity: 0.85;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+[data-reveal].revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
 }
