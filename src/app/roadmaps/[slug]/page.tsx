@@ -111,7 +111,7 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
                 </div>
             </div>
 
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
                 <div className="lg:grid lg:grid-cols-3 lg:gap-12">
                     <div className="lg:col-span-2">
                         <div className="mb-10">

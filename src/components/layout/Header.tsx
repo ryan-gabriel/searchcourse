@@ -59,7 +59,7 @@ export function Header() {
                                 key={item.href}
                                 href={item.href}
                                 className={cn(
-                                    'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                                    'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                                     'text-foreground opacity-70 hover:text-accent hover:bg-surface-muted'
                                 )}
                             >

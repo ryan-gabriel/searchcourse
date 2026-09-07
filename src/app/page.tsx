@@ -18,6 +18,7 @@ import {
   getFeaturedRoadmaps,
 } from '@/services';
 import { SearchForm } from '@/components/ui/SearchForm';
+import { ScrollReveal } from '@/components/ui/ScrollReveal';
 
 export const dynamic = 'force-dynamic';
 
@@ -64,7 +65,8 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-background pt-16 pb-20 lg:pt-26 lg:pb-28">
+      <ScrollReveal>
+      <section className="bg-background pt-20 pb-24 lg:pt-32 lg:pb-32">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl md:text-6xl font-extrabold text-foreground mb-6 tracking-tight leading-[1.1]">
             Master New Skills. <br className="hidden md:block" />
@@ -94,8 +96,10 @@ export default async function HomePage() {
           </p>
         </div>
       </section>
+      </ScrollReveal>
 
       {/* Stats Bar */}
+      <ScrollReveal>
       <section className="border-y border-border bg-surface-muted">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-3 gap-8 text-center divide-x divide-border">
@@ -120,9 +124,11 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
 
       {/* Categories */}
-      <section className="py-20 bg-background">
+      <ScrollReveal>
+      <section className="py-20 lg:py-24 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-10">
             <div>
@@ -163,11 +169,13 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
 
       {/* Career Roadmaps Teaser */}
-      <section className="py-20 bg-surface-muted border-y border-border">
+      <ScrollReveal>
+      <section className="py-20 lg:py-24 bg-surface-muted border-y border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-accent-ink text-xs font-bold uppercase tracking-wider mb-6">
                 <TrendingUp className="w-3 h-3" />
@@ -228,10 +236,12 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
 
       {/* Featured Courses */}
       {featuredResult.data.length > 0 && (
-        <section className="py-20 bg-background">
+        <ScrollReveal>
+        <section className="py-20 lg:py-24 bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-end justify-between mb-10">
               <div>
@@ -255,10 +265,12 @@ export default async function HomePage() {
             <CourseGrid courses={featuredResult.data} />
           </div>
         </section>
+        </ScrollReveal>
       )}
 
       {/* Bottom CTA */}
-      <section className="py-20 bg-accent text-accent-ink">
+      <ScrollReveal>
+      <section className="py-20 lg:py-24 bg-accent text-accent-ink">
         <div className="relative max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to upgrade your career?
@@ -284,6 +296,7 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
     </>
   );
 }

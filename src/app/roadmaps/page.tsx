@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { BookOpen, Clock, Map, ArrowRight, Award } from 'lucide-react';
 import { searchRoadmaps, getRoadmapBySlug, getAllCategories } from '@/services';
 import { RoadmapFilters } from '@/components/roadmap/RoadmapFilters';
+import { ScrollReveal } from '@/components/ui/ScrollReveal';
 import { formatPrice } from '@/lib/utils';
 const VALID_LEVELS = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'] as const;
 type ValidLevel = (typeof VALID_LEVELS)[number];
@@ -93,8 +94,9 @@ export default async function RoadmapsPage(props: RoadmapsPageProps) {
 
     return (
         <div className="min-h-screen bg-background">
+            <ScrollReveal>
             <section className="bg-surface border-b border-border">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
                             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
@@ -123,6 +125,7 @@ export default async function RoadmapsPage(props: RoadmapsPageProps) {
                     </div>
                 </div>
             </section>
+            </ScrollReveal>
 
             <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="flex flex-col lg:flex-row gap-8">
@@ -133,7 +136,7 @@ export default async function RoadmapsPage(props: RoadmapsPageProps) {
 
                     <div className="flex-1">
                         {roadmapsWithSavings.length > 0 ? (
-                            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                                 {roadmapsWithSavings.map(
                                     (roadmap: {
                                         id: string;
@@ -222,7 +225,7 @@ export default async function RoadmapsPage(props: RoadmapsPageProps) {
                 </div>
             </section>
 
-            <section className="py-16 bg-surface-muted border-t border-border">
+            <section className="py-20 bg-surface-muted border-t border-border">
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 className="text-2xl font-bold text-foreground mb-4">
                         Not sure which path to take?

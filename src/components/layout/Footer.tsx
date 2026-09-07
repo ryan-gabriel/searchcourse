@@ -34,7 +34,7 @@ export function Footer() {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {/* Brand */}
                     <div className="md:col-span-2">
@@ -96,7 +96,7 @@ export function Footer() {
                 </div>
 
                 {/* Bottom */}
-                <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="mt-16 pt-10 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
                     <p className="text-foreground opacity-50 text-sm">
                         © {currentYear} SearchCourse. All rights reserved.
                     </p>

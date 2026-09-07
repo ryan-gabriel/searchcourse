@@ -44,7 +44,7 @@ export function SearchForm({
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder={placeholder}
-                    className="w-full px-4 py-4 bg-transparent border-none focus:ring-0 focus:outline-none text-foreground placeholder:text-foreground/40 text-lg"
+                    className="w-full px-4 py-5 bg-transparent border-none focus:ring-0 focus:outline-none text-foreground placeholder:text-foreground/40 text-lg"
                 />
                 <button
                     type="submit"

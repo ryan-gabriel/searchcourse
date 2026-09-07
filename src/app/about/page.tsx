@@ -10,6 +10,7 @@ import {
     Zap,
 } from 'lucide-react';
 import { getAboutPageStats, getMissionContent } from '@/services';
+import { ScrollReveal } from '@/components/ui/ScrollReveal';
 
 export const metadata: Metadata = {
     title: 'About Us - Our Mission & Team',
@@ -96,7 +97,8 @@ export default async function AboutPage() {
 
     return (
         <div className="min-h-screen bg-background">
-            <section className="py-24 lg:py-32">
+            <ScrollReveal>
+            <section className="py-28 lg:py-36">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div className="mb-6 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-muted border border-border">
                         <span className="text-xs font-bold text-foreground uppercase tracking-widest">
@@ -129,10 +131,11 @@ export default async function AboutPage() {
                     </div>
                 </div>
             </section>
+            </ScrollReveal>
 
             <section
                 id="problem"
-                className="py-24 border-t border-border bg-surface-muted"
+                className="py-28 border-t border-border bg-surface-muted"
             >
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="bg-surface rounded-3xl p-8 md:p-12 border border-border">
@@ -162,7 +165,7 @@ export default async function AboutPage() {
                 </div>
             </section>
 
-            <section className="py-20 bg-background">
+            <section className="py-28 bg-background">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-border">
                         {statsArray.map((stat) => (
@@ -182,7 +185,7 @@ export default async function AboutPage() {
                 </div>
             </section>
 
-            <section className="py-24 bg-surface-muted border-y border-border">
+            <section className="py-28 bg-surface-muted border-y border-border">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl font-bold text-foreground mb-4">
@@ -254,7 +257,7 @@ export default async function AboutPage() {
                 </div>
             </section>
 
-            <section className="py-24 bg-surface-muted border-t border-border">
+            <section className="py-28 bg-surface-muted border-t border-border">
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <div className="inline-flex items-center justify-center w-12 h-12 bg-surface rounded-full mb-6 border border-border">
                         <ExternalLink className="w-6 h-6 text-foreground/40" />
@@ -282,7 +285,7 @@ export default async function AboutPage() {
                 </div>
             </section>
 
-            <section className="py-24 bg-accent text-accent-ink">
+            <section className="py-28 bg-accent text-accent-ink">
                 <div className="max-w-2xl mx-auto px-4 text-center">
                     <h2 className="text-3xl md:text-4xl font-bold mb-6">
                         Ready to cut through the noise?

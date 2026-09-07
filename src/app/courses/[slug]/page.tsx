@@ -70,7 +70,7 @@ export default async function CourseDetailPage(props: PageProps) {
     return (
         <div className="min-h-screen bg-background">
             <div className="bg-surface border-b border-border sticky top-0 z-30">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <nav className="flex items-center gap-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide">
                         <Link
                             href="/courses"
@@ -100,8 +100,8 @@ export default async function CourseDetailPage(props: PageProps) {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
-                <div className="lg:grid lg:grid-cols-3 lg:gap-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
+                <div className="lg:grid lg:grid-cols-3 lg:gap-16">
                     <div className="lg:col-span-2">
                         <div className="mb-8">
                             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight">

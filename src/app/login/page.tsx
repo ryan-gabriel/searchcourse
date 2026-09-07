@@ -66,8 +66,8 @@ function LoginForm() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-background px-4">
             <div className="w-full max-w-md">
-                <div className="bg-surface rounded-2xl border border-border p-8">
-                    <div className="text-center mb-8">
+                <div className="bg-surface rounded-2xl border border-border p-10">
+                    <div className="text-center mb-10">
                         <div className="w-16 h-16 bg-accent text-accent-ink rounded-2xl flex items-center justify-center mx-auto mb-4">
                             <Lock className="w-8 h-8" />
                         </div>

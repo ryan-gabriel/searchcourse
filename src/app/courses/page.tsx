@@ -157,7 +157,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
     return (
         <div className="min-h-screen bg-background">
             <div className="bg-surface border-b border-border">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                     <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
                         Browse All Courses
                     </h1>
@@ -363,7 +363,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
 
                         <Suspense fallback={<CourseGridSkeleton count={12} />}>
                             {coursesResult.data.length > 0 ? (
-                                <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                                <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
                                     {coursesResult.data.map((course) => (
                                         <div
                                             key={course.id}
@@ -484,7 +484,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
                         </Suspense>
 
                         {coursesResult.pagination.totalPages > 1 && (
-                            <div className="flex items-center justify-center gap-2 mt-10">
+                            <div className="flex items-center justify-center gap-2 mt-12">
                                 {validParams.page > 1 && (
                                     <Link
                                         href={buildFilterUrl(currentFilters, {
