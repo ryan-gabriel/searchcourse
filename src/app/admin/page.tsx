@@ -1,69 +1,8 @@
 import { StatCard } from '@/components/admin';
-import prisma from '@/lib/prisma';
+import { getDashboardStats } from '@/services';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
-
-interface RecentClick {
-    id: string;
-    source: string;
-    createdAt: Date;
-    course: {
-        title: string;
-        slug: string;
-    };
-}
-
-interface DashboardData {
-    courseCount: number;
-    platformCount: number;
-    categoryCount: number;
-    roadmapCount: number;
-    activeCouponCount: number;
-    totalClicks: number;
-    recentClicks: RecentClick[];
-}
-
-async function getDashboardData(): Promise<DashboardData> {
-    const [
-        courseCount,
-        platformCount,
-        categoryCount,
-        roadmapCount,
-        activeCouponCount,
-        totalClicks,
-        recentClicks,
-    ] = await Promise.all([
-        prisma.course.count({ where: { isActive: true } }),
-        prisma.platform.count({ where: { isActive: true } }),
-        prisma.category.count(),
-        prisma.roadmap.count({ where: { isActive: true } }),
-        prisma.coupon.count({
-            where: {
-                isActive: true,
-                OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
-            },
-        }),
-        prisma.clickEvent.count(),
-        prisma.clickEvent.findMany({
-            take: 10,
-            orderBy: { createdAt: 'desc' },
-            include: {
-                course: { select: { title: true, slug: true } },
-            },
-        }),
-    ]);
-
-    return {
-        courseCount,
-        platformCount,
-        categoryCount,
-        roadmapCount,
-        activeCouponCount,
-        totalClicks,
-        recentClicks,
-    };
-}
 
 const icons = {
     courses: (
@@ -99,7 +38,7 @@ const icons = {
 };
 
 export default async function AdminDashboard() {
-    const stats = await getDashboardData();
+    const stats = await getDashboardStats();
 
     return (
         <div className="p-6 lg:p-8 space-y-8">
@@ -111,12 +50,12 @@ export default async function AdminDashboard() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <StatCard title="Active Courses" value={stats.courseCount} icon={icons.courses} />
-                <StatCard title="Platforms" value={stats.platformCount} icon={icons.platforms} />
-                <StatCard title="Categories" value={stats.categoryCount} icon={icons.categories} />
-                <StatCard title="Roadmaps" value={stats.roadmapCount} icon={icons.roadmaps} />
-                <StatCard title="Active Coupons" value={stats.activeCouponCount} icon={icons.coupons} />
-                <StatCard title="Total Clicks" value={stats.totalClicks} icon={icons.clicks} />
+                <StatCard title="Active Courses" value={stats.courses.active} icon={icons.courses} />
+                <StatCard title="Platforms" value={stats.platforms} icon={icons.platforms} />
+                <StatCard title="Categories" value={stats.categories} icon={icons.categories} />
+                <StatCard title="Roadmaps" value={stats.roadmaps.active} icon={icons.roadmaps} />
+                <StatCard title="Active Coupons" value={stats.coupons.active} icon={icons.coupons} />
+                <StatCard title="Total Clicks" value={stats.clicks.total} icon={icons.clicks} />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

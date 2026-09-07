@@ -4,7 +4,7 @@
  * Dashboard statistics and analytics data.
  */
 
-import { TIME } from '@/lib/constants';
+import { DASHBOARD, TIME } from '@/lib/constants';
 import prisma from '@/lib/prisma';
 
 // ============================================
@@ -34,6 +34,12 @@ export interface DashboardStats {
         thisWeek: number;
         thisMonth: number;
     };
+    recentClicks: {
+        id: string;
+        source: string;
+        createdAt: Date;
+        course: { title: string; slug: string };
+    }[];
 }
 
 export interface ClickAnalytics {
@@ -76,6 +82,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
         todayClicks,
         weekClicks,
         monthClicks,
+        recentClicks,
     ] = await Promise.all([
         prisma.course.count(),
         prisma.course.count({ where: { isActive: true } }),
@@ -101,6 +108,13 @@ export async function getDashboardStats(): Promise<DashboardStats> {
         prisma.clickEvent.count({ where: { createdAt: { gte: startOfDay } } }),
         prisma.clickEvent.count({ where: { createdAt: { gte: startOfWeek } } }),
         prisma.clickEvent.count({ where: { createdAt: { gte: startOfMonth } } }),
+        prisma.clickEvent.findMany({
+            take: DASHBOARD.RECENT_CLICKS_LIMIT,
+            orderBy: { createdAt: 'desc' },
+            include: {
+                course: { select: { title: true, slug: true } },
+            },
+        }),
     ]);
 
     return {
@@ -126,6 +140,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
             thisWeek: weekClicks,
             thisMonth: monthClicks,
         },
+        recentClicks,
     };
 }
 
