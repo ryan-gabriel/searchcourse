@@ -76,7 +76,7 @@ export function StickyCourseSidebar({
 
     return (
         <div className="sticky top-24">
-            <div className="bg-surface rounded-2xl border border-border overflow-hidden">
+            <div className="bg-surface-elevated rounded-2xl border border-border overflow-hidden shadow-lg">
                 <div className="p-6 border-b border-border">
                     <div className="flex items-baseline gap-3 mb-2">
                         <span className="text-4xl font-bold text-foreground">

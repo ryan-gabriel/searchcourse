@@ -95,9 +95,10 @@ export function RoadmapStep({
             {/* Course Card */}
             <div
                 className={cn(
-                    'flex-1 bg-surface rounded-2xl overflow-hidden',
+                    'flex-1 bg-surface-elevated rounded-2xl overflow-hidden',
                     'transition-all duration-300',
                     'border border-border',
+                    'hover:shadow-md',
                     isCompleted && 'opacity-75'
                 )}
             >
@@ -153,7 +154,7 @@ export function RoadmapStep({
                         </h3>
 
                         {/* Course Meta */}
-                        <div className="flex flex-wrap items-center gap-3 text-sm text-foreground opacity-50 mb-3">
+                        <div className="flex flex-wrap items-center gap-3 text-sm text-muted mb-3">
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-surface-muted text-foreground">
                                 {course.platform.name}
                             </span>

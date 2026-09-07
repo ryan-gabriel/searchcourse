@@ -27,10 +27,11 @@ export function RoadmapCard({ roadmap, totalSavings = 0 }: RoadmapCardProps) {
         <Link
             href={`/roadmaps/${roadmap.slug}`}
             className={cn(
-                'group relative block bg-surface rounded-2xl overflow-hidden',
+                'group relative block bg-surface-elevated rounded-2xl overflow-hidden',
                 'transition-all duration-300',
                 'border border-border',
-                'hover:border-accent/40'
+                'hover:border-accent/40',
+                'hover:shadow-lg hover:-translate-y-0.5'
             )}
         >
             {/* Featured Badge */}

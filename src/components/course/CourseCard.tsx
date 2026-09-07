@@ -46,7 +46,7 @@ export function CourseCard({ course }: CourseCardProps) {
     };
 
     return (
-        <article className="group relative bg-surface rounded-2xl overflow-hidden transition-all duration-300 border border-border hover:border-accent/40">
+        <article className="group relative bg-surface-elevated rounded-2xl overflow-hidden transition-all duration-300 border border-border hover:border-accent/40 hover:shadow-lg hover:-translate-y-0.5">
             {/* Discount Badge */}
             {hasDiscount && discountPercent > 0 && (
                 <div className="absolute top-3 left-3 z-10">
@@ -57,7 +57,7 @@ export function CourseCard({ course }: CourseCardProps) {
             )}
 
             {/* Thumbnail */}
-            <Link href={affiliateUrl} target="_blank" className="block relative h-44 overflow-hidden">
+            <Link href={affiliateUrl} target="_blank" className="block relative h-48 overflow-hidden">
                 {course.thumbnailUrl ? (
                     <Image
                         src={course.thumbnailUrl}
@@ -75,7 +75,7 @@ export function CourseCard({ course }: CourseCardProps) {
                 )}
             </Link>
 
-            <div className="p-5">
+            <div className="p-6">
                 {/* Platform Badge */}
                 <div className="flex items-center gap-2 mb-3">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-muted text-foreground">
@@ -101,7 +101,7 @@ export function CourseCard({ course }: CourseCardProps) {
 
                 {/* Instructor */}
                 {course.instructorName && (
-                    <p className="text-sm text-foreground opacity-50 mb-3 truncate">
+                    <p className="text-sm text-muted mb-3 truncate">
                         by {course.instructorName}
                     </p>
                 )}

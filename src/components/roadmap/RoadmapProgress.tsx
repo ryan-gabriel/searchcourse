@@ -84,7 +84,7 @@ export function RoadmapProgress({ roadmapId, steps }: RoadmapProgressProps) {
                             <h3 className="font-semibold text-foreground">
                                 {isCompleted ? 'Roadmap Completed! 🎉' : 'Your Progress'}
                             </h3>
-                            <p className="text-sm text-foreground opacity-50">
+                            <p className="text-sm text-muted">
                                 {completedCount} of {totalCount} courses completed
                             </p>
                         </div>
@@ -97,7 +97,14 @@ export function RoadmapProgress({ roadmapId, steps }: RoadmapProgressProps) {
                 </div>
 
                 {/* Progress bar */}
-                <div className="relative h-3 bg-surface-muted rounded-full overflow-hidden">
+                <div
+                    className="relative h-3 bg-surface-muted rounded-full overflow-hidden"
+                    role="progressbar"
+                    aria-valuenow={progressPercent}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label={`Roadmap progress ${progressPercent}%`}
+                >
                     <div
                         className="absolute inset-y-0 left-0 bg-accent rounded-full transition-all duration-500 ease-out"
                         style={{ width: `${progressPercent}%` }}
@@ -105,7 +112,7 @@ export function RoadmapProgress({ roadmapId, steps }: RoadmapProgressProps) {
                 </div>
 
                 {/* Quick tip */}
-                <p className="mt-4 text-xs text-foreground opacity-50 text-center">
+                <p className="mt-4 text-xs text-muted text-center">
                     💡 Your progress is saved automatically in your browser
                 </p>
             </div>

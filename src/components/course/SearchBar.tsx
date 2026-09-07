@@ -91,6 +91,8 @@ export function SearchBar({
                                 : 'text-foreground opacity-40 hover:text-accent hover:bg-surface-muted'
                         )}
                         aria-label="Toggle filters"
+                        aria-expanded={showFilters}
+                        aria-controls="filter-panel"
                     >
                         <SlidersHorizontal className="w-4 h-4" />
                     </button>
@@ -99,7 +101,7 @@ export function SearchBar({
 
             {/* Filter Panel */}
             {showFilters && (
-                <div className="absolute top-full left-0 right-0 mt-2 p-4 bg-surface rounded-xl border border-border z-50">
+                <div id="filter-panel" className="absolute top-full left-0 right-0 mt-2 p-4 bg-surface rounded-xl border border-border z-50">
                     <FilterPanel />
                 </div>
             )}

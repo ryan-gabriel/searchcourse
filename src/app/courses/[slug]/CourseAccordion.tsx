@@ -80,6 +80,8 @@ export function CourseAccordion({ sections }: CourseAccordionProps) {
                         <div key={index}>
                             <button
                                 onClick={() => toggleSection(index)}
+                                aria-expanded={openSections.has(index)}
+                                aria-controls={`section-${index}`}
                                 className="w-full flex items-center justify-between p-4 bg-surface-muted hover:bg-border/50 transition-colors text-left"
                             >
                                 <div className="flex items-center gap-3">
@@ -99,6 +101,7 @@ export function CourseAccordion({ sections }: CourseAccordionProps) {
                             </button>
 
                             <div
+                                id={`section-${index}`}
                                 className={cn(
                                     'overflow-hidden transition-all duration-300',
                                     openSections.has(index) ? 'max-h-96' : 'max-h-0'

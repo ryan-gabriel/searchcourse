@@ -26,7 +26,7 @@ export function RoadmapFilters({ searchParams, categories }: RoadmapFiltersProps
                     <Filter className="w-4 h-4" /> Filters
                 </h3>
 
-                <form className="space-y-6">
+                <form className="space-y-8">
                     {/* Preserve search query if exists */}
                     {searchParams.q && <input type="hidden" name="q" value={searchParams.q} />}
 
