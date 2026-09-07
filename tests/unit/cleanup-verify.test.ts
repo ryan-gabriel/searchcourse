@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { applyVerdict } from "@/jobs/lib/applyVerdict";
+import { applyVerdict, nextBlockedStreak } from "@/jobs/lib/applyVerdict";
 
 describe("applyVerdict", () => {
     it("refreshes verifiedAt on VALID", () => {
@@ -16,5 +16,17 @@ describe("applyVerdict", () => {
 
     it("returns null on UNDETERMINED so the row is untouched", () => {
         expect(applyVerdict("UNDETERMINED")).toBeNull();
+    });
+});
+
+describe("nextBlockedStreak", () => {
+    it("increments on a blocked verdict", () => {
+        expect(nextBlockedStreak(0, true)).toBe(1);
+        expect(nextBlockedStreak(2, true)).toBe(3);
+    });
+
+    it("resets to 0 on a non-blocked verdict", () => {
+        expect(nextBlockedStreak(0, false)).toBe(0);
+        expect(nextBlockedStreak(5, false)).toBe(0);
     });
 });

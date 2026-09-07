@@ -18,16 +18,18 @@
  * - VERIFY_TIMEOUT_MS    (default 25000) per-page timeout
  * - VERIFY_RATE_LIMIT_MS (default 500) delay between coupon navigations
  * - VERIFY_BROWSER_CHANNEL (default "chrome", "none" for bundled Chromium on CI)
+ * - VERIFY_BLOCKED_THRESHOLD (default 3) consecutive blocked pages before abort
  */
 
 import { pathToFileURL } from 'url';
 import { prisma } from "@/lib/prisma";
-import { applyVerdict } from './lib/applyVerdict';
+import { applyVerdict, nextBlockedStreak } from './lib/applyVerdict';
 import { openUdemyProbe, type UdemyProbeOptions } from './lib/udemyProbe';
 import { verifyCoupon, type CouponStatus, type FetchUdemyStateFn } from './lib/verifyCoupon';
 
 const VERIFY_MAX_COUPONS = parseInt(process.env.VERIFY_MAX_COUPONS || '50', 10);
 const VERIFY_RATE_LIMIT_MS = parseInt(process.env.VERIFY_RATE_LIMIT_MS || '500', 10);
+const VERIFY_BLOCKED_THRESHOLD = parseInt(process.env.VERIFY_BLOCKED_THRESHOLD || '3', 10);
 
 function sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -56,6 +58,7 @@ export async function runVerification(
     const fetchState = injectedFetchState ?? session!.fetchState;
 
     const result: VerificationResult = { checked: 0, valid: 0, invalid: 0, undetermined: 0 };
+    let blockedStreak = 0;
 
     try {
         const coupons = await prisma.coupon.findMany({
@@ -77,12 +80,25 @@ export async function runVerification(
 
             let status: CouponStatus = 'UNDETERMINED';
             let evidence: string[] = [];
+            let blocked = false;
             try {
                 const verdict = await verifyCoupon(url, { fetchState });
                 status = verdict.status;
                 evidence = verdict.evidence;
+                blocked = verdict.blocked;
             } catch (error) {
                 console.error(`  ❌ Error verifying "${coupon.course.title}":`, error);
+            }
+
+            // Fast-fail: several consecutive blocked pages means the runner IP
+            // is flagged by Udemy's bot protection; skip the remaining coupons
+            // instead of burning the job timeout on invites to a challenge.
+            blockedStreak = nextBlockedStreak(blockedStreak, blocked);
+            if (blockedStreak >= VERIFY_BLOCKED_THRESHOLD) {
+                console.warn(
+                    `  ⏹ ${blockedStreak} consecutive blocked pages — runner appears blocked by Udemy; aborting remaining checks.`,
+                );
+                break;
             }
 
             const update = applyVerdict(status);

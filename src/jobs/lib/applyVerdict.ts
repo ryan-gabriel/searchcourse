@@ -27,3 +27,11 @@ export function applyVerdict(
             return null;
     }
 }
+
+/**
+ * Track a run of consecutive coupon pages flagged as blocked by bot
+ * protection. Increments on blocked, resets to 0 otherwise.
+ */
+export function nextBlockedStreak(streak: number, blocked: boolean): number {
+    return blocked ? streak + 1 : 0;
+}

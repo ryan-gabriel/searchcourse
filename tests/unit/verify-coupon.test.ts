@@ -92,6 +92,23 @@ describe("verifyCoupon", () => {
         ).rejects.toThrow();
     });
 
+    it("reports blocked:true for a blocked snapshot", async () => {
+        const verdict = await verifyCoupon(
+            "https://www.udemy.com/course/example/?couponCode=ABC123",
+            { fetchState: async () => snapshot({ blocked: true }) }
+        );
+        expect(verdict.status).toBe("UNDETERMINED");
+        expect(verdict.blocked).toBe(true);
+    });
+
+    it("reports blocked:false on a normal snapshot", async () => {
+        const verdict = await verifyCoupon(
+            "https://www.udemy.com/course/example/?couponCode=ABC123",
+            { fetchState: async () => snapshot({ bannerText: "Coupon applied" }) }
+        );
+        expect(verdict.blocked).toBe(false);
+    });
+
     it("defaults to UNDETERMINED when fetchState is absent in opts", async () => {
         // Simulate a fetchState that resolves to an empty snapshot.
         const verdict = await verifyCoupon(

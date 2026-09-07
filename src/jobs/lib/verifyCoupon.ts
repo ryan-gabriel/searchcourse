@@ -10,6 +10,7 @@ export interface CouponVerdict {
     status: CouponStatus;
     price: number | null;
     evidence: string[];
+    blocked: boolean;
 }
 
 export interface ProbeSnapshot {
@@ -101,7 +102,7 @@ function buildVerdict(status: CouponStatus, snapshot: ProbeSnapshot): CouponVerd
                 ? parsePriceToken(priceTokens[0])
                 : null;
 
-    return { status, price, evidence };
+    return { status, price, evidence, blocked: snapshot.blocked };
 }
 
 export async function verifyCoupon(
