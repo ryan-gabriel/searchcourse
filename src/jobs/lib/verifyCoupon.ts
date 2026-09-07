@@ -31,8 +31,6 @@ const INVALID_SIGNALS = [
     /coupon.{0,60}(invalid|expired|no longer available|sold out)/i,
 ];
 
-const PRICE_PATTERN = /(?:[\$€£₹¥]|\bnpr\b|\brs\.?|\bhkd\b|\bidr\b|\bpkr\b|\bgbp\b|\bEUR\b|\bUSD\b)\s*-?\s*([\d.,]+)|\b(?:free)\b/i;
-
 function parsePriceToken(token: string): number | null {
     const match = token.match(/([\d.,]+)/);
     if (!match) return null;
