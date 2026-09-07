@@ -102,8 +102,14 @@ export function Header() {
                 </div>
 
                 {/* Mobile Navigation */}
-                {mobileMenuOpen && (
-                    <div id="mobile-navigation" className="md:hidden py-4 border-t border-border">
+                <div
+                    id="mobile-navigation"
+                    className={cn(
+                        'md:hidden overflow-hidden transition-all duration-300 ease-in-out',
+                        mobileMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'
+                    )}
+                >
+                    <div className={cn('py-4 border-t border-border', !mobileMenuOpen && 'hidden')}>
                         <div className="flex flex-col gap-1">
                             {navItems.map((item) => (
                                 <Link
@@ -121,7 +127,7 @@ export function Header() {
                             ))}
                         </div>
                     </div>
-                )}
+                </div>
             </nav>
         </header>
     );
