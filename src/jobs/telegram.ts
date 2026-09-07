@@ -15,6 +15,7 @@
 import axios from 'axios';
 import { prisma } from "@/lib/prisma";
 import { formatCourseMessage } from "@/lib/telegramFormat";
+import { shouldBroadcastCoupon } from "@/lib/broadcastGuard";
 
 // ============================================
 // CONFIG
@@ -29,6 +30,12 @@ if (!BOT_TOKEN || !CHAT_ID) {
 }
 
 const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
+
+// Broadcast coupon guard (hours). Skip coupons expiring within
+// BROADCAST_MIN_EXPIRY_HOURS, and coupons whose feed snapshot
+// (verifiedAt = feed savedtime) is older than BROADCAST_MAX_VERIFIED_AGE_HOURS.
+const BROADCAST_MIN_EXPIRY_HOURS = parseInt(process.env.BROADCAST_MIN_EXPIRY_HOURS || '12', 10);
+const BROADCAST_MAX_VERIFIED_AGE_HOURS = parseInt(process.env.BROADCAST_MAX_VERIFIED_AGE_HOURS || '24', 10);
 
 // ============================================
 // HELPERS
@@ -67,54 +74,69 @@ async function main() {
     const startTime = Date.now();
 
     try {
-        // Find unposted courses with active coupons
-        const courses = await prisma.course.findMany({
-            where: {
-                isPosted: false,
-                isActive: true,
-                coupons: {
-                    some: {
-                        isActive: true,
-                        OR: [
-                            { expiresAt: null },
-                            { expiresAt: { gt: new Date() } },
-                        ],
+        const now = new Date();
+        const nearExpiryCutoff = new Date(now.getTime() + BROADCAST_MIN_EXPIRY_HOURS * 3600_000);
+        const staleCutoff = new Date(now.getTime() - BROADCAST_MAX_VERIFIED_AGE_HOURS * 3600_000);
+
+        const couponGuardWhere = {
+            isActive: true,
+            verifiedAt: { gte: staleCutoff },
+            OR: [
+                { expiresAt: null },
+                { expiresAt: { gt: nearExpiryCutoff } },
+            ],
+        };
+
+        // Find unposted courses with broadcastable coupons
+        const [screenedOut, courses] = await Promise.all([
+            // Courses held back because their coupons are near-expiry or stale
+            prisma.course.count({
+                where: {
+                    isPosted: false,
+                    isActive: true,
+                    coupons: { some: { isActive: true } },
+                    NOT: { coupons: { some: couponGuardWhere } },
+                },
+            }),
+            prisma.course.findMany({
+                where: {
+                    isPosted: false,
+                    isActive: true,
+                    coupons: { some: couponGuardWhere },
+                },
+                select: {
+                    id: true,
+                    title: true,
+                    slug: true,
+                    instructorName: true,
+                    originalPrice: true,
+                    rating: true,
+                    studentCount: true,
+                    language: true,
+                    category: {
+                        select: { name: true },
+                    },
+                    coupons: {
+                        where: couponGuardWhere,
+                        select: {
+                            finalPrice: true,
+                            discountValue: true,
+                            expiresAt: true,
+                            verifiedAt: true,
+                            code: true,
+                        },
+                        orderBy: { discountValue: 'desc' },
+                        take: 1,
                     },
                 },
-            },
-            select: {
-                id: true,
-                title: true,
-                slug: true,
-                instructorName: true,
-                originalPrice: true,
-                rating: true,
-                studentCount: true,
-                language: true,
-                category: {
-                    select: { name: true },
-                },
-                coupons: {
-                    where: {
-                        isActive: true,
-                        OR: [
-                            { expiresAt: null },
-                            { expiresAt: { gt: new Date() } },
-                        ],
-                    },
-                    select: {
-                        finalPrice: true,
-                        discountValue: true,
-                        expiresAt: true,
-                        code: true,
-                    },
-                    orderBy: { discountValue: 'desc' },
-                    take: 1,
-                },
-            },
-            orderBy: { createdAt: 'asc' },
-            take: 10, // Limit per run to avoid flooding
-        });
+                orderBy: { createdAt: 'asc' },
+                take: 10, // Limit per run to avoid flooding
+            }),
+        ]);
+
+        if (screenedOut > 0) {
+            console.log(`📋 ${screenedOut} course(s) held back (coupon near-expiry or stale)`);
+        }
 
         if (courses.length === 0) {
             console.log('📭 No unposted courses found.');
@@ -126,6 +148,20 @@ async function main() {
         let successCount = 0;
 
         for (const course of courses) {
+            const coupon = course.coupons[0];
+
+            // Re-check before sending: the coupon may have expired or gone
+            // stale between the query and the send (races with sync/cleanup).
+            if (!coupon || !shouldBroadcastCoupon({
+                expiresAt: coupon.expiresAt,
+                verifiedAt: coupon.verifiedAt,
+                minExpiryHours: BROADCAST_MIN_EXPIRY_HOURS,
+                maxVerifiedAgeHours: BROADCAST_MAX_VERIFIED_AGE_HOURS,
+            })) {
+                console.log(`  ⏭️  Guarded: ${course.title.substring(0, 50)}... (coupon no longer broadcastable)`);
+                continue;
+            }
+
             const message = formatCourseMessage({
                 ...course,
                 originalPrice: Number(course.originalPrice),

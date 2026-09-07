@@ -27,7 +27,7 @@ import { pathToFileURL } from 'url';
 import { prisma } from "@/lib/prisma";
 import { generateSlug } from "@/lib/slug.utils";
 import { mapCategory } from './lib/categories';
-import { parsePrice, extractCoupon, buildAffiliateUrl, formatDuration } from './lib/affiliate';
+import { parsePrice, extractCoupon, buildAffiliateUrl, formatDuration, parseExpiry, isCouponValid } from './lib/affiliate';
 
 // ============================================
 // TYPES
@@ -205,24 +205,35 @@ async function syncItem(item: UdemyFeedItem, platformId: string): Promise<boolea
     }
 
     if (couponCode) {
-        const expiresAt = item.expiry ? new Date(item.expiry) : null;
+        const expiresAt = parseExpiry(item.expiry);
 
-        await prisma.coupon.deleteMany({
-            where: { courseId, isActive: true },
-        });
+        // Only persist coupons that are still valid. A feed item can serve an
+        // already-expired code (feed latency); storing it as active would let
+        // a dead coupon reach the broadcast pipeline.
+        if (isCouponValid(expiresAt)) {
+            await prisma.coupon.deleteMany({
+                where: { courseId, isActive: true },
+            });
 
-        await prisma.coupon.create({
-            data: {
-                code: couponCode,
-                discountType: 'PERCENTAGE',
-                discountValue: 100,
-                finalPrice: 0,
-                expiresAt,
-                isActive: true,
-                source: 'udemy-api-sync',
-                courseId,
-            },
-        });
+            await prisma.coupon.create({
+                data: {
+                    code: couponCode,
+                    discountType: 'PERCENTAGE',
+                    discountValue: 100,
+                    finalPrice: 0,
+                    expiresAt,
+                    isActive: true,
+                    // verifiedAt is the feed's savedtime (when the feed last
+                    // offered this coupon), so the broadcast can screen for
+                    // stale coupons. Fall back to now when the feed omits it.
+                    verifiedAt: item.savedtime ? new Date(item.savedtime) : new Date(),
+                    source: 'udemy-api-sync',
+                    courseId,
+                },
+            });
+        } else {
+            console.warn(`  ⚠️ Skipped expired/invalid coupon for "${title.substring(0, 50)}..." (expiry: ${item.expiry ?? 'unknown'})`);
+        }
     }
 
     return true;

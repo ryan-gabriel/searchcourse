@@ -4,6 +4,8 @@ import {
     extractCoupon,
     buildAffiliateUrl,
     formatDuration,
+    parseExpiry,
+    isCouponValid,
 } from "@/jobs/lib/affiliate";
 
 const TRK_BASE = "https://trk.udemy.com/c/6990444/3193860/39854";
@@ -109,5 +111,44 @@ describe("formatDuration", () => {
         expect(formatDuration(null)).toBeNull();
         expect(formatDuration(undefined)).toBeNull();
         expect(formatDuration(NaN)).toBeNull();
+    });
+});
+
+describe("parseExpiry", () => {
+    it("parses an ISO timestamp", () => {
+        const d = parseExpiry("2026-09-11T18:30:31.676Z");
+        expect(d?.toISOString()).toBe("2026-09-11T18:30:31.676Z");
+    });
+
+    it("returns null for missing input", () => {
+        expect(parseExpiry(undefined)).toBeNull();
+        expect(parseExpiry(null)).toBeNull();
+        expect(parseExpiry("")).toBeNull();
+    });
+
+    it("returns null for unparseable input", () => {
+        expect(parseExpiry("not-a-date")).toBeNull();
+    });
+});
+
+describe("isCouponValid", () => {
+    const now = new Date("2026-09-07T00:00:00.000Z");
+    const future = new Date("2026-09-11T18:30:00.000Z");
+    const past = new Date("2026-09-01T18:30:00.000Z");
+
+    it("accepts a future expiry", () => {
+        expect(isCouponValid(future, now)).toBe(true);
+    });
+
+    it("rejects an expired coupon", () => {
+        expect(isCouponValid(past, now)).toBe(false);
+    });
+
+    it("rejects expiry exactly now (not in the future)", () => {
+        expect(isCouponValid(now, now)).toBe(false);
+    });
+
+    it("accepts a null expiry (no expiration advertised)", () => {
+        expect(isCouponValid(null, now)).toBe(true);
     });
 });

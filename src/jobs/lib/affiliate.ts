@@ -65,3 +65,22 @@ export function formatDuration(hours: number | null | undefined): string | null 
     if (!Number.isFinite(hours)) return null;
     return `${hours}h`;
 }
+
+/**
+ * Parse a feed expiry value into a Date. Returns null for missing or
+ * unparseable input so callers never write an invalid Date to the database.
+ */
+export function parseExpiry(value: string | null | undefined): Date | null {
+    if (!value) return null;
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
+/**
+ * A coupon is considered valid while its expiry is in the future.
+ * A null expiry (no expiration advertised) is treated as valid.
+ */
+export function isCouponValid(expiresAt: Date | null, now: Date = new Date()): boolean {
+    if (expiresAt === null) return true;
+    return expiresAt.getTime() > now.getTime();
+}
