@@ -23,7 +23,7 @@ export function Skeleton({ className }: SkeletonProps) {
 
 export function CourseCardSkeleton() {
     return (
-        <div className="bg-surface rounded-2xl overflow-hidden border border-border">
+        <div className="bg-surface-elevated rounded-2xl overflow-hidden border border-border">
             {/* Thumbnail */}
             <Skeleton className="h-44 w-full rounded-none" />
 
@@ -71,7 +71,7 @@ export function CourseGridSkeleton({ count = 8 }: { count?: number }) {
 
 export function RoadmapCardSkeleton() {
     return (
-        <div className="bg-surface rounded-2xl p-6 border border-border">
+        <div className="bg-surface-elevated rounded-2xl p-6 border border-border">
             <div className="flex items-start gap-4">
                 <Skeleton className="h-14 w-14 rounded-xl" />
                 <div className="flex-1 space-y-2">
@@ -83,6 +83,39 @@ export function RoadmapCardSkeleton() {
             <div className="flex items-center justify-between mt-6">
                 <Skeleton className="h-5 w-24" />
                 <Skeleton className="h-8 w-20 rounded-lg" />
+            </div>
+        </div>
+    );
+}
+
+export function AdminStatSkeleton() {
+    return (
+        <div className="bg-surface-elevated rounded-xl border border-border p-6">
+            <div className="flex items-center justify-between mb-4">
+                <Skeleton className="h-5 w-24" />
+                <Skeleton className="h-10 w-10 rounded-lg" />
+            </div>
+            <Skeleton className="h-8 w-16 mb-2" />
+            <Skeleton className="h-3 w-32" />
+        </div>
+    );
+}
+
+export function AdminTableSkeleton({ rows = 5 }: { rows?: number }) {
+    return (
+        <div className="bg-surface-elevated rounded-xl border border-border overflow-hidden">
+            <div className="px-6 py-4 border-b border-border">
+                <Skeleton className="h-5 w-32" />
+            </div>
+            <div className="divide-y divide-border">
+                {Array.from({ length: rows }).map((_, i) => (
+                    <div key={i} className="px-6 py-4 flex items-center gap-4">
+                        <Skeleton className="h-4 flex-1" />
+                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-8 w-20 rounded-md" />
+                    </div>
+                ))}
             </div>
         </div>
     );

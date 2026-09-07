@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 interface LearningOutcome {
     id?: string;
@@ -151,7 +152,15 @@ export default function CourseContentPage({ params }: { params: Promise<{ id: st
         }
     };
 
-    if (isLoading) return <div className="p-8 text-center text-foreground opacity-50">Loading editor...</div>;
+    if (isLoading)
+        return (
+            <div className="p-6 lg:p-8 max-w-5xl mx-auto space-y-6">
+                <Skeleton className="h-8 w-48" />
+                <Skeleton className="h-4 w-64" />
+                <Skeleton className="h-64 w-full rounded-2xl" />
+                <Skeleton className="h-24 w-full rounded-2xl" />
+            </div>
+        );
     if (!course) return <div className="p-8 text-center text-accent">Course not found</div>;
 
     return (

@@ -91,7 +91,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="grid gap-8">
-                <div className="bg-surface p-6 rounded-xl border border-border space-y-6">
+                <div className="bg-surface-elevated p-6 rounded-xl border border-border space-y-6">
                     <h2 className="text-lg font-semibold text-foreground">Homepage Stats</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <InputField label="Courses Verified" value={formData.coursesVerified}
@@ -109,7 +109,7 @@ export default function SettingsPage() {
                     </div>
                 </div>
 
-                <div className="bg-surface p-6 rounded-xl border border-border space-y-6">
+                <div className="bg-surface-elevated p-6 rounded-xl border border-border space-y-6">
                     <h2 className="text-lg font-semibold text-foreground">Mission Content</h2>
                     <div className="space-y-4">
                         <InputField label="Title" value={formData.missionTitle}

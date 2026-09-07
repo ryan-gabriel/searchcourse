@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { DataTable, Column, Modal, InputField, SwitchField } from '@/components/admin';
 import type { PlatformWithCounts } from '@/services';
+import { AdminTableSkeleton } from '@/components/ui/Skeleton';
 
 interface PaginatedResponse {
     data: PlatformWithCounts[];
@@ -159,7 +160,7 @@ export default function PlatformsPage() {
             </div>
 
             {isLoading ? (
-                <div className="text-center py-12 text-foreground opacity-50">Loading platforms...</div>
+                <AdminTableSkeleton />
             ) : (
                 <DataTable columns={columns} data={platforms} keyField="id" />
             )}

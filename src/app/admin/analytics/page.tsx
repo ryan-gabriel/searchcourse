@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { DataTable, Column, StatCard } from '@/components/admin';
+import { AdminTableSkeleton } from '@/components/ui/Skeleton';
 
 interface ClickEvent {
     id: string;
@@ -164,7 +165,7 @@ export default function AnalyticsPage() {
             <div>
                 <h2 className="text-lg font-semibold text-foreground mb-4">Recent Events</h2>
                 {isLoading ? (
-                    <div className="text-center py-12 text-foreground opacity-50">Loading events...</div>
+                    <AdminTableSkeleton />
                 ) : (
                     <DataTable columns={columns} data={events} keyField="id" />
                 )}

@@ -70,7 +70,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md', footer }:
                 ref={modalRef}
                 className={`
                     w-full ${sizeClasses[size]}
-                    bg-surface
+                    bg-surface-elevated
                     rounded-2xl
                     border border-border
                     animate-fadeIn

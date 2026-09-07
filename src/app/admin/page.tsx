@@ -120,7 +120,7 @@ export default async function AdminDashboard() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="p-6 rounded-2xl bg-surface border border-border">
+                <div className="p-6 rounded-2xl bg-surface-elevated border border-border">
                     <h2 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h2>
                     <div className="grid grid-cols-2 gap-3">
                         <Link href="/admin/courses" className="p-4 rounded-xl bg-accent text-accent-ink text-center hover:opacity-90 transition-opacity">
@@ -142,17 +142,17 @@ export default async function AdminDashboard() {
                     </div>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-surface border border-border">
+                <div className="p-6 rounded-2xl bg-surface-elevated border border-border">
                     <h2 className="text-lg font-semibold text-foreground mb-4">Recent Clicks</h2>
                     <div className="space-y-3">
                         {stats.recentClicks.length === 0 ? (
-                            <p className="text-sm text-foreground opacity-50">No clicks recorded yet.</p>
+                            <p className="text-sm text-muted">No clicks recorded yet.</p>
                         ) : (
                             stats.recentClicks.map((click) => (
                                 <div key={click.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-medium text-foreground truncate">{click.course.title}</p>
-                                        <p className="text-xs text-foreground opacity-50">
+                                        <p className="text-xs text-muted">
                                             {click.source} &middot; {new Date(click.createdAt).toLocaleString()}
                                         </p>
                                     </div>

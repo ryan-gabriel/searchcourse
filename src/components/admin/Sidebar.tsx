@@ -97,7 +97,7 @@ export function Sidebar() {
             className={`
                 ${collapsed ? 'w-16' : 'w-64'}
                 h-screen sticky top-0
-                bg-surface border-r border-border
+                bg-surface-elevated border-r border-border
                 transition-all duration-300 ease-in-out
                 flex flex-col
             `}

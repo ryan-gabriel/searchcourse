@@ -160,7 +160,7 @@ export function SwitchField({ label, checked, onChange, description }: SwitchFie
             >
                 <span
                     className={`
-                        absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-surface border border-border
+                        absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-surface-elevated border border-border
                         transition-transform
                         ${checked ? 'translate-x-5' : 'translate-x-0'}
                     `}

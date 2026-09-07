@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { DataTable, Column, Modal, InputField, TextareaField, SelectField, SwitchField } from '@/components/admin';
+import { AdminTableSkeleton } from '@/components/ui/Skeleton';
 import type { CourseWithDetails } from '@/services';
 
 interface Platform {
@@ -361,7 +362,7 @@ export default function CoursesPage() {
             </div>
 
             {isLoading ? (
-                <div className="text-center py-12 text-foreground opacity-50">Loading courses...</div>
+                <AdminTableSkeleton />
             ) : (
                 <DataTable
                     columns={columns}

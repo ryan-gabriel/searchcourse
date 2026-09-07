@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { DataTable, Column, Modal, InputField, TextareaField, SwitchField } from '@/components/admin';
+import { AdminTableSkeleton } from '@/components/ui/Skeleton';
 
 interface Roadmap {
     id: string;
@@ -206,7 +207,7 @@ export default function RoadmapsPage() {
             </div>
 
             {isLoading ? (
-                <div className="text-center py-12 text-foreground opacity-50">Loading roadmaps...</div>
+                <AdminTableSkeleton />
             ) : (
                 <DataTable
                     columns={columns}

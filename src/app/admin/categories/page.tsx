@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { DataTable, Column, Modal, InputField, TextareaField } from '@/components/admin';
 import type { CategoryWithCounts } from '@/services';
+import { AdminTableSkeleton } from '@/components/ui/Skeleton';
 
 interface PaginatedResponse {
     data: CategoryWithCounts[];
@@ -151,7 +152,7 @@ export default function CategoriesPage() {
             </div>
 
             {isLoading ? (
-                <div className="text-center py-12 text-foreground opacity-50">Loading categories...</div>
+                <AdminTableSkeleton />
             ) : (
                 <DataTable columns={columns} data={categories} keyField="id" />
             )}

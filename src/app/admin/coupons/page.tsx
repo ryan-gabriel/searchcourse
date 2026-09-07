@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { DataTable, Column, Modal, InputField, SelectField, SwitchField } from '@/components/admin';
 import type { CouponWithCourse } from '@/services';
+import { AdminTableSkeleton } from '@/components/ui/Skeleton';
 
 interface Course {
     id: string;
@@ -265,7 +266,7 @@ export default function CouponsPage() {
             </div>
 
             {isLoading ? (
-                <div className="text-center py-12 text-foreground opacity-50">Loading coupons...</div>
+                <AdminTableSkeleton />
             ) : (
                 <DataTable
                     columns={columns}
