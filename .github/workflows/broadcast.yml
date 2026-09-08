@@ -2,7 +2,7 @@ name: Telegram Broadcast
 
 on:
   schedule:
-    - cron: "0 */2 * * *"
+    - cron: "*/90 * * * *"
   workflow_dispatch:
 
 jobs:
