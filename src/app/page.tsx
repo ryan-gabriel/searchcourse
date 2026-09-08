@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import {
   ArrowRight,
   TrendingUp,
@@ -19,8 +20,19 @@ import {
 } from '@/services';
 import { SearchForm } from '@/components/ui/SearchForm';
 import { ScrollReveal } from '@/components/ui/ScrollReveal';
+import { JsonLd } from '@/components/seo/JsonLd';
+import {
+  buildWebSiteSchema,
+  buildItemListSchema,
+} from '@/lib/seo/schema';
 
-export const dynamic = 'force-dynamic';
+export const metadata: Metadata = {
+  alternates: {
+    canonical: '/',
+  },
+};
+
+export const revalidate = 300;
 
 const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   'web-development': Code2,
@@ -64,6 +76,17 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd data={buildWebSiteSchema(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000')} />
+      {featuredResult.data.length > 0 && (
+        <JsonLd
+          data={buildItemListSchema(
+            featuredResult.data.map((course) => ({
+              name: course.title,
+              url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/courses/${course.slug}`,
+            }))
+          )}
+        />
+      )}
       {/* Hero */}
       <ScrollReveal>
       <section className="bg-background pt-20 pb-24 lg:pt-32 lg:pb-32">

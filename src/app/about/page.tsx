@@ -16,10 +16,14 @@ export const metadata: Metadata = {
     title: 'About Us - Our Mission & Team',
     description:
         'Learn about our mission to curate the highest quality online courses. Meet the experts behind our rigorous vetting process.',
+    alternates: {
+        canonical: '/about',
+    },
     openGraph: {
         title: 'About SearchCourse | Our Mission',
         description:
             'Learn about our mission to curate the highest quality online courses.',
+        url: '/about',
     },
 };
 
@@ -44,7 +48,7 @@ const VALUES = [
     },
 ];
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 const SYSTEM_COMPONENTS = [
     {

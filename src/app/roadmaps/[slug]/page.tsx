@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
     Clock,
     BookOpen,
@@ -15,9 +16,20 @@ import {
 } from 'lucide-react';
 import { getRoadmapBySlug } from '@/services';
 import { formatPrice } from '@/lib/utils';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { buildBreadcrumbSchema } from '@/lib/seo/schema';
 
 interface PageProps {
     params: Promise<{ slug: string }>;
+}
+
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
+function trimTitle(title: string, max = 55): string {
+    if (title.length <= max) return title;
+    const cut = title.slice(0, max).trimEnd();
+    const lastSpace = cut.lastIndexOf(' ');
+    return lastSpace > 20 ? cut.slice(0, lastSpace) + '…' : cut + '…';
 }
 
 export async function generateMetadata({
@@ -30,7 +42,7 @@ export async function generateMetadata({
         return { title: 'Roadmap Not Found' };
     }
 
-    const title = `${roadmap.title} - Learning Roadmap`;
+    const title = `${trimTitle(roadmap.title)} - Learning Roadmap`;
     const description =
         roadmap.description ||
         `Master ${roadmap.title.toLowerCase()} with this ${roadmap.courseCount}-course learning path. Save ${formatPrice(
@@ -41,6 +53,9 @@ export async function generateMetadata({
     return {
         title,
         description,
+        alternates: {
+            canonical: `/roadmaps/${roadmap.slug}`,
+        },
         keywords: [
             roadmap.title.toLowerCase(),
             'learning roadmap',
@@ -51,11 +66,12 @@ export async function generateMetadata({
         openGraph: {
             title: `${title} | SearchCourse`,
             description,
+            url: `/roadmaps/${roadmap.slug}`,
         },
     };
 }
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 const VALUE_PROPS = [
     {
@@ -87,6 +103,13 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
 
     return (
         <div className="min-h-screen bg-background">
+            <JsonLd
+                data={buildBreadcrumbSchema([
+                    { name: 'Home', url: `${BASE_URL}/` },
+                    { name: 'Roadmaps', url: `${BASE_URL}/roadmaps` },
+                    { name: roadmap.title },
+                ])}
+            />
             <div className="bg-surface border-b border-border">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
                     <nav className="flex items-center gap-2 text-sm">
@@ -195,12 +218,14 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
                                                         <div className="flex flex-col sm:flex-row gap-4">
                                                             {course.thumbnailUrl && (
                                                                 <div className="sm:w-32 flex-shrink-0 aspect-video rounded-lg overflow-hidden bg-surface-muted">
-                                                                    <img
+                                                                    <Image
                                                                         src={
                                                                             course.thumbnailUrl
                                                                         }
                                                                         alt={course.title}
-                                                                        className="w-full h-full object-cover"
+                                                                        fill
+                                                                        sizes="160px"
+                                                                        className="object-cover"
                                                                     />
                                                                 </div>
                                                             )}

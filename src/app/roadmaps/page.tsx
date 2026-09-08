@@ -5,6 +5,8 @@ import { searchRoadmaps, getRoadmapBySlug, getAllCategories } from '@/services';
 import { RoadmapFilters } from '@/components/roadmap/RoadmapFilters';
 import { ScrollReveal } from '@/components/ui/ScrollReveal';
 import { formatPrice } from '@/lib/utils';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { buildItemListSchema } from '@/lib/seo/schema';
 const VALID_LEVELS = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'] as const;
 type ValidLevel = (typeof VALID_LEVELS)[number];
 
@@ -20,6 +22,9 @@ export const metadata: Metadata = {
     title: 'Learning Roadmaps - Curated Course Paths',
     description:
         'Follow curated learning paths to master new skills. Save money with bundled course discounts and track your progress.',
+    alternates: {
+        canonical: '/roadmaps',
+    },
     keywords: [
         'learning roadmap',
         'course path',
@@ -32,10 +37,11 @@ export const metadata: Metadata = {
         title: 'Learning Roadmaps | SearchCourse',
         description:
             'Follow curated learning paths to master new skills with the best course deals.',
+        url: '/roadmaps',
     },
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 export default async function RoadmapsPage(props: RoadmapsPageProps) {
     const searchParams = await props.searchParams;
@@ -94,6 +100,14 @@ export default async function RoadmapsPage(props: RoadmapsPageProps) {
 
     return (
         <div className="min-h-screen bg-background">
+            <JsonLd
+                data={buildItemListSchema(
+                    roadmaps.map((roadmap) => ({
+                        name: roadmap.title,
+                        url: `/roadmaps/${roadmap.slug}`,
+                    }))
+                )}
+            />
             <ScrollReveal>
             <section className="bg-surface border-b border-border">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">

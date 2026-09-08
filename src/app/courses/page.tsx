@@ -1,27 +1,93 @@
 import { Suspense } from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
+import { unstable_cache } from 'next/cache';
 import { SlidersHorizontal, X, Star } from 'lucide-react';
 import { SortDropdown } from './SortDropdown';
 import { CourseGridSkeleton } from '@/components/ui/Skeleton';
 import { searchCourses, getAllPlatforms, getAllCategories } from '@/services';
 import { CourseSearchSchema } from '@/validations';
-
-export const metadata: Metadata = {
-    title: 'Browse Courses',
-    description:
-        'Discover thousands of online courses with verified discounts. Filter by platform, category, and price to find your perfect course.',
-    openGraph: {
-        title: 'Browse Courses | SearchCourse',
-        description:
-            'Discover thousands of online courses with verified discounts.',
-    },
-};
+import { resolveCoursesIndexing } from '@/lib/seo/canonical';
+import { buildItemListSchema } from '@/lib/seo/schema';
+import { JsonLd } from '@/components/seo/JsonLd';
 
 export const dynamic = 'force-dynamic';
 
+const searchCoursesCached = unstable_cache(
+    async (params: Parameters<typeof searchCourses>[0]) => searchCourses(params),
+    ['courses-listing'],
+    { revalidate: 60 }
+);
+
 interface CoursesPageProps {
     searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+function firstParam(
+    value: string | string[] | undefined
+): string | undefined {
+    if (Array.isArray(value)) return value[0];
+    return value;
+}
+
+export async function generateMetadata({
+    searchParams,
+}: CoursesPageProps): Promise<Metadata> {
+    const params = await searchParams;
+
+    const normalized: Record<string, string | undefined> = {};
+    for (const [key, value] of Object.entries(params)) {
+        normalized[key] = firstParam(value);
+    }
+
+    const decision = resolveCoursesIndexing({
+        baseUrl: '',
+        params: normalized,
+    });
+    const canonical = decision.canonicalUrl || '/courses';
+
+    const { category, platform, query } = normalized;
+
+    const [categories, platforms] = await Promise.all([
+        getAllCategories().catch((): Category[] => []),
+        getAllPlatforms().catch((): Platform[] => []),
+    ] as const);
+
+    const categoryName = categories.find((c) => c.slug === category)?.name;
+    const platformName = platforms.find((p) => p.slug === platform)?.name;
+
+    let title: string;
+    let description: string;
+
+    if (categoryName) {
+        title = `Best ${categoryName} Courses & Deals`;
+        description = `Browse the best ${categoryName} courses with verified discounts. Compare top-rated ${categoryName} classes from Udemy, Coursera, and more.`;
+    } else if (platformName) {
+        title = `${platformName} Courses with Verified Discounts`;
+        description = `Discover ${platformName} courses with verified discounts and coupons. Save money on top-rated ${platformName} classes.`;
+    } else if (query) {
+        title = `Search results for "${query}"`;
+        description = `Find online courses matching "${query}" with verified deals and discounts on SearchCourse.`;
+    } else {
+        title = 'Browse Courses';
+        description =
+            'Discover thousands of online courses with verified discounts. Filter by platform, category, and price to find your perfect course.';
+    }
+
+    return {
+        title,
+        description,
+        alternates: { canonical },
+        robots: decision.noindex
+            ? { index: false, follow: true }
+            : { index: true, follow: true },
+        openGraph: {
+            title: `${title} | SearchCourse`,
+            description,
+            url: canonical,
+        },
+    };
 }
 
 interface Platform {
@@ -82,7 +148,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
           };
 
     const [coursesResult, platforms, categories] = (await Promise.all([
-        searchCourses(validParams),
+        searchCoursesCached(validParams),
         getAllPlatforms().catch((): Platform[] => []),
         getAllCategories().catch((): Category[] => []),
     ])) as [Awaited<ReturnType<typeof searchCourses>>, Platform[], Category[]];
@@ -156,6 +222,16 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
 
     return (
         <div className="min-h-screen bg-background">
+            {coursesResult.data.length > 0 && (
+                <JsonLd
+                    data={buildItemListSchema(
+                        coursesResult.data.map((course) => ({
+                            name: course.title,
+                            url: `/courses/${course.slug}`,
+                        }))
+                    )}
+                />
+            )}
             <div className="bg-surface border-b border-border">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                     <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
@@ -371,10 +447,12 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
                                         >
                                             <div className="aspect-video bg-surface-muted relative">
                                                 {course.thumbnailUrl ? (
-                                                    <img
+                                                    <Image
                                                         src={course.thumbnailUrl}
                                                         alt={course.title}
-                                                        className="w-full h-full object-cover"
+                                                        fill
+                                                        sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                                                        className="object-cover"
                                                     />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center text-foreground/40">

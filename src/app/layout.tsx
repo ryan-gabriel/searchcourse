@@ -4,6 +4,8 @@ import './globals.css';
 import { ThemeProvider } from '@/components/layout/ThemeProvider';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { buildOrganizationSchema } from '@/lib/seo/schema';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
@@ -120,6 +122,11 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <JsonLd
+            data={buildOrganizationSchema(
+              process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+            )}
+          />
         </ThemeProvider>
       </body>
     </html>

@@ -14,11 +14,23 @@ import {
 } from 'lucide-react';
 import { getCourseWithFullDetails, getCourseBySlug } from '@/services';
 import { formatPrice, calculateDiscountPercentage, formatCompactNumber } from '@/lib/utils';
+import { buildCourseSchema, buildBreadcrumbSchema } from '@/lib/seo/schema';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { EditorialNote } from '@/components/course/EditorialNote';
 import { CourseAccordion } from './CourseAccordion';
 import { StickyCourseSidebar } from './StickyCourseSidebar';
 
 interface PageProps {
     params: Promise<{ slug: string }>;
+}
+
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
+function trimTitle(title: string, max = 55): string {
+    if (title.length <= max) return title;
+    const cut = title.slice(0, max).trimEnd();
+    const lastSpace = cut.lastIndexOf(' ');
+    return lastSpace > 20 ? cut.slice(0, lastSpace) + '…' : cut + '…';
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -29,14 +41,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         return { title: 'Course Not Found' };
     }
 
+    const description =
+        course.shortDescription || course.description?.slice(0, 160) || undefined;
+
     return {
-        title: course.title,
-        description:
-            course.shortDescription || course.description?.slice(0, 160),
+        title: trimTitle(course.title),
+        description,
+        alternates: {
+            canonical: `/courses/${course.slug}`,
+        },
         openGraph: {
-            title: `${course.title} | SearchCourse`,
-            description:
-                course.shortDescription || course.description?.slice(0, 160),
+            title: `${trimTitle(course.title)} | SearchCourse`,
+            description,
+            url: `/courses/${course.slug}`,
             images: course.thumbnailUrl
                 ? [{ url: course.thumbnailUrl }]
                 : undefined,
@@ -44,7 +61,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
 }
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 export default async function CourseDetailPage(props: PageProps) {
     const { slug } = await props.params;
@@ -69,6 +86,41 @@ export default async function CourseDetailPage(props: PageProps) {
 
     return (
         <div className="min-h-screen bg-background">
+            <JsonLd
+                data={buildCourseSchema({
+                    name: course.title,
+                    description:
+                        course.shortDescription || course.description?.slice(0, 500) || course.title,
+                    url: `${BASE_URL}/courses/${course.slug}`,
+                    image: course.thumbnailUrl || undefined,
+                    providerName: course.platform.name,
+                    providerUrl: course.directUrl,
+                    instructorName: course.instructorName || undefined,
+                    rating: course.rating || undefined,
+                    reviewCount: course.reviewCount,
+                    price: Number(finalPrice),
+                    currency: course.currency,
+                    lastVerifiedAt: course.lastVerifiedAt,
+                })}
+            />
+            <JsonLd
+                data={buildBreadcrumbSchema([
+                    { name: 'Courses', url: `${BASE_URL}/courses` },
+                    ...(course.category
+                        ? [
+                              {
+                                  name: course.category.name,
+                                  url: `${BASE_URL}/courses?category=${course.category.slug}`,
+                              },
+                          ]
+                        : []),
+                    {
+                        name: course.platform.name,
+                        url: `${BASE_URL}/courses?platform=${course.platform.slug}`,
+                    },
+                    { name: course.title },
+                ])}
+            />
             <div className="bg-surface border-b border-border sticky top-0 z-30">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <nav className="flex items-center gap-2 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide">
@@ -276,6 +328,23 @@ export default async function CourseDetailPage(props: PageProps) {
                                     {course.description}
                                 </div>
                             </section>
+                        )}
+
+                        {course.isFeatured && (
+                            <EditorialNote
+                                facts={{
+                                    title: course.title,
+                                    instructorName: course.instructorName,
+                                    rating: course.rating,
+                                    reviewCount: course.reviewCount,
+                                    platformName: course.platform.name,
+                                    discountPercent: hasDiscount
+                                        ? discountPercent
+                                        : undefined,
+                                    finalPrice: Number(finalPrice),
+                                    verifiedDate: course.lastVerifiedAt,
+                                }}
+                            />
                         )}
 
                         {course.syllabusSections.length > 0 && (
