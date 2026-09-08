@@ -32,6 +32,10 @@ export const metadata: Metadata = {
   creator: 'SearchCourse',
   publisher: 'SearchCourse',
 
+  verification: {
+    google: 'v2nwME-tJsD-NrNQIghAfDT9Ew-hR0c1QC4A7As_WLM',
+  },
+
   icons: {
     icon: [
       { url: '/seo/16x16-icon.ico', sizes: '16x16', type: 'image/x-icon' },
