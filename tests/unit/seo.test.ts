@@ -3,7 +3,7 @@ import { buildCourseSchema, buildBreadcrumbSchema, buildWebSiteSchema, buildItem
 import { resolveCoursesIndexing } from '@/lib/seo/canonical';
 import { buildEditorialNote } from '@/lib/seo/editorial';
 
-const BASE = 'https://searchcourse.com';
+const BASE = 'https://searchcourse.vercel.app';
 
 describe('resolveCoursesIndexing', () => {
     it('returns a clean, indexable canonical for the base listing', () => {
