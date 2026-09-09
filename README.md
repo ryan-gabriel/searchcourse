@@ -1,8 +1,8 @@
 # SearchCourse
 
-Course-deal discovery platform: scrapes Udemy coupons via RapidAPI, publishes
-deals to the web and a Telegram channel, tracks affiliate clicks, and provides
-an admin CMS.
+Course-deal discovery platform: scrapes Udemy coupons from coupon aggregator
+sites, publishes deals to the web and a Telegram channel, tracks affiliate
+clicks, and provides an admin CMS.
 
 ## Getting started
 
@@ -15,7 +15,6 @@ an admin CMS.
 
 - `npm run dev` — local dev server
 - `npm run build` — prisma generate + next build
-- `npm run sync` — fetch Udemy coupons from RapidAPI (cron)
 - `npm run telegram` — broadcast unpublished deals to Telegram (cron)
 - `npm run cleanup` — expire/delete stale coupons (cron)
 - `npm run test` — Vitest unit tests
