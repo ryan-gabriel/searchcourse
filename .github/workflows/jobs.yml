@@ -1,4 +1,4 @@
-name: Hourly Jobs (Sync, Scrape, Cleanup, Broadcast)
+name: Hourly Jobs (Scrape, Cleanup, Broadcast)
 
 on:
   schedule:
@@ -21,14 +21,6 @@ jobs:
           cache: npm
       - run: npm install --no-audit --no-fund
       - run: npx prisma generate
-      - name: Sync Courses (RapidAPI feed)
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
-          RAPIDAPI_HOST: ${{ secrets.RAPIDAPI_HOST }}
-          RAPIDAPI_MAX_PAGES: "1"
-          IMPACT_AFFILIATE_BASE: ${{ secrets.IMPACT_AFFILIATE_BASE }}
-        run: npm run sync
       - name: Scrape Coupons
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
