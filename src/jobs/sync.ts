@@ -3,7 +3,8 @@
  *
  * 1. Fetches the coupon feed page by page (10 items/page)
  * 2. For each course, upserts it into the database using externalId (item.id) for dedup
- * 3. Creates/refreshes the associated Coupon (100% off -> finalPrice $0)
+ * 3. Creates/refreshes the associated Coupon (100% off -> finalPrice $0 by default,
+ *    or the actual discounted price when the feed provides coupon_price)
  *
  * Stops when a page returns fewer than 10 items (feed end).
  *
@@ -25,30 +26,11 @@
 import axios from 'axios';
 import { pathToFileURL } from 'url';
 import { prisma } from "@/lib/prisma";
-import { generateSlug } from "@/lib/slug.utils";
-import { mapCategory } from './lib/categories';
-import { parsePrice, extractCoupon, buildAffiliateUrl, formatDuration, parseExpiry, isCouponValid } from './lib/affiliate';
-
-// ============================================
-// TYPES
-// ============================================
-
-interface UdemyFeedItem {
-    id: string;               // Course ID (external dedup key)
-    sku?: string;
-    pic?: string;
-    title: string;
-    coupon: string;           // Full Udemy URL including couponCode
-    org_price?: string;       // e.g. "$9.99"
-    desc_text?: string;
-    category?: string;
-    language?: string;
-    platform?: string;
-    rating?: number;
-    duration?: number;        // Hours
-    expiry?: string;
-    savedtime?: string;
-}
+import {
+    getOrCreateUdemyPlatform,
+    syncItem,
+    type UdemyFeedItem,
+} from './lib/pipeline';
 
 // ============================================
 // CONFIG
@@ -59,7 +41,6 @@ const RAPIDAPI_HOST = process.env.RAPIDAPI_HOST || '';
 const RAPIDAPI_PATH = process.env.RAPIDAPI_PATH || '/';
 const RAPIDAPI_MAX_PAGES = parseInt(process.env.RAPIDAPI_MAX_PAGES || '1', 10);
 const FEED_PAGE_SIZE = 10;
-const IMPACT_AFFILIATE_BASE = process.env.IMPACT_AFFILIATE_BASE || '';
 
 if (!RAPIDAPI_KEY) {
     console.error('❌ RAPIDAPI_KEY environment variable is required');
@@ -106,154 +87,6 @@ async function fetchFeed(page: number): Promise<UdemyFeedItem[]> {
     if (Array.isArray(data)) return data;
     if (Array.isArray(data?.results)) return data.results;
     throw new Error('Feed response was neither an array nor { results: [...] }');
-}
-
-// ============================================
-// SYNC LOGIC
-// ============================================
-
-async function getOrCreateUdemyPlatform(): Promise<string> {
-    const existing = await prisma.platform.findFirst({
-        where: { slug: 'udemy' },
-        select: { id: true },
-    });
-
-    if (existing) return existing.id;
-
-    const created = await prisma.platform.create({
-        data: {
-            name: 'Udemy',
-            slug: 'udemy',
-            baseUrl: 'https://www.udemy.com',
-            isActive: true,
-        },
-    });
-
-    return created.id;
-}
-
-async function syncItem(item: UdemyFeedItem, platformId: string): Promise<boolean> {
-    const externalId = String(item.id).trim();
-    const title = item.title?.trim();
-
-    if (!externalId || !title) {
-        console.warn('  ⚠️ Skipping item with missing id/title:', JSON.stringify(item));
-        return false;
-    }
-
-    const slug = generateSlug(title);
-    const { directUrl, couponCode } = extractCoupon(item.coupon);
-
-    if (!IMPACT_AFFILIATE_BASE) {
-        console.warn('  ⚠️ IMPACT_AFFILIATE_BASE is not set - courses will NOT be commissionable');
-    }
-    const affiliateUrl = buildAffiliateUrl(directUrl, couponCode);
-
-    const baseData = {
-        title,
-        thumbnailUrl: item.pic || null,
-        originalPrice: parsePrice(item.org_price),
-        rating: item.rating ?? null,
-        instructorName: null,
-        description: item.desc_text || null,
-        language: item.language || null,
-        duration: formatDuration(item.duration),
-        directUrl,
-        affiliateUrl,
-        lastVerifiedAt: new Date(),
-    };
-
-    const existing = await prisma.course.findUnique({
-        where: { externalId },
-        select: { id: true },
-    });
-
-    let courseId: string;
-
-    if (existing) {
-        await prisma.course.update({
-            where: { id: existing.id },
-            data: baseData,
-        });
-        courseId = existing.id;
-        console.log(`  ♻️ Updated: ${title.substring(0, 50)}...`);
-    } else {
-        const categoryId = await mapCategory(item.category);
-
-        const newCourse = await prisma.course.create({
-            data: {
-                externalId,
-                slug: await ensureUniqueSlug(slug),
-                headline: null,
-                shortDescription: null,
-                instructorBio: null,
-                currency: 'USD',
-                level: 'ALL_LEVELS',
-                reviewCount: 0,
-                studentCount: 0,
-                lectureCount: null,
-                isActive: true,
-                isFeatured: false,
-                isPosted: false,
-                platformId,
-                categoryId,
-                ...baseData,
-            },
-        });
-        courseId = newCourse.id;
-        console.log(`  ✅ Created: ${title.substring(0, 50)}...`);
-    }
-
-    if (couponCode) {
-        const expiresAt = parseExpiry(item.expiry);
-
-        // Only persist coupons that are still valid. A feed item can serve an
-        // already-expired code (feed latency); storing it as active would let
-        // a dead coupon reach the broadcast pipeline.
-        if (isCouponValid(expiresAt)) {
-            await prisma.coupon.deleteMany({
-                where: { courseId, isActive: true },
-            });
-
-            await prisma.coupon.create({
-                data: {
-                    code: couponCode,
-                    discountType: 'PERCENTAGE',
-                    discountValue: 100,
-                    finalPrice: 0,
-                    expiresAt,
-                    isActive: true,
-                    // verifiedAt is the feed's savedtime (when the feed last
-                    // offered this coupon), so the broadcast can screen for
-                    // stale coupons. Fall back to now when the feed omits it.
-                    verifiedAt: item.savedtime ? new Date(item.savedtime) : new Date(),
-                    source: 'udemy-api-sync',
-                    courseId,
-                },
-            });
-        } else {
-            console.warn(`  ⚠️ Skipped expired/invalid coupon for "${title.substring(0, 50)}..." (expiry: ${item.expiry ?? 'unknown'})`);
-        }
-    }
-
-    return true;
-}
-
-async function ensureUniqueSlug(slug: string): Promise<string> {
-    let candidate = slug;
-    let counter = 0;
-
-    while (true) {
-        const existing = await prisma.course.findUnique({
-            where: { slug: candidate },
-            select: { id: true },
-        });
-
-        if (!existing) return candidate;
-
-        counter++;
-        candidate = `${slug}-${counter}`;
-    }
 }
 
 // ============================================
