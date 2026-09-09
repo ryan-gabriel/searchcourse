@@ -26,6 +26,6 @@ export async function GET(request: NextRequest, context: RouteContext) {
     }
 
     return NextResponse.redirect(
-        new URL(`/api/out/${course.id}?src=tg`, request.url)
+        new URL(`/courses/${course.slug}?src=tg`, request.url)
     );
 }
