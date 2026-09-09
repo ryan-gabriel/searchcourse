@@ -140,7 +140,7 @@ export async function runBroadcast() {
                 },
             },
             orderBy: { createdAt: 'asc' },
-            take: 5, // Limit per run to avoid flooding
+            take: BROADCAST.MAX_COURSES_PER_RUN, // Limit per run to avoid flooding
         }),
     ]);
 

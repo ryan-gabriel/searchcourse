@@ -8,11 +8,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { after } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { isCronAuthorized } from '@/lib/cron-auth';
 import { runScrape } from '@/jobs/scrape-coupons';
 
 export const runtime = 'nodejs';
+export const maxDuration = 300;
 
 export async function GET(request: NextRequest) {
     const key = request.nextUrl.searchParams.get('key');
@@ -20,16 +22,19 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    try {
-        const result = await runScrape();
-        return NextResponse.json({ ok: true, ...result });
-    } catch (error) {
-        console.error('Scrape job failed:', error);
-        return NextResponse.json(
-            { ok: false, error: 'Internal server error' },
-            { status: 500 }
-        );
-    } finally {
-        await prisma.$disconnect();
-    }
+    // Acknowledges the cron trigger immediately while the long-running
+    // scrape continues in the background (cron-job.org free waits ~30s,
+    // so we must not hold the response open for the full scrape).
+    after(async () => {
+        try {
+            const result = await runScrape();
+            console.log('Scrape job (background) complete:', result);
+        } catch (error) {
+            console.error('Scrape job (background) failed:', error);
+        } finally {
+            await prisma.$disconnect();
+        }
+    });
+
+    return NextResponse.json({ ok: true, started: true });
 }

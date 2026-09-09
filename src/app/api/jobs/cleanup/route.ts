@@ -13,6 +13,7 @@ import { isCronAuthorized } from '@/lib/cron-auth';
 import { runCleanup } from '@/jobs/cleanup';
 
 export const runtime = 'nodejs';
+export const maxDuration = 60;
 
 export async function GET(request: NextRequest) {
     const key = request.nextUrl.searchParams.get('key');

@@ -21,7 +21,7 @@ export const BROADCAST = {
   MIN_EXPIRY_HOURS: Number(process.env.BROADCAST_MIN_EXPIRY_HOURS) || 12,
   MAX_VERIFIED_AGE_HOURS: Number(process.env.BROADCAST_MAX_VERIFIED_AGE_HOURS) || 24,
   RATE_LIMIT_MS: 1500,
-  MAX_COURSES_PER_RUN: 10,
+  MAX_COURSES_PER_RUN: 5,
 } as const;
 
 export const DASHBOARD = {
