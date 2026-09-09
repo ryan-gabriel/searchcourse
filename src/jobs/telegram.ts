@@ -140,7 +140,7 @@ export async function runBroadcast() {
                 },
             },
             orderBy: { createdAt: 'asc' },
-            take: 10, // Limit per run to avoid flooding
+            take: 5, // Limit per run to avoid flooding
         }),
     ]);
 
