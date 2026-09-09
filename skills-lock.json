@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "community-marketing": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/community-marketing/SKILL.md",
+      "computedHash": "a03b4acff0650071536c45e1915af07bbc5c3c3c64b536ddfb9e90b55ff70471"
+    }
+  }
+}
