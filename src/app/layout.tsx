@@ -131,8 +131,15 @@ export default function RootLayout({
               process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
             )}
           />
-        </ThemeProvider>
+</ThemeProvider>
+      {/* Sticky Telegram Banner */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-blue-900 text-white text-sm py-3 px-4 text-center opacity-95 transition-opacity duration-300 hover:opacity-100">
+        <span className="font-medium">💰 FREE UDEMY DEALS DAILY — JOIN 500+ SAVVY LEARNERS</span>
+        <a href="https://t.me/searchcourses" className="font-medium underline underline-offset-2 ml-2" target="_blank" rel="noopener noreferrer">
+          t.me/searchcourses
+        </a>
+      </div>
       </body>
-    </html>
+</html>
   );
 }
