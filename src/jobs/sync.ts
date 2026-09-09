@@ -43,21 +43,18 @@ const RAPIDAPI_MAX_PAGES = parseInt(process.env.RAPIDAPI_MAX_PAGES || '1', 10);
 const FEED_PAGE_SIZE = 10;
 
 if (!RAPIDAPI_KEY) {
-    console.error('❌ RAPIDAPI_KEY environment variable is required');
-    process.exit(1);
+    throw new Error('❌ RAPIDAPI_KEY environment variable is required');
 }
 
 // Allowlist the RapidAPI feed host to prevent SSRF / API-key exfiltration if the
 // environment is ever compromised. Hosts must be *.p.rapidapi.com (or the
 // concrete rapidapi.com API endpoints).
 if (!RAPIDAPI_HOST) {
-    console.error('❌ RAPIDAPI_HOST environment variable is required');
-    process.exit(1);
+    throw new Error('❌ RAPIDAPI_HOST environment variable is required');
 }
 const RAPIDAPI_HOST_ALLOWED = /^(?:[a-z0-9-]+\.)*p\.rapidapi\.com$/i;
 if (!RAPIDAPI_HOST_ALLOWED.test(RAPIDAPI_HOST)) {
-    console.error(`❌ RAPIDAPI_HOST "${RAPIDAPI_HOST}" is not an allowed RapidAPI host`);
-    process.exit(1);
+    throw new Error(`❌ RAPIDAPI_HOST "${RAPIDAPI_HOST}" is not an allowed RapidAPI host`);
 }
 
 const apiHeaders: Record<string, string> = {
@@ -93,48 +90,53 @@ async function fetchFeed(page: number): Promise<UdemyFeedItem[]> {
 // MAIN
 // ============================================
 
-async function main() {
+export async function runSync() {
     console.log('🚀 Starting Udemy course sync...');
     const startTime = Date.now();
 
-    try {
-        const platformId = await getOrCreateUdemyPlatform();
-        console.log(`📦 Using platform ID: ${platformId}`);
+    const platformId = await getOrCreateUdemyPlatform();
+    console.log(`📦 Using platform ID: ${platformId}`);
 
-        console.log(`📥 Syncing feed from ${RAPIDAPI_HOST}...`);
+    console.log(`📥 Syncing feed from ${RAPIDAPI_HOST}...`);
 
-        let syncedCount = 0;
-        let page = 0;
+    let syncedCount = 0;
+    let page = 0;
 
-        while (page < RAPIDAPI_MAX_PAGES) {
-            console.log(`📄 Fetching page ${page}...`);
-            const items = await fetchFeed(page);
+    while (page < RAPIDAPI_MAX_PAGES) {
+        console.log(`📄 Fetching page ${page}...`);
+        const items = await fetchFeed(page);
 
-            if (items.length === 0) {
-                console.log('  Page empty - end of feed.');
-                break;
-            }
-
-            for (const item of items) {
-                try {
-                    const ok = await syncItem(item, platformId);
-                    if (ok) syncedCount++;
-                } catch (error) {
-                    console.error(`  ❌ Failed to sync: ${item?.title?.substring(0, 50)}`, error);
-                }
-            }
-
-            if (items.length < FEED_PAGE_SIZE) {
-                console.log(`  Partial page (${items.length} items) - end of feed.`);
-                break;
-            }
-
-            page++;
-            if (page % 5 === 0) await sleep(300); // Mild rate-limit courtesy
+        if (items.length === 0) {
+            console.log('  Page empty - end of feed.');
+            break;
         }
 
-        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-        console.log(`\n✅ Sync complete! ${syncedCount} courses processed in ${elapsed}s`);
+        for (const item of items) {
+            try {
+                const ok = await syncItem(item, platformId);
+                if (ok) syncedCount++;
+            } catch (error) {
+                console.error(`  ❌ Failed to sync: ${item?.title?.substring(0, 50)}`, error);
+            }
+        }
+
+        if (items.length < FEED_PAGE_SIZE) {
+            console.log(`  Partial page (${items.length} items) - end of feed.`);
+            break;
+        }
+
+        page++;
+        if (page % 5 === 0) await sleep(300); // Mild rate-limit courtesy
+    }
+
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    console.log(`\n✅ Sync complete! ${syncedCount} courses processed in ${elapsed}s`);
+    return { syncedCount, elapsed };
+}
+
+async function main() {
+    try {
+        await runSync();
     } catch (error) {
         console.error('❌ Sync failed:', error);
         process.exit(1);

@@ -42,7 +42,7 @@ const SCRAPERS: Record<string, (options: {
     tutorialbar: scrapeTutorialbar,
 };
 
-async function main() {
+export async function runScrape() {
     console.log('🕷️  Starting free coupon scraper...');
     const startTime = Date.now();
 
@@ -50,68 +50,73 @@ async function main() {
         console.log('🧪 DRY RUN mode - no rows will be written\n');
     }
 
-    try {
-        const platformId = DRY_RUN
-            ? null
-            : await getOrCreateUdemyPlatform();
-        if (platformId) console.log(`📦 Using platform ID: ${platformId}`);
+    const platformId = DRY_RUN
+        ? null
+        : await getOrCreateUdemyPlatform();
+    if (platformId) console.log(`📦 Using platform ID: ${platformId}`);
 
-        let totalItems = 0;
-        let totalSynced = 0;
+    let totalItems = 0;
+    let totalSynced = 0;
 
-        for (const source of ENABLED_SOURCES) {
-            const scraper = SCRAPERS[source];
-            if (!scraper) {
-                console.warn(`  ⚠️ Unknown source "${source}" (ignored)`);
+    for (const source of ENABLED_SOURCES) {
+        const scraper = SCRAPERS[source];
+        if (!scraper) {
+            console.warn(`  ⚠️ Unknown source "${source}" (ignored)`);
+            continue;
+        }
+
+        console.log(`\n📥 Scraping ${source}...`);
+        try {
+            const items = await scraper({
+                maxPages: MAX_PAGES,
+                maxPosts: MAX_POSTS,
+                sleepMs: SLEEP_MS,
+            });
+
+            console.log(`  Found ${items.length} coupon(s) from ${source}`);
+            totalItems += items.length;
+
+            if (DRY_RUN) {
+                for (const item of items.slice(0, 15)) {
+                    console.log(`    - ${item.title.substring(0, 70)}`);
+                    console.log(`      ${item.coupon}`);
+                    if (item.coupon_price !== undefined) {
+                        console.log(`      coupon price: ${item.coupon_price}`);
+                    }
+                    if (item.discount_percent !== undefined) {
+                        console.log(`      discount: ${item.discount_percent}%`);
+                    }
+                }
                 continue;
             }
 
-            console.log(`\n📥 Scraping ${source}...`);
-            try {
-                const items = await scraper({
-                    maxPages: MAX_PAGES,
-                    maxPosts: MAX_POSTS,
-                    sleepMs: SLEEP_MS,
-                });
-
-                console.log(`  Found ${items.length} coupon(s) from ${source}`);
-                totalItems += items.length;
-
-                if (DRY_RUN) {
-                    for (const item of items.slice(0, 15)) {
-                        console.log(`    - ${item.title.substring(0, 70)}`);
-                        console.log(`      ${item.coupon}`);
-                        if (item.coupon_price !== undefined) {
-                            console.log(`      coupon price: ${item.coupon_price}`);
-                        }
-                        if (item.discount_percent !== undefined) {
-                            console.log(`      discount: ${item.discount_percent}%`);
-                        }
-                    }
-                    continue;
+            for (const item of items) {
+                try {
+                    const ok = await syncItem(item, platformId as string);
+                    if (ok) totalSynced++;
+                } catch (error) {
+                    console.error(`  ❌ Failed to sync: ${item?.title?.substring(0, 50)}`, error);
                 }
-
-                for (const item of items) {
-                    try {
-                        const ok = await syncItem(item, platformId as string);
-                        if (ok) totalSynced++;
-                    } catch (error) {
-                        console.error(`  ❌ Failed to sync: ${item?.title?.substring(0, 50)}`, error);
-                    }
-                }
-            } catch (error) {
-                console.error(`  ❌ Scraper "${source}" failed:`, error);
             }
+        } catch (error) {
+            console.error(`  ❌ Scraper "${source}" failed:`, error);
         }
+    }
 
-        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-        if (DRY_RUN) {
-            console.log(`\n✅ Dry run complete! ${totalItems} coupon(s) parsed in ${elapsed}s`);
-        } else {
-            console.log(
-                `\n✅ Scrape complete! ${totalSynced}/${totalItems} courses synced in ${elapsed}s`
-            );
-        }
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    if (DRY_RUN) {
+        console.log(`\n✅ Dry run complete! ${totalItems} coupon(s) parsed in ${elapsed}s`);
+    } else {
+        console.log(
+            `\n✅ Scrape complete! ${totalSynced}/${totalItems} courses synced in ${elapsed}s`
+        );
+    }
+    return { totalItems, totalSynced, elapsed, dryRun: DRY_RUN };
+}
+
+async function main() {
+    try {
+        await runScrape();
     } catch (error) {
         console.error('❌ Scrape failed:', error);
         process.exit(1);
