@@ -2,7 +2,9 @@
  * Branded Short Redirect
  *
  * Routes branded `/go/{slug}` links (used by Telegram broadcasts) to the
- * tracking redirector, preserving attribution as TELEGRAM source.
+ * corresponding course detail page with ?src=tg, so Telegram clicks land
+ * on the website before enrolling. Attribution is carried through to the
+ * affiliate CTA on that page.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
