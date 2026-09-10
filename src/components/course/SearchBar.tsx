@@ -57,7 +57,7 @@ export function SearchBar({
     return (
         <div className={cn('relative', className)}>
             <div className="relative flex items-center">
-                <Search className="absolute left-4 w-5 h-5 text-foreground opacity-40 pointer-events-none" />
+                <Search className="absolute left-4 w-5 h-5 text-foreground/40 pointer-events-none" />
                 <input
                     type="text"
                     value={query}
@@ -76,7 +76,7 @@ export function SearchBar({
                     {query && (
                         <button
                             onClick={handleClear}
-                            className="p-2 text-foreground opacity-40 hover:text-accent transition-colors"
+                            className="p-2 cursor-pointer text-foreground/40 hover:text-accent transition-colors duration-200"
                             aria-label="Clear search"
                         >
                             <X className="w-4 h-4" />
@@ -85,10 +85,10 @@ export function SearchBar({
                     <button
                         onClick={() => setShowFilters(!showFilters)}
                         className={cn(
-                            'p-2 rounded-lg transition-colors',
+                            'p-2 rounded-lg transition-colors duration-200 cursor-pointer',
                             showFilters
                                 ? 'bg-surface-muted text-accent'
-                                : 'text-foreground opacity-40 hover:text-accent hover:bg-surface-muted'
+                                : 'text-foreground/40 hover:text-accent hover:bg-surface-muted'
                         )}
                         aria-label="Toggle filters"
                         aria-expanded={showFilters}
@@ -189,13 +189,13 @@ function FilterPanel() {
                 <button
                     onClick={() => updateFilter('hasDiscount', hasDiscount ? '' : 'true')}
                     className={cn(
-                        'w-full px-3 py-2 rounded-lg border text-sm font-medium transition-colors',
+                        'w-full px-3 py-2 rounded-lg border text-sm font-medium transition-colors duration-200 cursor-pointer',
                         hasDiscount
                             ? 'bg-surface-muted border-accent text-accent'
-                            : 'bg-surface-muted border-border text-foreground opacity-70 hover:opacity-100'
+                            : 'bg-surface-muted border-border text-foreground/70 hover:text-foreground'
                     )}
                 >
-                    {hasDiscount ? '✓ On Sale Only' : 'Show All'}
+                    {hasDiscount ? 'On Sale Only' : 'Show All'}
                 </button>
             </div>
         </div>

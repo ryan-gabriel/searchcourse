@@ -35,8 +35,8 @@ export function SearchForm({
 
     return (
         <form onSubmit={handleSubmit} role="search" aria-label="Search courses" className={`relative ${className}`}>
-            <div className="relative flex items-center bg-surface border border-border rounded-xl overflow-hidden">
-                <div className="pl-4 text-foreground opacity-50">
+            <div className="relative flex items-center overflow-hidden rounded-xl border border-border bg-surface focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/40">
+                <div className="pl-4 text-foreground/40">
                     <Search className="w-5 h-5" />
                 </div>
                 <input
@@ -44,11 +44,11 @@ export function SearchForm({
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder={placeholder}
-                    className="w-full px-4 py-5 bg-transparent border-none focus:ring-0 focus:outline-none text-foreground placeholder:text-foreground/40 text-lg"
+                    className="w-full bg-transparent px-4 py-5 text-lg text-foreground placeholder:text-foreground/40 focus:outline-none"
                 />
                 <button
                     type="submit"
-                    className="hidden sm:flex items-center gap-2 px-6 py-3 bg-accent text-accent-ink font-semibold hover:opacity-85 transition-opacity"
+                    className="hidden sm:flex items-center gap-2 px-6 py-3 bg-accent text-accent-ink font-semibold transition-all duration-200 hover:brightness-110 cursor-pointer"
                 >
                     {buttonText}
                 </button>
