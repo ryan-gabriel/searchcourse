@@ -57,7 +57,7 @@ export function CourseCard({ course }: CourseCardProps) {
             )}
 
             {/* Thumbnail */}
-            <Link href={affiliateUrl} target="_blank" className="block relative h-48 overflow-hidden">
+            <Link href={`/courses/${course.slug}`} className="block relative h-48 overflow-hidden">
                 {course.thumbnailUrl ? (
                     <Image
                         src={course.thumbnailUrl}
@@ -82,7 +82,7 @@ export function CourseCard({ course }: CourseCardProps) {
                         {course.platform.name}
                     </span>
                     {course.category && (
-                        <span className="text-xs text-foreground opacity-40">
+                        <span className="text-xs text-foreground/40">
                             {course.category.name}
                         </span>
                     )}
@@ -91,8 +91,7 @@ export function CourseCard({ course }: CourseCardProps) {
                 {/* Title */}
                 <h3 className="font-semibold text-foreground mb-2 line-clamp-2 min-h-[3rem]">
                     <Link
-                        href={affiliateUrl}
-                        target="_blank"
+                        href={`/courses/${course.slug}`}
                         className="hover:text-accent transition-colors"
                     >
                         {course.title}
@@ -110,23 +109,23 @@ export function CourseCard({ course }: CourseCardProps) {
                 <div className="flex items-center gap-4 mb-4 text-sm">
                     {course.rating && (
                         <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 fill-accent text-accent" />
+                            <Star className="w-4 h-4 fill-rating text-rating" />
                             <span className="font-medium text-foreground">
                                 {course.rating.toFixed(1)}
                             </span>
-                            <span className="text-foreground opacity-40">
+                            <span className="text-foreground/40">
                                 ({formatCompactNumber(course.reviewCount)})
                             </span>
                         </div>
                     )}
                     {course.studentCount > 0 && (
-                        <div className="flex items-center gap-1 text-foreground opacity-50">
+                        <div className="flex items-center gap-1 text-foreground/50">
                             <Users className="w-4 h-4" />
                             <span>{formatCompactNumber(course.studentCount)}</span>
                         </div>
                     )}
                     {course.duration && (
-                        <div className="flex items-center gap-1 text-foreground opacity-50">
+                        <div className="flex items-center gap-1 text-foreground/50">
                             <Clock className="w-4 h-4" />
                             <span>{course.duration}</span>
                         </div>
@@ -140,7 +139,7 @@ export function CourseCard({ course }: CourseCardProps) {
                             {finalPrice === 0 ? 'FREE' : formatPrice(finalPrice, course.currency)}
                         </span>
                         {hasDiscount && (
-                            <span className="text-sm text-foreground opacity-40 line-through">
+                            <span className="text-sm text-foreground/40 line-through">
                                 {formatPrice(course.originalPrice, course.currency)}
                             </span>
                         )}
@@ -150,7 +149,7 @@ export function CourseCard({ course }: CourseCardProps) {
                         onClick={handleRevealDeal}
                         className={cn(
                             'inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200',
-                            'bg-accent text-accent-ink hover:opacity-85',
+                            'bg-accent text-accent-ink hover:brightness-110',
                             'active:scale-95'
                         )}
                     >
