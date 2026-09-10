@@ -37,15 +37,8 @@ export const metadata: Metadata = {
   },
 
   icons: {
-    icon: [
-      { url: '/seo/16x16-icon.ico', sizes: '16x16', type: 'image/x-icon' },
-      { url: '/seo/32x32-icon.ico', sizes: '32x32', type: 'image/x-icon' },
-      { url: '/seo/48x48-icon.ico', sizes: '48x48', type: 'image/x-icon' },
-      { url: '/seo/192x192-icon.ico', sizes: '192x192', type: 'image/x-icon' },
-      { url: '/seo/512x512-icon.ico', sizes: '512x512', type: 'image/x-icon' },
-    ],
-    shortcut: '/seo/32x32-icon.ico',
-    apple: [{ url: '/seo/192x192-icon.ico', sizes: '180x180', type: 'image/x-icon' }],
+    icon: [{ url: '/favicon.ico', sizes: '48x48', type: 'image/x-icon' }],
+    apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],
   },
 
   openGraph: {
