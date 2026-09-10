@@ -89,7 +89,7 @@ export default async function HomePage() {
       )}
       {/* Hero */}
       <ScrollReveal>
-      <section className="relative overflow-hidden bg-background pt-20 pb-24 lg:pt-32 lg:pb-32">
+      <section className="relative isolate overflow-hidden bg-background pt-20 pb-24 lg:pt-32 lg:pb-32">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[420px] w-[720px] -translate-x-1/2 rounded-full opacity-30 blur-3xl"
