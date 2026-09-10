@@ -1,7 +1,10 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeAll } from "vitest";
+import { readFileSync } from "fs";
+import { join } from "path";
 import {
     findUdemyCouponUrl,
     extractCourseSlug,
+    extractCouponamiDescription,
     deriveCoupon,
 } from "@/jobs/lib/scrape-utils";
 
@@ -71,6 +74,54 @@ describe("extractCourseSlug", () => {
         expect(extractCourseSlug("https://www.udemy.com/course/")).toBeNull();
         expect(extractCourseSlug("not-a-url")).toBeNull();
         expect(extractCourseSlug(null)).toBeNull();
+    });
+});
+
+describe("extractCouponamiDescription", () => {
+    let fixtureHtml: string;
+
+    beforeAll(() => {
+        fixtureHtml = readFileSync(
+            join(__dirname, "..", "fixtures", "couponami-post.html"),
+            "utf-8"
+        );
+    });
+
+    it("extracts the full multi-paragraph body description", () => {
+        const description = extractCouponamiDescription(fixtureHtml);
+
+        expect(description).not.toBeNull();
+        expect(description!).toContain(
+            "Unlock the secrets to effective contract negotiation"
+        );
+        expect(description!).toContain("continuously improving your strategy");
+    });
+
+    it("returns null when no description is present", () => {
+        expect(
+            extractCouponamiDescription("<html><body><p>Hi</p></body></html>")
+        ).toBeNull();
+        expect(extractCouponamiDescription(null)).toBeNull();
+        expect(extractCouponamiDescription(undefined)).toBeNull();
+    });
+
+    it("falls back to the meta description when the body marker is missing", () => {
+        const html =
+            '<html><head><meta name="description" content="Meta fallback text." /></head>' +
+            "<body><p>Hi</p></body></html>";
+        expect(extractCouponamiDescription(html)).toBe("Meta fallback text.");
+    });
+
+    it("supports pages that use an h2 Description heading", () => {
+        const html = readFileSync(
+            join(__dirname, "..", "fixtures", "couponami-post-h2.html"),
+            "utf-8"
+        );
+
+        const description = extractCouponamiDescription(html);
+
+        expect(description).not.toBeNull();
+        expect(description!).toContain("thorough, extensive");
     });
 });
 

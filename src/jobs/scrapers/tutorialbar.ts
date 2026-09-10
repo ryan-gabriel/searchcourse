@@ -1,10 +1,18 @@
 import * as cheerio from 'cheerio';
 import type { UdemyFeedItem } from '../lib/pipeline';
 import { findUdemyCouponUrl, extractCourseSlug } from '../lib/scrape-utils';
-import { fetchHtml, followRedirects } from './http';
+import {
+    parseTutorialbarPost,
+    mergePostDetails,
+} from '../lib/tutorialbar-post';
+import { fetchHtml, followRedirects, sleep } from './http';
 import type { ScrapeOptions } from './discudemy';
 
 const LISTING_BASE = 'https://www.tutorialbar.com';
+
+export function isTutorialbarCardExpired(cardText: string): boolean {
+    return cardText.includes('Deal Expired') || cardText.includes('Deal Ended');
+}
 
 function parsePriceTag(text: string): number {
     const digits = text.replace(/[^0-9.,-]/g, '').replace(/,/g, '');
@@ -38,6 +46,7 @@ export async function scrapeTutorialbar(
 
         $('div.coupon-card').each((_, el) => {
             const card = $(el);
+            if (isTutorialbarCardExpired(card.text())) return;
             const href =
                 card.find('a[href^="/course/"]').first().attr('href') || '';
             const slug = href.replace(/^\/course\//, '').split(/[/?#]/)[0];
@@ -96,7 +105,7 @@ export async function scrapeTutorialbar(
             const externalId = couponUrl ? extractCourseSlug(couponUrl) : null;
             if (!couponUrl || !externalId) continue;
 
-            items.push({
+            let item: UdemyFeedItem = {
                 id: externalId,
                 title: card.title || externalId,
                 coupon: couponUrl,
@@ -109,7 +118,27 @@ export async function scrapeTutorialbar(
                 platform: 'Udemy',
                 savedtime: new Date().toISOString(),
                 source: 'scraped:tutorialbar',
-            });
+            };
+
+            // Best-effort enrichment from the course post page, which embeds
+            // the full course record (instructor, rating, students, headline,
+            // description, objectives). Failures keep the listing-level item.
+            try {
+                const postHtml = await fetchHtml(
+                    `${LISTING_BASE}/course/${encodeURIComponent(card.slug)}`
+                );
+                await sleep(options.sleepMs);
+                if (postHtml) {
+                    item = mergePostDetails(
+                        item,
+                        parseTutorialbarPost(postHtml, card.slug)
+                    );
+                }
+            } catch {
+                // Ignore enrichment errors.
+            }
+
+            items.push(item);
         }
     }
 

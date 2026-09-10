@@ -67,6 +67,21 @@ export function formatDuration(hours: number | null | undefined): string | null 
 }
 
 /**
+ * Normalize a scraped duration into the schema string.
+ * Numbers are treated as hours; strings like "17h 4m 13s" keep the
+ * human-readable form minus the seconds component. Zero and blank
+ * durations normalize to null.
+ */
+export function normalizeDuration(
+    value: number | string | null | undefined
+): string | null {
+    if (value === null || value === undefined) return null;
+    if (typeof value === 'number') return formatDuration(value);
+    const cleaned = value.trim().replace(/\s*\d+s$/, '').trim();
+    return cleaned.length > 0 ? cleaned : null;
+}
+
+/**
  * Parse a feed expiry value into a Date. Returns null for missing or
  * unparseable input so callers never write an invalid Date to the database.
  */

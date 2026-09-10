@@ -4,6 +4,7 @@ import {
     extractCoupon,
     buildAffiliateUrl,
     formatDuration,
+    normalizeDuration,
     parseExpiry,
     isCouponValid,
 } from "@/jobs/lib/affiliate";
@@ -111,6 +112,29 @@ describe("formatDuration", () => {
         expect(formatDuration(null)).toBeNull();
         expect(formatDuration(undefined)).toBeNull();
         expect(formatDuration(NaN)).toBeNull();
+    });
+});
+
+describe("normalizeDuration", () => {
+    it("keeps numeric hours via formatDuration", () => {
+        expect(normalizeDuration(6)).toBe("6h");
+        expect(normalizeDuration(NaN)).toBeNull();
+    });
+
+    it("drops the seconds component from duration strings", () => {
+        expect(normalizeDuration("17h 4m 13s")).toBe("17h 4m");
+    });
+
+    it("keeps duration strings without seconds as-is", () => {
+        expect(normalizeDuration("5.5h")).toBe("5.5h");
+    });
+
+    it("returns null for zero or missing durations", () => {
+        expect(normalizeDuration("0s")).toBeNull();
+        expect(normalizeDuration("")).toBeNull();
+        expect(normalizeDuration("   ")).toBeNull();
+        expect(normalizeDuration(null)).toBeNull();
+        expect(normalizeDuration(undefined)).toBeNull();
     });
 });
 

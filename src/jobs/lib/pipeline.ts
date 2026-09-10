@@ -5,11 +5,11 @@ import {
     parsePrice,
     extractCoupon,
     buildAffiliateUrl,
-    formatDuration,
     parseExpiry,
     isCouponValid,
 } from './affiliate';
 import { deriveCoupon } from './scrape-utils';
+import { buildEnrichmentData, normalizeObjectives } from './enrichment';
 
 export interface UdemyFeedItem {
     id: string;
@@ -25,7 +25,12 @@ export interface UdemyFeedItem {
     language?: string;
     platform?: string;
     rating?: number;
-    duration?: number;
+    rating_count?: number;
+    students_count?: number;
+    instructor_name?: string;
+    headline?: string;
+    duration?: number | string;
+    objectives?: string[];
     expiry?: string;
     savedtime?: string;
     source?: string;
@@ -107,14 +112,11 @@ export async function syncItem(
         title,
         thumbnailUrl: item.pic || null,
         originalPrice,
-        rating: item.rating ?? null,
-        instructorName: null,
-        description: item.desc_text || null,
         language: item.language || null,
-        duration: formatDuration(item.duration),
         directUrl,
         affiliateUrl,
         lastVerifiedAt: new Date(),
+        ...buildEnrichmentData(item),
     };
 
     const existing = await prisma.course.findUnique({
@@ -182,6 +184,20 @@ export async function syncItem(
         } else {
             console.warn(`  ⚠️ Skipped expired/invalid coupon for "${title.substring(0, 50)}..." (expiry: ${item.expiry ?? 'unknown'})`);
         }
+    }
+
+    const objectives = normalizeObjectives(item.objectives);
+    if (objectives.length > 0) {
+        await prisma.courseLearningOutcome.deleteMany({
+            where: { courseId },
+        });
+        await prisma.courseLearningOutcome.createMany({
+            data: objectives.map((text, index) => ({
+                courseId,
+                text,
+                sortOrder: index,
+            })),
+        });
     }
 
     return true;

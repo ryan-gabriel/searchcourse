@@ -7,8 +7,8 @@
  * Environment Variables:
  * - DATABASE_URL
  * - SCRAPE_ENABLED_SOURCES (csv, default "discudemy,tutorialbar")
- * - SCRAPE_MAX_PAGES        (listing pages per source, default 10)
- * - SCRAPE_MAX_POSTS        (max posts processed per source, default 30)
+ * - SCRAPE_MAX_PAGES        (listing pages per source, default 2)
+ * - SCRAPE_MAX_POSTS        (max posts processed per source, default 6)
  * - SCRAPE_SLEEP_MS         (delay between requests, default 300)
  * - SCRAPE_DRY_RUN          ("1" logs parsed items without writing to the DB)
  * - IMPACT_AFFILIATE_BASE   (optional; Impact deep-link prefix for commissions)
@@ -28,8 +28,8 @@ const ENABLED_SOURCES = (process.env.SCRAPE_ENABLED_SOURCES || 'discudemy,tutori
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean);
-const MAX_PAGES = parseInt(process.env.SCRAPE_MAX_PAGES || '10', 10);
-const MAX_POSTS = parseInt(process.env.SCRAPE_MAX_POSTS || '30', 10);
+const MAX_PAGES = parseInt(process.env.SCRAPE_MAX_PAGES || '2', 10);
+const MAX_POSTS = parseInt(process.env.SCRAPE_MAX_POSTS || '6', 10);
 const SLEEP_MS = parseInt(process.env.SCRAPE_SLEEP_MS || '300', 10);
 const DRY_RUN = process.env.SCRAPE_DRY_RUN === '1';
 
@@ -85,6 +85,30 @@ export async function runScrape() {
                     }
                     if (item.discount_percent !== undefined) {
                         console.log(`      discount: ${item.discount_percent}%`);
+                    }
+                    if (item.instructor_name) {
+                        console.log(`      instructor: ${item.instructor_name}`);
+                    }
+                    if (item.rating !== undefined) {
+                        console.log(
+                            `      rating: ${item.rating} (${item.rating_count ?? 0} reviews, ${item.students_count ?? 0} students)`
+                        );
+                    }
+                    if (item.headline) {
+                        console.log(`      headline: ${item.headline.substring(0, 80)}`);
+                    }
+                    if (item.duration !== undefined) {
+                        console.log(`      duration: ${item.duration}`);
+                    }
+                    if (item.desc_text) {
+                        console.log(
+                            `      description: ${item.desc_text.substring(0, 80)}...`
+                        );
+                    }
+                    if (item.objectives && item.objectives.length > 0) {
+                        console.log(
+                            `      objectives: ${item.objectives.length} items`
+                        );
                     }
                 }
                 continue;

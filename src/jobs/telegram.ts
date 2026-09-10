@@ -97,8 +97,10 @@ export async function runBroadcast() {
         ],
     };
 
-    // Find unposted courses with broadcastable coupons
-    const [screenedOut, courses] = await Promise.all([
+    // Find unposted courses with broadcastable coupons.
+    // Over-fetch then re-sort by coupon freshness so the newest coupon
+    // posts first (oldest coupons are most likely dead on Udemy's side).
+    const [screenedOut, candidates] = await Promise.all([
         // Courses held back because their coupons are near-expiry or stale
         prisma.course.count({
             where: {
@@ -139,10 +141,18 @@ export async function runBroadcast() {
                     take: 1,
                 },
             },
-            orderBy: { createdAt: 'asc' },
-            take: BROADCAST.MAX_COURSES_PER_RUN, // Limit per run to avoid flooding
+            orderBy: { createdAt: 'desc' },
+            take: BROADCAST.MAX_COURSES_PER_RUN * 4, // Over-fetch; sliced below
         }),
     ]);
+
+    const courses = candidates
+        .sort((a, b) => {
+            const at = a.coupons[0]?.verifiedAt?.getTime() ?? 0;
+            const bt = b.coupons[0]?.verifiedAt?.getTime() ?? 0;
+            return bt - at;
+        })
+        .slice(0, BROADCAST.MAX_COURSES_PER_RUN);
 
     if (screenedOut > 0) {
         console.log(`📋 ${screenedOut} course(s) held back (coupon near-expiry or stale)`);

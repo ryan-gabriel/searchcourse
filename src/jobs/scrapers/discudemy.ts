@@ -1,6 +1,10 @@
 import * as cheerio from 'cheerio';
 import type { UdemyFeedItem } from '../lib/pipeline';
-import { findUdemyCouponUrl, extractCourseSlug } from '../lib/scrape-utils';
+import {
+    findUdemyCouponUrl,
+    extractCourseSlug,
+    extractCouponamiDescription,
+} from '../lib/scrape-utils';
 import { fetchHtml, sleep } from './http';
 
 export interface ScrapeOptions {
@@ -12,6 +16,10 @@ export interface ScrapeOptions {
 const LISTING_BASE = 'https://www.discudemy.com';
 const POST_BASE = 'https://www.couponami.com';
 const GO_BASE = 'https://www.couponami.com/go';
+
+export function isDiscudemyCardExpired(cardText: string): boolean {
+    return /expired|ended/i.test(cardText);
+}
 
 function lastSlug(url: string): string | null {
     try {
@@ -36,18 +44,18 @@ function parseMetaPrice(metaHtml: string): number {
 async function resolveCouponUrl(
     postUrl: string,
     sleepMs: number
-): Promise<string | null> {
+): Promise<{ couponUrl: string | null; postHtml: string | null }> {
     const slug = lastSlug(postUrl);
     if (slug) {
         const goHtml = await fetchHtml(`${GO_BASE}/${encodeURIComponent(slug)}`);
         await sleep(sleepMs);
         const direct = goHtml ? findUdemyCouponUrl(goHtml) : null;
-        if (direct) return direct;
+        if (direct) return { couponUrl: direct, postHtml: null };
     }
 
     const postHtml = await fetchHtml(postUrl);
     await sleep(sleepMs);
-    if (!postHtml) return null;
+    if (!postHtml) return { couponUrl: null, postHtml: null };
 
     const $post = cheerio.load(postHtml);
     const goHref = $post('a.discBtn[href*="/go/"]').first().attr('href') || null;
@@ -56,10 +64,10 @@ async function resolveCouponUrl(
         const goHtml = await fetchHtml(resolved);
         await sleep(sleepMs);
         const direct = goHtml ? findUdemyCouponUrl(goHtml) : null;
-        if (direct) return direct;
+        if (direct) return { couponUrl: direct, postHtml };
     }
 
-    return findUdemyCouponUrl(postHtml);
+    return { couponUrl: findUdemyCouponUrl(postHtml), postHtml };
 }
 
 export async function scrapeDiscudemy(
@@ -86,6 +94,7 @@ export async function scrapeDiscudemy(
 
         $('section.card').each((_, el) => {
             const card = $(el);
+            if (isDiscudemyCardExpired(card.text())) return;
             const titleEl = card.find('a.card-header').first();
             const title = titleEl.text().trim();
             const href = titleEl.attr('href') || '';
@@ -118,9 +127,26 @@ export async function scrapeDiscudemy(
             if (!slug || seenSlugs.has(slug)) continue;
             seenSlugs.add(slug);
 
-            const couponUrl = await resolveCouponUrl(card.url, options.sleepMs);
+            const { couponUrl, postHtml: resolvedPostHtml } =
+                await resolveCouponUrl(card.url, options.sleepMs);
             const externalId = couponUrl ? extractCourseSlug(couponUrl) : null;
             if (!couponUrl || !externalId) continue;
+
+            // The fast go-link path skips the post page; fetch it lazily so
+            // every course still gets a chance at a full description.
+            let postHtml = resolvedPostHtml;
+            if (!postHtml) {
+                try {
+                    postHtml = await fetchHtml(card.url);
+                    await sleep(options.sleepMs);
+                } catch {
+                    postHtml = null;
+                }
+            }
+
+            const descText = postHtml
+                ? extractCouponamiDescription(postHtml)
+                : null;
 
             items.push({
                 id: externalId,
@@ -132,6 +158,7 @@ export async function scrapeDiscudemy(
                 pic: card.pic || undefined,
                 category: card.category || undefined,
                 language: card.language ? card.language.toLowerCase() : undefined,
+                desc_text: descText || undefined,
                 platform: 'Udemy',
                 savedtime: new Date().toISOString(),
                 source: 'scraped:discudemy',

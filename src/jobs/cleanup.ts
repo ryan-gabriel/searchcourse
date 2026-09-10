@@ -44,6 +44,27 @@ export async function runCleanup() {
 
     console.log(`🔕 Deactivated ${deactivated.count} recently-expired coupons`);
 
+    // 2b. Deactivate scraped coupons that advertise no expiry but were not
+    //     re-verified within the staleness window. Scraped coupons always
+    //     store a null expiry, so check #1/#2 never touch them — without
+    //     this they would stay "active" (and broadcastable) forever while
+    //     the real Udemy coupon dies on the 1,000-redemption cap.
+    const staleCutoff = new Date(Date.now() - CLEANUP.STALE_COUPON_MAX_AGE_HOURS * TIME.ONE_HOUR_MS);
+    const deactivatedStale = await prisma.coupon.updateMany({
+        where: {
+            isActive: true,
+            expiresAt: null,
+            verifiedAt: {
+                lt: staleCutoff,
+            },
+        },
+        data: {
+            isActive: false,
+        },
+    });
+
+    console.log(`🕰️  Deactivated ${deactivatedStale.count} stale no-expiry coupons (unverified > ${CLEANUP.STALE_COUPON_MAX_AGE_HOURS}h)`);
+
     // 3. Optionally deactivate courses with no active coupons
     //    (only for API-synced courses, identified by externalId)
     const orphanedCourses = await prisma.course.findMany({
@@ -79,7 +100,7 @@ export async function runCleanup() {
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
     console.log(`\n✅ Cleanup complete in ${elapsed}s`);
-    return { deleted: deleted.count, deactivated: deactivated.count, deactivatedCourses, elapsed };
+    return { deleted: deleted.count, deactivated: deactivated.count, deactivatedStale: deactivatedStale.count, deactivatedCourses, elapsed };
 }
 
 async function main() {
