@@ -78,9 +78,9 @@ function LoginForm() {
                     </div>
 
                     {error && (
-                        <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center gap-3">
-                            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-                            <p className="text-red-700 dark:text-red-300 text-sm">{error}</p>
+                        <div className="mb-6 p-4 bg-danger/10 border border-danger/30 rounded-lg flex items-center gap-3">
+                            <AlertCircle className="w-5 h-5 text-danger flex-shrink-0" />
+                            <p className="text-danger text-sm">{error}</p>
                         </div>
                     )}
 
