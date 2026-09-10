@@ -147,7 +147,7 @@ function FilterPanel() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Level Filter */}
             <div>
-                <label className="block text-sm font-medium text-foreground opacity-70 mb-2">
+                <label className="block text-sm font-medium text-foreground/70 mb-2">
                     Level
                 </label>
                 <select
@@ -165,7 +165,7 @@ function FilterPanel() {
 
             {/* Sort By */}
             <div>
-                <label className="block text-sm font-medium text-foreground opacity-70 mb-2">
+                <label className="block text-sm font-medium text-foreground/70 mb-2">
                     Sort By
                 </label>
                 <select
@@ -183,7 +183,7 @@ function FilterPanel() {
 
             {/* Discount Toggle */}
             <div>
-                <label className="block text-sm font-medium text-foreground opacity-70 mb-2">
+                <label className="block text-sm font-medium text-foreground/70 mb-2">
                     Discounts
                 </label>
                 <button

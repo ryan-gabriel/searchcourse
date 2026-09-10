@@ -104,7 +104,7 @@ export const metadata: Metadata = {
   referrer: 'origin-when-cross-origin',
   category: 'education',
   other: {
-    'theme-color': '#12110f',
+    'theme-color': '#0b0f0d',
   },
 };
 
@@ -143,7 +143,7 @@ export default function RootLayout({
             )}
           />
 </ThemeProvider>
-      <div className="h-14" aria-hidden="true" />
+      <div className="h-20" aria-hidden="true" />
       <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-surface/95 backdrop-blur text-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] text-center">
           <Send className="h-4 w-4 text-accent" aria-hidden="true" />
