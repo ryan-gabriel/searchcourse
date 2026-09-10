@@ -11,6 +11,7 @@
 import { pathToFileURL } from 'url';
 import { CLEANUP, TIME } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
+import { staleScrapedCouponWhere } from './lib/cleanup-utils';
 
 export async function runCleanup() {
     console.log('🧹 Starting expired coupon cleanup...');
@@ -65,6 +66,18 @@ export async function runCleanup() {
 
     console.log(`🕰️  Deactivated ${deactivatedStale.count} stale no-expiry coupons (unverified > ${CLEANUP.STALE_COUPON_MAX_AGE_HOURS}h)`);
 
+    // 2c. Hard-delete scraped coupons that were never re-verified. Scoped to
+    //     the `scraped:` prefix so manually-curated admin/partner coupons
+    //     (free-text source, legitimately null-expiry + old verifiedAt) are
+    //     never touched. Deactivation (#2b) already hid them at 48h; this
+    //     removes the rows at 72h so the DB doesn't grow indefinitely.
+    const deleteCutoff = new Date(Date.now() - CLEANUP.STALE_COUPON_DELETE_AFTER_HOURS * TIME.ONE_HOUR_MS);
+    const deletedStale = await prisma.coupon.deleteMany({
+        where: staleScrapedCouponWhere(deleteCutoff),
+    });
+
+    console.log(`🗑️  Deleted ${deletedStale.count} stale scraped coupons (unverified > ${CLEANUP.STALE_COUPON_DELETE_AFTER_HOURS}h)`);
+
     // 3. Optionally deactivate courses with no active coupons
     //    (only for API-synced courses, identified by externalId)
     const orphanedCourses = await prisma.course.findMany({
@@ -100,7 +113,7 @@ export async function runCleanup() {
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
     console.log(`\n✅ Cleanup complete in ${elapsed}s`);
-    return { deleted: deleted.count, deactivated: deactivated.count, deactivatedStale: deactivatedStale.count, deactivatedCourses, elapsed };
+    return { deleted: deleted.count, deactivated: deactivated.count, deactivatedStale: deactivatedStale.count, deletedStale: deletedStale.count, deactivatedCourses, elapsed };
 }
 
 async function main() {

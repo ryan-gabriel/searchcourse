@@ -16,6 +16,7 @@ export const TIME = {
 export const CLEANUP = {
   EXPIRED_COUPON_RETENTION_HOURS: 24,
   STALE_COUPON_MAX_AGE_HOURS: 48,
+  STALE_COUPON_DELETE_AFTER_HOURS: 72,
 } as const;
 
 export const BROADCAST = {
