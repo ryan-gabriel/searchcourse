@@ -22,6 +22,7 @@ import { StickyCourseSidebar } from './StickyCourseSidebar';
 
 interface PageProps {
     params: Promise<{ slug: string }>;
+    searchParams: Promise<{ src?: string }>;
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
@@ -65,6 +66,7 @@ export const revalidate = 300;
 
 export default async function CourseDetailPage(props: PageProps) {
     const { slug } = await props.params;
+    const { src } = await props.searchParams;
     const course = await getCourseWithFullDetails(slug);
 
     if (!course) {
@@ -82,7 +84,10 @@ export default async function CourseDetailPage(props: PageProps) {
           )
         : 0;
 
-    const affiliateUrl = `/api/out/${course.id}`;
+    const affiliateUrl =
+        src === 'tg'
+            ? `/api/out/${course.id}?src=tg`
+            : `/api/out/${course.id}`;
 
     return (
         <div className="min-h-screen bg-background">
@@ -462,6 +467,7 @@ export default async function CourseDetailPage(props: PageProps) {
                     <Link
                         href={affiliateUrl}
                         target="_blank"
+                        rel="noopener noreferrer"
                         className="flex-1 max-w-[200px] btn btn-primary py-3 rounded-xl gap-2"
                     >
                         Enroll Now
