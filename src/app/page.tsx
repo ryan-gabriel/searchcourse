@@ -89,9 +89,14 @@ export default async function HomePage() {
       )}
       {/* Hero */}
       <ScrollReveal>
-      <section className="bg-background pt-20 pb-24 lg:pt-32 lg:pb-32">
+      <section className="relative overflow-hidden bg-background pt-20 pb-24 lg:pt-32 lg:pb-32">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[420px] w-[720px] -translate-x-1/2 rounded-full opacity-30 blur-3xl"
+          style={{ background: 'radial-gradient(circle, var(--accent), transparent 70%)' }}
+        />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-foreground mb-6 tracking-tight leading-[1.1]">
+          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-extrabold text-foreground mb-6 tracking-tight leading-[1.05]">
             Master New Skills. <br className="hidden md:block" />
             <span className="text-muted">We Filter the Noise.</span>
           </h1>
@@ -105,15 +110,15 @@ export default async function HomePage() {
 
           <p className="text-sm text-foreground/40">
             Trending:{' '}
-            <Link href="/courses?query=react" className="hover:text-foreground underline">
+            <Link href="/courses?query=react" className="text-accent hover:underline">
               React Patterns
             </Link>
             ,{' '}
-            <Link href="/courses?query=python" className="hover:text-foreground underline">
+            <Link href="/courses?query=python" className="text-accent hover:underline">
               Python for Data
             </Link>
             ,{' '}
-            <Link href="/courses?query=aws" className="hover:text-foreground underline">
+            <Link href="/courses?query=aws" className="text-accent hover:underline">
               AWS Cert
             </Link>
           </p>
@@ -127,19 +132,19 @@ export default async function HomePage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-3 gap-8 text-center divide-x divide-border">
             <div>
-              <p className="text-3xl font-bold text-foreground mb-1">{stats.coursesVerified}</p>
+              <p className="font-display text-3xl font-bold text-foreground mb-1">{stats.coursesVerified}</p>
               <p className="text-xs font-medium text-muted uppercase tracking-wider">
                 Courses Verified
               </p>
             </div>
             <div>
-              <p className="text-3xl font-bold text-foreground mb-1">{stats.studentSavings}</p>
+              <p className="font-display text-3xl font-bold text-foreground mb-1">{stats.studentSavings}</p>
               <p className="text-xs font-medium text-muted uppercase tracking-wider">
                 Student Savings
               </p>
             </div>
             <div>
-              <p className="text-3xl font-bold text-foreground mb-1">{stats.uptime}</p>
+              <p className="font-display text-3xl font-bold text-foreground mb-1">{stats.uptime}</p>
               <p className="text-xs font-medium text-muted uppercase tracking-wider">
                 Uptime
               </p>
@@ -268,7 +273,7 @@ export default async function HomePage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-end justify-between mb-10">
               <div>
-                <h2 className="text-3xl font-bold text-foreground mb-2">
+                <h2 className="font-display text-3xl font-bold text-foreground mb-2">
                   Top Picks of the Month
                 </h2>
                 <p className="text-muted flex items-center gap-2">
@@ -295,10 +300,10 @@ export default async function HomePage() {
       <ScrollReveal>
       <section className="py-20 lg:py-24 bg-accent text-accent-ink">
         <div className="relative max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+          <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
             Ready to upgrade your career?
           </h2>
-          <p className="text-accent-ink/60 mb-8 text-lg">
+          <p className="text-accent-ink/70 mb-8 text-lg">
             Join thousands of developers saving time and money on technical education. No
             spam, just high-signal deals.
           </p>
@@ -312,7 +317,7 @@ export default async function HomePage() {
             </Link>
             <Link
               href="/about"
-              className="inline-flex items-center justify-center px-8 py-4 bg-accent-ink/10 text-accent-ink font-semibold rounded-xl border border-accent-ink/20 hover:bg-accent-ink/20 transition-colors"
+              className="inline-flex items-center justify-center px-8 py-4 bg-accent-ink/10 text-accent-ink font-semibold rounded-xl border border-accent-ink/20 hover:bg-accent-ink/20 transition-colors duration-200"
             >
               Our Vetting Process
             </Link>
