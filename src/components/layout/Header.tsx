@@ -28,7 +28,7 @@ export function Header() {
     };
 
     return (
-        <header className="sticky top-0 z-50 bg-surface border-b border-border">
+        <header className="sticky top-0 z-50 border-b border-border bg-surface/80 backdrop-blur">
             <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
@@ -59,8 +59,8 @@ export function Header() {
                                 key={item.href}
                                 href={item.href}
                                 className={cn(
-                                    'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                                    'text-foreground opacity-70 hover:text-accent hover:bg-surface-muted'
+                                    'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200',
+                                    'text-foreground/70 hover:text-foreground hover:bg-surface-muted'
                                 )}
                             >
                                 <item.icon className="w-4 h-4" />
@@ -74,7 +74,7 @@ export function Header() {
                         {/* Theme Toggle */}
                         <button
                             onClick={toggleTheme}
-                            className="p-2.5 rounded-lg text-foreground opacity-70 hover:text-accent hover:bg-surface-muted transition-colors"
+                            className="cursor-pointer p-2.5 rounded-lg text-foreground/70 hover:text-accent hover:bg-surface-muted transition-colors duration-200"
                             aria-label="Toggle theme"
                         >
                             {resolvedTheme === 'dark' ? (
@@ -87,7 +87,7 @@ export function Header() {
                         {/* Mobile menu button */}
                         <button
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="md:hidden p-2.5 rounded-lg text-foreground opacity-70 hover:text-accent hover:bg-surface-muted transition-colors"
+                            className="md:hidden cursor-pointer p-2.5 rounded-lg text-foreground/70 hover:text-accent hover:bg-surface-muted transition-colors duration-200"
                             aria-label="Toggle menu"
                             aria-expanded={mobileMenuOpen}
                             aria-controls="mobile-navigation"
@@ -119,8 +119,8 @@ export function Header() {
                                     href={item.href}
                                     onClick={() => setMobileMenuOpen(false)}
                                     className={cn(
-                                        'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors',
-                                        'text-foreground opacity-70 hover:text-accent hover:bg-surface-muted'
+                                        'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200',
+                                        'text-foreground/70 hover:text-foreground hover:bg-surface-muted'
                                     )}
                                 >
                                     <item.icon className="w-5 h-5" />

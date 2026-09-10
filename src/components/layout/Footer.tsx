@@ -51,7 +51,7 @@ export function Footer() {
                             with the best deals. We curate and verify courses from top platforms
                             to help you learn smarter, not harder.
                         </p>
-                        <p className="text-foreground opacity-50 text-sm">
+                        <p className="text-foreground/50 text-sm">
                             Built with <Heart className="w-4 h-4 inline text-accent" /> for lifelong learners.
                         </p>
                     </div>
@@ -66,7 +66,7 @@ export function Footer() {
                                 <li key={link.href}>
                                     <Link
                                         href={link.href}
-                                        className="text-foreground opacity-70 hover:text-accent text-sm transition-colors"
+                                        className="text-foreground/70 hover:text-accent text-sm transition-colors duration-200"
                                     >
                                         {link.label}
                                     </Link>
@@ -85,7 +85,7 @@ export function Footer() {
                                 <li key={link.href}>
                                     <Link
                                         href={link.href}
-                                        className="text-foreground opacity-70 hover:text-accent text-sm transition-colors"
+                                        className="text-foreground/70 hover:text-accent text-sm transition-colors duration-200"
                                     >
                                         {link.label}
                                     </Link>
@@ -97,10 +97,10 @@ export function Footer() {
 
                 {/* Bottom */}
                 <div className="mt-16 pt-10 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
-                    <p className="text-foreground opacity-50 text-sm">
+                    <p className="text-foreground/50 text-sm">
                         © {currentYear} SearchCourse. All rights reserved.
                     </p>
-                    <div className="flex items-center gap-4 text-sm text-foreground opacity-50">
+                    <div className="flex items-center gap-4 text-sm text-foreground/50">
                         <span>Courses from:</span>
                         <div className="flex items-center gap-3">
                             <a
