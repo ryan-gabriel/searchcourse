@@ -45,7 +45,7 @@ export function SortDropdown({ currentSort, options, currentFilters }: SortDropd
             <select
                 defaultValue={currentSort}
                 onChange={handleChange}
-                className="appearance-none pl-3 pr-8 py-2.5 bg-surface border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer"
+                className="appearance-none pl-3 pr-8 py-2.5 bg-surface border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer transition-colors duration-200"
             >
                 {options.map((option) => (
                     <option key={option.value} value={option.value}>

@@ -1,11 +1,11 @@
 import { Suspense } from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import Image from 'next/image';
 import { unstable_cache } from 'next/cache';
 import { SlidersHorizontal, X, Star } from 'lucide-react';
 import { SortDropdown } from './SortDropdown';
 import { CourseGridSkeleton } from '@/components/ui/Skeleton';
+import { CourseCard } from '@/components/course';
 import { searchCourses, getAllPlatforms, getAllCategories } from '@/services';
 import { CourseSearchSchema } from '@/validations';
 import { resolveCoursesIndexing } from '@/lib/seo/canonical';
@@ -348,7 +348,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
                                                         key={i}
                                                         className={`w-4 h-4 ${
                                                             i < Math.floor(rating)
-                                                                ? 'fill-amber-400 text-amber-400'
+                                                                ? 'fill-rating text-rating'
                                                                 : 'fill-border text-border'
                                                         }`}
                                                     />
@@ -368,7 +368,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
                                             : 'true',
                                         page: '1',
                                     })}
-                                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors duration-200 cursor-pointer ${
                                         validParams.hasDiscount
                                             ? 'bg-surface-muted text-price font-medium'
                                             : 'text-foreground/60 hover:bg-surface-muted'
@@ -383,7 +383,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
                                     >
                                         {validParams.hasDiscount && (
                                             <svg
-                                                className="w-3 h-3 text-white"
+                                                className="w-3 h-3 text-background"
                                                 fill="none"
                                                 viewBox="0 0 24 24"
                                                 stroke="currentColor"
@@ -441,106 +441,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
                             {coursesResult.data.length > 0 ? (
                                 <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
                                     {coursesResult.data.map((course) => (
-                                        <div
-                                            key={course.id}
-                                            className="bg-surface rounded-2xl border border-border overflow-hidden"
-                                        >
-                                            <div className="aspect-video bg-surface-muted relative">
-                                                {course.thumbnailUrl ? (
-                                                    <Image
-                                                        src={course.thumbnailUrl}
-                                                        alt={course.title}
-                                                        fill
-                                                        sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                                                        className="object-cover"
-                                                    />
-                                                ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-foreground/40">
-                                                        No Image
-                                                    </div>
-                                                )}
-                                                {course.activeCoupon && (
-                                                    <span className="absolute top-3 left-3 px-2 py-1 bg-price text-white text-xs font-semibold rounded">
-                                                        {Math.round(
-                                                            Number(
-                                                                course.activeCoupon.discountValue
-                                                            )
-                                                        )}
-                                                        % OFF
-                                                    </span>
-                                                )}
-                                            </div>
-
-                                            <div className="p-5">
-                                                <div className="text-xs text-muted font-medium mb-2">
-                                                    {course.platform.name}
-                                                </div>
-                                                <h3 className="font-semibold text-foreground mb-2 line-clamp-2 leading-snug">
-                                                    <Link
-                                                        href={`/courses/${course.slug}`}
-                                                        className="hover:text-foreground/70"
-                                                    >
-                                                        {course.title}
-                                                    </Link>
-                                                </h3>
-                                                {course.instructorName && (
-                                                    <p className="text-sm text-muted mb-3">
-                                                        {course.instructorName}
-                                                    </p>
-                                                )}
-
-                                                {course.rating && (
-                                                    <div className="flex items-center gap-1 mb-3">
-                                                        <span className="font-semibold text-amber-600 text-sm">
-                                                            {Number(course.rating).toFixed(1)}
-                                                        </span>
-                                                        <div className="flex">
-                                                            {[...Array(5)].map((_, i) => (
-                                                                <Star
-                                                                    key={i}
-                                                                    className={`w-3.5 h-3.5 ${
-                                                                        i <
-                                                                        Math.floor(
-                                                                            Number(course.rating)
-                                                                        )
-                                                                            ? 'fill-amber-400 text-amber-400'
-                                                                            : 'fill-border text-border'
-                                                                    }`}
-                                                                />
-                                                            ))}
-                                                        </div>
-                                                        <span className="text-xs text-foreground/40">
-                                                            (
-                                                            {course.reviewCount.toLocaleString()})
-                                                        </span>
-                                                    </div>
-                                                )}
-
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-lg font-bold text-foreground">
-                                                        {course.activeCoupon
-                                                            ? Number(
-                                                                  course.activeCoupon.finalPrice
-                                                              ) === 0
-                                                                ? 'Free'
-                                                                : `$${Number(
-                                                                      course.activeCoupon.finalPrice
-                                                                  ).toFixed(2)}`
-                                                            : `$${Number(
-                                                                  course.originalPrice
-                                                              ).toFixed(2)}`}
-                                                    </span>
-                                                    {course.activeCoupon && (
-                                                        <span className="text-sm text-foreground/40 line-through">
-                                                            $
-                                                            {Number(
-                                                                course.originalPrice
-                                                            ).toFixed(2)}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <CourseCard key={course.id} course={course} />
                                     ))}
                                 </div>
                             ) : (
