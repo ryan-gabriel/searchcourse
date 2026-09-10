@@ -2,7 +2,8 @@
  * Course Card Component
  *
  * High-conversion course card with pricing, ratings, and CTA.
- * All clickable elements point to affiliate redirect API.
+ * Title and thumbnail link to the course detail page; the Get Deal
+ * button points to the affiliate redirect API.
  */
 
 'use client';
@@ -68,7 +69,7 @@ export function CourseCard({ course }: CourseCardProps) {
                     />
                 ) : (
                     <div className="w-full h-full bg-surface-muted flex items-center justify-center">
-                        <span className="text-foreground text-4xl font-bold opacity-40">
+                        <span className="text-foreground/40 text-4xl font-bold">
                             {course.title.charAt(0)}
                         </span>
                     </div>
