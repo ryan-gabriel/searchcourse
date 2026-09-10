@@ -4,6 +4,7 @@
  * Responsive grid layout for course cards.
  */
 
+import { SearchX } from 'lucide-react';
 import { CourseCard } from './CourseCard';
 import { CourseGridSkeleton } from '@/components/ui/Skeleton';
 import type { CourseWithDetails } from '@/services';
@@ -22,12 +23,12 @@ export function CourseGrid({ courses, isLoading }: CourseGridProps) {
         return (
             <div className="text-center py-16">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-surface-muted mb-4">
-                    <span className="text-3xl">📚</span>
+                    <SearchX className="w-7 h-7 text-foreground/40" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
                     No courses found
                 </h3>
-                <p className="text-foreground opacity-50 max-w-md mx-auto">
+                <p className="text-foreground/50 max-w-md mx-auto">
                     Try adjusting your search or filter criteria to find what you&apos;re looking for.
                 </p>
             </div>

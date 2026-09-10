@@ -11,7 +11,7 @@ export function EditorialNote({ facts }: { facts: EditorialNoteFacts }) {
 
     return (
         <section className="mb-10 rounded-2xl border border-border bg-surface-muted p-6">
-            <h2 className="flex items-center gap-2 text-xl font-bold text-foreground mb-3">
+            <h2 className="flex items-center gap-2 text-xl font-bold text-foreground mb-3 font-display">
                 <ShieldCheck className="w-5 h-5 text-price" />
                 Why we&apos;re featuring this
             </h2>
