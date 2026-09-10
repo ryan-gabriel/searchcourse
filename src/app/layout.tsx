@@ -51,13 +51,14 @@ export const metadata: Metadata = {
       'Find the best deals on online courses from Udemy, Coursera, and more. Save up to 90% on top-rated courses.',
     images: [
       {
-        url: '/seo/og-image.png',
+        url: '/seo/twitter-card.jpg',
         width: 1200,
-        height: 630,
-        alt: 'SearchCourse - Your Gateway to Premium Online Courses',
-        type: 'image/png',
+        height: 600,
+        alt: 'SearchCourse - Premium Course Deals',
+        type: 'image/jpeg',
       },
     ],
+
   },
 
   twitter: {
