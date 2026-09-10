@@ -210,7 +210,7 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
                                                     key={step.id}
                                                     className="relative flex gap-4"
                                                 >
-                                                    <div className="relative z-10 flex-shrink-0 w-10 h-10 rounded-full bg-accent text-accent-ink flex items-center justify-center font-bold text-sm">
+                                                    <div className="relative z-10 flex-shrink-0 w-10 h-10 rounded-full bg-accent text-accent-ink flex items-center justify-center font-bold text-sm font-display">
                                                         {index + 1}
                                                     </div>
 
@@ -253,7 +253,7 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
                                                                     )}
                                                                     {course.rating && (
                                                                         <div className="flex items-center gap-1">
-                                                                            <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                                                                            <Star className="w-4 h-4 fill-rating text-rating" />
                                                                             <span className="font-medium text-foreground/70">
                                                                                 {Number(
                                                                                     course.rating

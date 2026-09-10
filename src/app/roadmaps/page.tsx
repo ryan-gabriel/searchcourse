@@ -127,7 +127,7 @@ export default async function RoadmapsPage(props: RoadmapsPageProps) {
                                 name="q"
                                 defaultValue={searchParams.q}
                                 placeholder="Search roadmaps (e.g. Frontend, DevOps)..."
-                                className="w-full pl-4 pr-12 py-3 bg-surface-muted border border-border rounded-xl focus:ring-2 focus:ring-accent text-foreground"
+                                className="w-full pl-4 pr-12 py-3 bg-surface-muted border border-border rounded-xl text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-accent"
                             />
                             <button
                                 type="submit"
@@ -222,7 +222,7 @@ export default async function RoadmapsPage(props: RoadmapsPageProps) {
                                 )}
                             </div>
                         ) : (
-                            <div className="text-center py-20 border-2 border-dashed border-border rounded-2xl">
+                            <div className="text-center py-20 rounded-2xl border border-border bg-surface">
                                 <Map className="w-16 h-16 mx-auto text-border mb-4" />
                                 <h3 className="text-xl font-semibold text-foreground mb-2">
                                     No roadmaps found
