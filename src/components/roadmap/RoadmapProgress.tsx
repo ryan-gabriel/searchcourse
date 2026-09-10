@@ -82,7 +82,7 @@ export function RoadmapProgress({ roadmapId, steps }: RoadmapProgressProps) {
                         )}
                         <div>
                             <h3 className="font-semibold text-foreground">
-                                {isCompleted ? 'Roadmap Completed! 🎉' : 'Your Progress'}
+                                {isCompleted ? 'Roadmap Completed!' : 'Your Progress'}
                             </h3>
                             <p className="text-sm text-muted">
                                 {completedCount} of {totalCount} courses completed
@@ -113,7 +113,7 @@ export function RoadmapProgress({ roadmapId, steps }: RoadmapProgressProps) {
 
                 {/* Quick tip */}
                 <p className="mt-4 text-xs text-muted text-center">
-                    💡 Your progress is saved automatically in your browser
+                    Your progress is saved automatically in your browser
                 </p>
             </div>
 

@@ -32,11 +32,11 @@ export function RoadmapFilters({ searchParams, categories }: RoadmapFiltersProps
 
                     {/* Level Filter */}
                     <div className="space-y-3">
-                        <label className="text-xs font-bold text-foreground opacity-50 uppercase tracking-wider">Level</label>
+                        <label className="text-xs font-bold text-foreground/50 uppercase tracking-wider">Level</label>
                         <select
                             name="level"
                             defaultValue={searchParams.level || ''}
-                            className="w-full p-2 bg-surface border border-border rounded-lg text-sm"
+                            className="w-full p-2 bg-surface border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer transition-colors duration-200"
                             onChange={handleChange}
                         >
                             <option value="">All Levels</option>
@@ -48,11 +48,11 @@ export function RoadmapFilters({ searchParams, categories }: RoadmapFiltersProps
 
                     {/* Category Filter */}
                     <div className="space-y-3">
-                        <label className="text-xs font-bold text-foreground opacity-50 uppercase tracking-wider">Category</label>
+                        <label className="text-xs font-bold text-foreground/50 uppercase tracking-wider">Category</label>
                         <select
                             name="category"
                             defaultValue={searchParams.category || ''}
-                            className="w-full p-2 bg-surface border border-border rounded-lg text-sm"
+                            className="w-full p-2 bg-surface border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer transition-colors duration-200"
                             onChange={handleChange}
                         >
                             <option value="">All Categories</option>

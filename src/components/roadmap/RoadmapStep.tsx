@@ -68,7 +68,7 @@ export function RoadmapStep({
                         'border-2 transition-all duration-300',
                         isCompleted
                             ? 'bg-accent border-accent text-accent-ink'
-                            : 'bg-surface border-border text-foreground opacity-50 hover:border-accent hover:text-accent'
+                            : 'bg-surface border-border text-foreground/50 hover:border-accent hover:text-accent'
                     )}
                     aria-label={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
                 >
@@ -119,7 +119,7 @@ export function RoadmapStep({
                             />
                         ) : (
                             <div className="w-full h-full bg-surface-muted flex items-center justify-center">
-                                <span className="text-foreground text-3xl font-bold opacity-40">
+                                <span className="text-foreground/40 text-3xl font-bold">
                                     {course.title.charAt(0)}
                                 </span>
                             </div>
@@ -160,7 +160,7 @@ export function RoadmapStep({
                             </span>
                             {course.rating && (
                                 <div className="flex items-center gap-1">
-                                    <Star className="w-4 h-4 fill-accent text-accent" />
+                                    <Star className="w-4 h-4 fill-rating text-rating" />
                                     <span>{course.rating.toFixed(1)}</span>
                                 </div>
                             )}
@@ -174,7 +174,7 @@ export function RoadmapStep({
 
                         {/* Step Description */}
                         {step.description && (
-                            <p className="text-sm text-foreground opacity-70 mb-4 line-clamp-2">
+                            <p className="text-sm text-foreground/70 mb-4 line-clamp-2">
                                 {step.description}
                             </p>
                         )}
@@ -186,7 +186,7 @@ export function RoadmapStep({
                                     {finalPrice === 0 ? 'FREE' : formatPrice(finalPrice, 'USD')}
                                 </span>
                                 {hasDiscount && (
-                                    <span className="text-sm text-foreground opacity-40 line-through">
+                                    <span className="text-sm text-foreground/40 line-through">
                                         {formatPrice(course.originalPrice, 'USD')}
                                     </span>
                                 )}
@@ -196,7 +196,7 @@ export function RoadmapStep({
                                 onClick={handleRevealDeal}
                                 className={cn(
                                     'inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200',
-                                    'bg-accent text-accent-ink hover:opacity-85',
+                                    'bg-accent text-accent-ink hover:brightness-110',
                                     'active:scale-95'
                                 )}
                             >

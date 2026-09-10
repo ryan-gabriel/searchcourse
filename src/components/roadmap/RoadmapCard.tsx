@@ -60,13 +60,13 @@ export function RoadmapCard({ roadmap, totalSavings = 0 }: RoadmapCardProps) {
                 </h3>
 
                 {roadmap.description && (
-                    <p className="text-sm text-foreground opacity-50 mb-4 line-clamp-2">
+                    <p className="text-sm text-foreground/50 mb-4 line-clamp-2">
                         {roadmap.description}
                     </p>
                 )}
 
                 {/* Stats */}
-                <div className="flex items-center gap-4 mb-4 text-sm text-foreground opacity-70">
+                <div className="flex items-center gap-4 mb-4 text-sm text-foreground/70">
                     <div className="flex items-center gap-1.5">
                         <BookOpen className="w-4 h-4 text-accent" />
                         <span>{roadmap.courseCount} Courses</span>
