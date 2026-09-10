@@ -6,7 +6,7 @@
 
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -19,18 +19,26 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    const [theme, setTheme] = useState<Theme>('dark');
+    const [theme, setThemeState] = useState<Theme>('dark');
     const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('dark');
+    const [initialized, setInitialized] = useState(false);
 
     useEffect(() => {
-        // Load saved theme
         const savedTheme = localStorage.getItem('theme') as Theme | null;
         if (savedTheme) {
-            setTheme(savedTheme);
+            setThemeState(savedTheme);
         }
+        setInitialized(true);
+    }, []);
+
+    const setTheme = useCallback((nextTheme: Theme) => {
+        localStorage.setItem('theme', nextTheme);
+        setThemeState(nextTheme);
     }, []);
 
     useEffect(() => {
+        if (!initialized) return;
+
         const root = window.document.documentElement;
 
         let resolved: 'light' | 'dark' = 'dark';
@@ -46,8 +54,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         setResolvedTheme(resolved);
         root.classList.remove('light', 'dark');
         root.classList.add(resolved);
-        localStorage.setItem('theme', theme);
-    }, [theme]);
+    }, [theme, initialized]);
 
     // Listen for system theme changes
     useEffect(() => {
