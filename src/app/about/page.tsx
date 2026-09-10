@@ -177,7 +177,7 @@ export default async function AboutPage() {
                                 key={stat.label}
                                 className="flex flex-col items-center justify-center"
                             >
-                                <div className="text-4xl font-extrabold text-foreground mb-2">
+                                <div className="font-display text-4xl font-extrabold text-foreground mb-2">
                                     {stat.value}
                                 </div>
                                 <div className="text-sm font-medium text-muted uppercase tracking-wide">
@@ -225,7 +225,7 @@ export default async function AboutPage() {
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-12 gap-4">
                         <div>
-                            <h2 className="text-3xl font-bold text-foreground mb-2">
+                            <h2 className="font-display text-3xl font-bold text-foreground mb-2">
                                 The Discovery Engine
                             </h2>
                             <p className="text-foreground/60">
@@ -266,7 +266,7 @@ export default async function AboutPage() {
                     <div className="inline-flex items-center justify-center w-12 h-12 bg-surface rounded-full mb-6 border border-border">
                         <ExternalLink className="w-6 h-6 text-foreground/40" />
                     </div>
-                    <h3 className="text-xl font-bold text-foreground mb-4">
+                    <h3 className="font-display text-xl font-bold text-foreground mb-4">
                         Affiliate Disclosure
                     </h3>
                     <div className="bg-surface p-6 rounded-xl border border-border text-sm text-foreground/60 leading-relaxed">
@@ -291,7 +291,7 @@ export default async function AboutPage() {
 
             <section className="py-28 bg-accent text-accent-ink">
                 <div className="max-w-2xl mx-auto px-4 text-center">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                    <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
                         Ready to cut through the noise?
                     </h2>
                     <p className="text-accent-ink/60 mb-8 text-lg">

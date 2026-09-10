@@ -28,7 +28,7 @@ export default function CoursesError({ error, reset }: ErrorBoundaryProps) {
                 <button
                     onClick={reset}
                     autoFocus
-                    className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-accent text-accent-ink hover:opacity-85 transition-opacity"
+                    className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-accent text-accent-ink hover:brightness-110 transition-all duration-200"
                 >
                     Try Again
                 </button>
