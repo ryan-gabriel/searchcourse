@@ -98,7 +98,7 @@ export function StickyCourseSidebar({
 
                     {hasDiscount && timeLeft && (
                         <>
-                            <div className="flex items-center gap-2 text-red-600 mb-2">
+                            <div className="flex items-center gap-2 text-danger mb-2">
                                 <Timer className="w-4 h-4" />
                                 <span className="text-sm font-medium">
                                     Offer ends in {timeLeft}

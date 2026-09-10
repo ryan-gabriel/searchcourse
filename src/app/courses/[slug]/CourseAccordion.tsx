@@ -82,7 +82,7 @@ export function CourseAccordion({ sections }: CourseAccordionProps) {
                                 onClick={() => toggleSection(index)}
                                 aria-expanded={openSections.has(index)}
                                 aria-controls={`section-${index}`}
-                                className="w-full flex items-center justify-between p-4 bg-surface-muted hover:bg-border/50 transition-colors text-left"
+                                className="w-full flex items-center justify-between p-4 bg-surface-muted hover:bg-border/50 transition-colors duration-200 text-left cursor-pointer"
                             >
                                 <div className="flex items-center gap-3">
                                     <ChevronDown

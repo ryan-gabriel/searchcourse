@@ -174,7 +174,7 @@ export default async function CourseDetailPage(props: PageProps) {
                             <div className="flex flex-wrap items-center gap-4 text-sm mb-6">
                                 {course.rating && (
                                     <div className="flex items-center gap-1">
-                                        <span className="font-bold text-amber-600">
+                                        <span className="font-bold text-rating">
                                             {Number(course.rating).toFixed(1)}
                                         </span>
                                         <div className="flex">
@@ -183,7 +183,7 @@ export default async function CourseDetailPage(props: PageProps) {
                                                     key={i}
                                                     className={`w-4 h-4 ${
                                                         i < Math.floor(Number(course.rating))
-                                                            ? 'fill-amber-400 text-amber-400'
+                                                            ? 'fill-rating text-rating'
                                                             : 'fill-border text-border'
                                                     }`}
                                                 />
@@ -387,7 +387,7 @@ export default async function CourseDetailPage(props: PageProps) {
                                                         Math.floor(
                                                             Number(course.rating || 0)
                                                         )
-                                                            ? 'fill-amber-400 text-amber-400'
+                                                            ? 'fill-rating text-rating'
                                                             : 'fill-border text-border'
                                                     }`}
                                                 />
