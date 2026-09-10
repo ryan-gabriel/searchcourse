@@ -260,10 +260,10 @@ export default async function CourseDetailPage(props: PageProps) {
                                 <Link
                                     href={affiliateUrl}
                                     target="_blank"
-                                    className="absolute inset-0 bg-black/40 hover:bg-black/30 transition-colors flex items-center justify-center group"
+                                    className="absolute inset-0 bg-background/40 hover:bg-background/30 transition-colors duration-200 flex items-center justify-center group"
                                 >
-                                    <button className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-all group-hover:scale-110">
-                                        <PlayCircle className="w-12 h-12 text-white fill-white/20" />
+                                    <button className="w-20 h-20 rounded-full bg-foreground/20 flex items-center justify-center group-hover:bg-foreground/30 transition-all group-hover:scale-110">
+                                        <PlayCircle className="w-12 h-12 text-foreground fill-foreground/20" />
                                     </button>
                                 </Link>
                             )}
