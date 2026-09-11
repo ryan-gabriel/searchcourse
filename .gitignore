@@ -38,9 +38,10 @@ yarn-error.log*
 # worktrees
 .worktrees/
 
-# open-mem: Auto-generated folder context files.
-# Uncomment to exclude from version control (recommended for large projects):
-# **/AGENTS.md
+# open-mem: auto-generated folder context — root AGENTS.md is local-only.
+# Project guidance is versioned at docs/AGENTS.md
+**/AGENTS.md
+!docs/AGENTS.md
 
 # graphify knowledge graph (auto-generated; rebuild with: graphify update .)
 graphify-out/

@@ -1,0 +1,49 @@
+## Overview
+
+SearchCourse is a course-deal platform (Next.js 16 App Router, React 19, Prisma 7 on PostgreSQL, Supabase Auth, Tailwind 4). It scrapes Udemy coupons, publishes deals to the web + Telegram, tracks affiliate clicks, and ships an admin CMS.
+
+## Setup
+
+1. `cp .env.example .env` and fill in values — `DATABASE_URL`, Supabase keys, `IMPACT_AFFILIATE_BASE`, Telegram bot creds, `CRON_SECRET` are all required for full functionality.
+2. `npm install` (postinstall runs `prisma generate`)
+3. `npx prisma migrate dev`
+4. `npm run dev`
+
+Requires Node >= 22.
+
+## Commands
+
+- `npm run dev` — dev server
+- `npm run build` — prisma generate + next build
+- `npm run lint` — eslint
+- `npm run typecheck` — `tsc --noEmit`
+- `npm run test` — Vitest unit tests. Test files live in `tests/unit/**/*.test.ts` (only that glob is included per `vitest.config.ts`). Run a single test with `npx vitest run tests/unit/<file>.test.ts`. There is no e2e suite — the README's `test:e2e` claim is stale.
+- `npm run scrape` / `reset` / `telegram` / `cleanup` — run the jobs in `src/jobs/` locally via `tsx`.
+
+## Architecture
+
+- Strict layering per `prisma/schema.prisma` header: **Database → Service → Validation → UI**. Business logic goes in `src/services/*.service.ts`, zod schemas in `src/validations/*.schema.ts`, and route handlers/UI (`src/app/**`) should call services — do not inline DB queries in the app layer.
+- Path alias `@/*` → `src/*`.
+- Prisma 7 uses the `pg` driver adapter (`PrismaPg` in `src/lib/prisma.ts`), not the default engine. `DATABASE_URL` is read at runtime and configured in `prisma.config.ts`.
+- Jobs (`src/jobs/`, `src/jobs/scrapers/`) are self-contained tsx scripts AND mirrored as `CRON_SECRET`-guarded endpoints under `src/app/api/jobs/*`. Both entrypoints are valid; `SCRAPE_DRY_RUN=1` logs parsed items without writing to the DB.
+- Admin auth is Supabase Auth with an `is_admin` claim in `user_metadata` — there is intentionally no admin table.
+- SEO helpers live in `src/lib/seo/`.
+
+## Gotchas
+
+- `next.config.ts` sets a CSP with `'unsafe-inline'`/`'unsafe-eval'` in `script-src`. This is documented intentional compatibility debt for Next hydration/HMR — do not tighten it without the planned nonce/hash migration. Respect the header `img-src`/`connect-src` allowlists (Udemy CDNs, Supabase, RapidAPI) when adding resources.
+- `next/image` `remotePatterns` only allows Udemy CDN hosts (`img-c.udemycdn.com`, `d3njjcbhbojbot.cloudfront.net`); other image hosts will break.
+- The schema notes a multi-tier convention — keep new models/services/validations in their tier.
+
+## graphify
+
+This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+
+When the user types `/graphify`, use the installed graphify skill or instructions before doing anything else.
+
+Rules:
+- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
+- Dirty graphify-out/ files are expected after hooks or incremental updates; dirty graph files are not a reason to skip graphify. Only skip graphify if the task is about stale or incorrect graph output, or the user explicitly says not to use it.
+- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
+- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
+- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
