@@ -73,6 +73,7 @@ export async function searchRoadmaps(params: RoadmapSearchParams) {
         isFeatured,
         level,
         category,
+        hasCourses,
         page,
         limit
     } = params;
@@ -92,6 +93,10 @@ export async function searchRoadmaps(params: RoadmapSearchParams) {
     // New filter fields
     if (level) where.level = level;
     if (category) where.category = { slug: category };
+
+    if (hasCourses) {
+        where.steps = { some: {} };
+    }
 
     const skip = (page - 1) * limit;
 
@@ -223,6 +228,8 @@ export async function getRoadmapBySlug(
         };
     });
 
+    if (!steps.length) return null;
+
     return {
         id: roadmap.id,
         title: roadmap.title,
@@ -230,7 +237,7 @@ export async function getRoadmapBySlug(
         description: roadmap.description,
         iconName: roadmap.iconName,
         estimatedHours: roadmap.estimatedHours,
-        courseCount: roadmap.courseCount,
+        courseCount: steps.length,
         isActive: roadmap.isActive,
         isFeatured: roadmap.isFeatured,
         totalOriginalPrice,
@@ -277,6 +284,7 @@ export async function getFeaturedRoadmaps(limit: number = 4) {
     return searchRoadmaps({
         isFeatured: true,
         isActive: true,
+        hasCourses: true,
         page: 1,
         limit,
     });

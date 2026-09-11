@@ -47,6 +47,7 @@ export const RoadmapSearchSchema = z.object({
   hasCertificate: z.coerce.boolean().optional(),
   hasFreeResources: z.coerce.boolean().optional(),
   isShortPath: z.coerce.boolean().optional(),
+  hasCourses: z.coerce.boolean().optional(),
   page: z.coerce.number().int().min(1).max(1_000_000).default(1),
   limit: z.coerce.number().int().min(1).max(20).default(10),
 });
