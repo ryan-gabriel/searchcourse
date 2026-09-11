@@ -249,7 +249,7 @@ describe('buildOrganizationSchema', () => {
     it('builds an Organization with logo', () => {
         const schema = buildOrganizationSchema(BASE);
         expect(schema['@type']).toBe('Organization');
-        expect(schema.logo).toBe(`${BASE}/seo/192x192-icon.ico`);
+        expect(schema.logo).toBe(`${BASE}/icon-512.png`);
     });
 });
 

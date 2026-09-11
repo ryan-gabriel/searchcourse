@@ -134,6 +134,6 @@ export function buildOrganizationSchema(baseUrl: string): JsonLd {
         '@type': 'Organization',
         name: 'SearchCourse',
         url: baseUrl,
-        logo: `${baseUrl}/seo/192x192-icon.ico`,
+        logo: `${baseUrl}/icon-512.png`,
     };
 }

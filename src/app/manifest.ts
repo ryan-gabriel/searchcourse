@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
         description: 'Discover the best online course deals',
         start_url: '/',
         display: 'standalone',
-        background_color: '#faf9f7',
-        theme_color: '#1a1917',
+        background_color: '#f3f4f6',
+        theme_color: '#004733',
         icons: [
             {
                 src: '/icon-192.png',

@@ -39,7 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             select: { slug: true, updatedAt: true },
         }),
         prisma.roadmap.findMany({
-            where: { isActive: true },
+            where: { isActive: true, steps: { some: {} } },
             select: { slug: true, updatedAt: true },
         }),
     ]);
