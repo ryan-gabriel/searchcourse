@@ -54,10 +54,28 @@ Rules:
 ### ./
 | ID | Type | Title | Date |
 |----|------|-------|------|
+| 30eb9cb5-4f3b-4d4c-a9d7-1dff7801a5ac | 🔵 discovery | .gitignore structure and open-mem exclusion pattern | 2026-09-11 |
+| 59e5938b-f449-40d2-af76-a6fafc8b736e | ✅ change | Commit 4 landed: tooling — AGENTS.md, opencode, graphify | 2026-09-11 |
+| a901f3c5-2200-47d9-83df-df43b7082084 | ✅ change | Commit 3 diff: deps trimmed, Tailwind removed, opencode-headroom added | 2026-09-11 |
+| 45acf1d9-2084-4d15-b66a-19c6b2b42d9e | 🔄 refactor | Commit 1 scope: 69 files, 8786 deletions, near-zero additions | 2026-09-11 |
 | 15884a40-ef70-4471-81ab-7e92e3f19669 | 🔄 refactor | Massive codebase refactor: 146 files, ~148k lines changed | 2026-09-11 |
 | 97334ca8-f342-40b4-80b4-846a37ea6506 | 🔄 refactor | Major component consolidation and skill system update | 2026-09-11 |
 
-**Key concepts:** full-stack-refactor, design-system-overhaul, skill-infrastructure-update, font-icon-catalog-refresh, test-suite-modification, component-removal, barrel-export-cleanup, skill-data-update, architecture-simplification, error-state-consolidation
+**Key concepts:** gitignore-conventions, stale-gitignore-entries, ai-tooling-artifacts, sqlite-wal-visibility, ai-tooling-infrastructure, knowledge-graph, ast-cache, opencode-configuration, commit-strategy-completion, dependency-removal
+
+### .opencode/
+| ID | Type | Title | Date |
+|----|------|-------|------|
+| 59e5938b-f449-40d2-af76-a6fafc8b736e | ✅ change | Commit 4 landed: tooling — AGENTS.md, opencode, graphify | 2026-09-11 |
+
+**Key concepts:** ai-tooling-infrastructure, knowledge-graph, ast-cache, opencode-configuration, commit-strategy-completion
+
+### .opencode/plugins/
+| ID | Type | Title | Date |
+|----|------|-------|------|
+| 59e5938b-f449-40d2-af76-a6fafc8b736e | ✅ change | Commit 4 landed: tooling — AGENTS.md, opencode, graphify | 2026-09-11 |
+
+**Key concepts:** ai-tooling-infrastructure, knowledge-graph, ast-cache, opencode-configuration, commit-strategy-completion
 
 ### .opencode/skills/ui-ux-pro-max/
 | ID | Type | Title | Date |
@@ -97,12 +115,20 @@ Rules:
 
 **Key concepts:** component-removal, barrel-export-cleanup, skill-data-update, architecture-simplification, error-state-consolidation
 
+### graphify-out/
+| ID | Type | Title | Date |
+|----|------|-------|------|
+| 59e5938b-f449-40d2-af76-a6fafc8b736e | ✅ change | Commit 4 landed: tooling — AGENTS.md, opencode, graphify | 2026-09-11 |
+
+**Key concepts:** ai-tooling-infrastructure, knowledge-graph, ast-cache, opencode-configuration, commit-strategy-completion
+
 ### src/app/
 | ID | Type | Title | Date |
 |----|------|-------|------|
+| 45acf1d9-2084-4d15-b66a-19c6b2b42d9e | 🔄 refactor | Commit 1 scope: 69 files, 8786 deletions, near-zero additions | 2026-09-11 |
 | 15884a40-ef70-4471-81ab-7e92e3f19669 | 🔄 refactor | Massive codebase refactor: 146 files, ~148k lines changed | 2026-09-11 |
 
-**Key concepts:** full-stack-refactor, design-system-overhaul, skill-infrastructure-update, font-icon-catalog-refresh, test-suite-modification
+**Key concepts:** subtractive-refactor, component-layer-removal, error-boundary-deletion, page-inline-strategy, full-stack-refactor, design-system-overhaul, skill-infrastructure-update, font-icon-catalog-refresh, test-suite-modification
 
 💡 *Use `mem-find` to search full details. Use `mem-create` to save important decisions.*
 <!-- /open-mem-context -->
