@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Star, Check, Clock, Users, BadgePercent } from 'lucide-react';
+import { Star, Check, Clock, Users, BadgePercent, Info } from 'lucide-react';
 import { Container } from '@/components/container';
 import { LinkButton } from '@/components/button';
 import { TelegramCTA } from '@/components/telegram-cta';
@@ -219,6 +219,14 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
               </p>
 
               <TelegramCTA variant="inline" source="course" />
+
+              <div className="mt-4 flex items-start gap-2 rounded-md border border-border bg-muted/40 p-3 text-left text-xs text-muted-foreground">
+                <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                <p>
+                  Heads up: this coupon may expire or run out of spots at any time. If it no longer works, the course
+                  may not be free anymore, but the discount could still be available.
+                </p>
+              </div>
 
               <dl className="mt-6 space-y-2 border-t border-border pt-4 text-sm">
                 {facts.map((fact) => (
