@@ -3,6 +3,7 @@ import { GeistSans } from 'geist/font/sans';
 import './globals.css';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
+import { TelegramCTA } from '@/components/telegram-cta';
 import { SITE_NAME, SITE_TAGLINE, siteUrl } from '@/lib/site';
 
 export const metadata: Metadata = {
@@ -57,6 +58,7 @@ export default function RootLayout({
         <main id="main" className="flex-1">
           {children}
         </main>
+        <TelegramCTA />
         <SiteFooter />
       </body>
     </html>

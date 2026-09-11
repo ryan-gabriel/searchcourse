@@ -1,4 +1,5 @@
 import { formatPriceSimple } from '@/lib/utils';
+import { TELEGRAM_URL } from '@/lib/site';
 
 const SITE_BASE_URL = process.env.SITE_BASE_URL || 'https://searchcourse.vercel.app';
 
@@ -81,7 +82,7 @@ function formatCourseMessage(course: {
     lines.push('');
     lines.push(`🔗 [Get this course](${link})`);
     lines.push('');
-    lines.push(`_via SearchCourse_`);
+    lines.push(`📣 [Forward to a friend · Join @searchcourses](${TELEGRAM_URL})`);
 
     return lines.join('\n');
 }

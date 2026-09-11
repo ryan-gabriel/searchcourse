@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Star, Check, Clock, Users, BadgePercent } from 'lucide-react';
 import { Container } from '@/components/container';
 import { LinkButton } from '@/components/button';
+import { TelegramCTA } from '@/components/telegram-cta';
 import { getCourseWithFullDetails } from '@/services';
 import { buildCourseSchema, buildBreadcrumbSchema } from '@/lib/seo/schema';
 import { buildEditorialNote } from '@/lib/seo/editorial';
@@ -216,6 +217,8 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
               <p className="mt-3 text-center text-xs text-muted-foreground">
                 You&apos;ll be redirected to {course.platform.name}. We may earn a commission at no extra cost to you.
               </p>
+
+              <TelegramCTA variant="inline" source="course" />
 
               <dl className="mt-6 space-y-2 border-t border-border pt-4 text-sm">
                 {facts.map((fact) => (

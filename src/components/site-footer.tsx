@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from './container';
-import { SITE_NAME } from '@/lib/site';
+import { SITE_NAME, TELEGRAM_URL } from '@/lib/site';
 
 export function SiteFooter() {
   return (
@@ -33,6 +33,14 @@ export function SiteFooter() {
           <Link href="/terms" className="focus-ring text-secondary-foreground/75 hover:text-secondary-foreground">
             Terms
           </Link>
+          <a
+            href={TELEGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="focus-ring text-secondary-foreground/75 hover:text-secondary-foreground"
+          >
+            Telegram
+          </a>
         </nav>
       </Container>
     </footer>
