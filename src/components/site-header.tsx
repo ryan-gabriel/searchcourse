@@ -12,7 +12,7 @@ const NAV = [
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-secondary/20 bg-secondary">
-      <Container className="flex h-16 items-center justify-between gap-6">
+      <Container className="flex h-21 items-center justify-between gap-6">
         <Link href="/" className="focus-ring inline-flex items-center rounded-md" aria-label={SITE_NAME}>
           <Image
             src="/seo/long-logo-light.png"
@@ -20,7 +20,7 @@ export function SiteHeader() {
             width={180}
             height={50}
             priority
-            className="h-8 w-auto"
+            className="h-16.5 w-auto sm:h-18"
           />
         </Link>
 

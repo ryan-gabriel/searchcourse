@@ -57,7 +57,7 @@ export function CourseCard({ course }: { course: CourseCardCourse }) {
           <div className="flex items-center gap-2 text-sm">
             {typeof course.rating === 'number' && course.rating > 0 ? (
               <>
-                <Star className="h-4 w-4" style={{ fill: '#8e0413', color: '#8e0413' }} aria-hidden="true" />
+                <Star className="h-4 w-4 fill-destructive text-destructive" aria-hidden="true" />
                 <span className="font-medium">{course.rating.toFixed(1)}</span>
                 <span className="text-muted-foreground">({formatStudents(course.studentCount)})</span>
               </>

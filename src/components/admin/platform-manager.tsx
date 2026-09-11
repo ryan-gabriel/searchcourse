@@ -253,12 +253,12 @@ function PlatformForm({
         <button
           type="submit"
           disabled={busy}
-          className={`${buttonClass('primary', 'px-5 py-2')} disabled:cursor-not-allowed disabled:opacity-60`}
+          className={`${buttonClass('primary')} disabled:cursor-not-allowed disabled:opacity-60`}
         >
           {busy ? (isEdit ? 'Saving…' : 'Adding…') : isEdit ? 'Save changes' : 'Add platform'}
         </button>
         {isEdit && onCancel ? (
-          <button type="button" onClick={onCancel} className={buttonClass('secondary', 'px-5 py-2')}>
+          <button type="button" onClick={onCancel} className={buttonClass('secondary')}>
             Cancel
           </button>
         ) : null}

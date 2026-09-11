@@ -33,10 +33,10 @@ export function RoadmapCard({ roadmap }: { roadmap: RoadmapCardData }) {
             </span>
           ) : null}
           {roadmap.hasJobGuarantee ? (
-            <span className="rounded-sm px-2 py-0.5 text-xs font-semibold" style={{ backgroundColor: '#004733', color: '#ffffff' }}>Job guarantee</span>
+            <span className="rounded-sm bg-secondary px-2 py-0.5 text-xs font-semibold text-secondary-foreground">Job guarantee</span>
           ) : null}
           {roadmap.hasFreeResources ? (
-            <span className="rounded-sm px-2 py-0.5 text-xs font-semibold" style={{ backgroundColor: '#004733', color: '#ffffff' }}>Free resources</span>
+            <span className="rounded-sm bg-secondary px-2 py-0.5 text-xs font-semibold text-secondary-foreground">Free resources</span>
           ) : null}
           {roadmap.isShortPath ? (
             <span className="rounded-sm bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">Short path</span>

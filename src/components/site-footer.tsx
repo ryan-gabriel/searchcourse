@@ -13,9 +13,9 @@ export function SiteFooter() {
             alt={SITE_NAME}
             width={180}
             height={50}
-            className="h-8 w-auto"
+            className="h-16.5 w-auto"
           />
-          <p className="mt-1 text-sm text-secondary-foreground/75">Curated online course deals.</p>
+          <p className="mt-2 text-sm text-secondary-foreground/75">Curated online course deals.</p>
         </div>
         <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
           <Link href="/courses" className="focus-ring text-secondary-foreground/75 hover:text-secondary-foreground">

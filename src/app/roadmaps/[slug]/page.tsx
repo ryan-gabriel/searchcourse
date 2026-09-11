@@ -159,7 +159,7 @@ export default async function RoadmapDetailPage({ params }: Props) {
                         {step.course.duration ? <span>{step.course.duration}</span> : null}
                         {typeof step.course.rating === 'number' && step.course.rating > 0 ? (
                           <span className="inline-flex items-center gap-1 text-foreground">
-                            <Star className="h-4 w-4" style={{ fill: '#8e0413', color: '#8e0413' }} aria-hidden="true" />
+                            <Star className="h-4 w-4 fill-destructive text-destructive" aria-hidden="true" />
                             {step.course.rating.toFixed(1)}
                           </span>
                         ) : null}

@@ -46,10 +46,10 @@ export default async function HomePage() {
               SearchCourse verifies Udemy coupons and discounts so you can skip the inflated list price and study for less.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <LinkButton href="/courses" variant="primary" className="px-5 py-2.5">
+              <LinkButton href="/courses" variant="primary">
                 Browse today&apos;s deals
               </LinkButton>
-              <LinkButton href="/roadmaps" variant="secondary" className="px-5 py-2.5">
+              <LinkButton href="/roadmaps" variant="secondary">
                 Explore learning paths
               </LinkButton>
             </div>
