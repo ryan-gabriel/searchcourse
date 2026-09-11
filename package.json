@@ -17,8 +17,7 @@
     "cleanup": "tsx src/jobs/cleanup.ts",
     "postinstall": "prisma generate",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.3.0",
@@ -31,6 +30,7 @@
     "lru-cache": "^11.2.5",
     "lucide-react": "^0.563.0",
     "next": "16.3.4",
+    "opencode-headroom": "^0.1.0",
     "pg": "^8.18.0",
     "prisma": "^7.3.0",
     "react": "19.2.3",
@@ -39,7 +39,6 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@playwright/test": "^1.48.0",
     "@tailwindcss/postcss": "^4",
     "@types/cheerio": "^0.22.35",
     "@types/node": "^20",
@@ -49,7 +48,6 @@
     "cheerio": "^1.2.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
-    "tailwindcss": "^4",
     "tsx": "^4.19.0",
     "typescript": "^5",
     "vitest": "^2.1.0"
