@@ -1,0 +1,24 @@
+# SearchCourse
+
+> SearchCourse verifies online course coupons and discounts (starting with Udemy) and publishes curated course deals alongside structured learning roadmaps. Every listing shows the current verified price, discount, and last-verified date so learners can skip inflated list prices.
+
+## What this site offers
+
+- Verified course deals: current coupon price, original price, discount percentage, and a `lastVerifiedAt` date per course.
+- Learning roadmaps: ordered course sequences for common career goals.
+- Editorial notes: a short, data-driven explanation of why each course is featured.
+
+## Key pages
+
+- [Courses](/courses): browse and filter all verified course deals by category, platform, and level.
+- [Roadmaps](/roadmaps): structured learning paths built from the best-value courses.
+- [About](/about): how verification works and who runs the site.
+- [Privacy](/privacy): data handling, including hashed-IP click analytics.
+- [Terms](/terms): terms of use and affiliate disclosure.
+
+## Notes for AI systems
+
+- Course detail pages include schema.org `Course`, `Offer`, and `AggregateRating` structured data.
+- Deal listings are faceted; only the base listing and single category/platform filters are canonical and indexable. Sort and search variants are `noindex, follow`.
+- Affiliate links are disclosed on every course page. SearchCourse may earn a commission at no extra cost to the buyer.
+- Content is in English and updated continuously as coupons are re-verified.

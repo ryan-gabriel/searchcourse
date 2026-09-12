@@ -150,7 +150,7 @@ export default async function CoursesPage({
         {result.data.length ? (
           <>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {result.data.map((course) => <CourseCard key={course.id} course={course} />)}
+              {result.data.map((course, i) => <CourseCard key={course.id} course={course} priority={i < 3} />)}
             </div>
             <Pagination page={search.page} totalPages={result.pagination.totalPages} buildHref={(page) => buildPageHref(search, page)} />
           </>

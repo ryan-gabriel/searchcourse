@@ -48,3 +48,7 @@ graphify-out/
 
 # open-mem session memory (auto-generated)
 .open-mem/
+
+# installed agent skills
+.agents/
+.claude/

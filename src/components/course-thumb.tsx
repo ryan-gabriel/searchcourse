@@ -14,10 +14,12 @@ export function CourseThumb({
   src,
   alt = '',
   sizes,
+  priority = false,
 }: {
   src: string | null;
   alt?: string;
   sizes: string;
+  priority?: boolean;
 }) {
   if (!src || !isAllowedImage(src)) {
     return (
@@ -36,6 +38,7 @@ export function CourseThumb({
       alt={alt}
       fill
       sizes={sizes}
+      priority={priority}
       className="object-cover"
     />
   );

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cache } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Star, Check, Clock, Users, BadgePercent, Info } from 'lucide-react';
@@ -11,6 +12,8 @@ import { buildEditorialNote } from '@/lib/seo/editorial';
 import { discountPercent, formatPercent, formatPrice, formatCount, formatDate, LEVEL_LABELS } from '@/lib/format';
 import { SITE_NAME, siteUrl } from '@/lib/site';
 
+const getCourse = cache(getCourseWithFullDetails);
+
 interface Props {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ src?: string }>;
@@ -18,7 +21,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const course = await getCourseWithFullDetails(slug);
+  const course = await getCourse(slug);
 
   if (!course) {
     return { title: 'Course not found' };
@@ -48,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CourseDetailPage({ params, searchParams }: Props) {
   const { slug } = await params;
   const { src } = await searchParams;
-  const course = await getCourseWithFullDetails(slug);
+  const course = await getCourse(slug);
 
   if (!course) notFound();
 

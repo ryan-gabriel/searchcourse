@@ -24,6 +24,12 @@ export function SiteFooter() {
           <Link href="/roadmaps" className="focus-ring text-secondary-foreground/75 hover:text-secondary-foreground">
             Roadmaps
           </Link>
+          <Link href="/categories" className="focus-ring text-secondary-foreground/75 hover:text-secondary-foreground">
+            Categories
+          </Link>
+          <Link href="/platforms" className="focus-ring text-secondary-foreground/75 hover:text-secondary-foreground">
+            Platforms
+          </Link>
           <Link href="/about" className="focus-ring text-secondary-foreground/75 hover:text-secondary-foreground">
             About
           </Link>

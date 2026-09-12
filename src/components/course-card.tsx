@@ -23,7 +23,7 @@ export interface CourseCardCourse {
   } | null;
 }
 
-export function CourseCard({ course }: { course: CourseCardCourse }) {
+export function CourseCard({ course, priority = false }: { course: CourseCardCourse; priority?: boolean }) {
   const discounted = course.activeCoupon ? course.activeCoupon.finalPrice < course.originalPrice : false;
   const savings = course.activeCoupon
     ? discountPercent(course.originalPrice, course.activeCoupon.finalPrice)
@@ -33,7 +33,7 @@ export function CourseCard({ course }: { course: CourseCardCourse }) {
     <article className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-md focus-within:shadow-md">
       <Link href={`/courses/${course.slug}`} className="focus-ring" aria-label={course.title}>
         <div className="relative aspect-video overflow-hidden bg-muted">
-          <CourseThumb src={course.thumbnailUrl} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
+          <CourseThumb src={course.thumbnailUrl} priority={priority} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
           {discounted ? (
             <span className="absolute left-3 top-3 rounded-sm bg-accent px-2 py-1 text-xs font-semibold text-accent-foreground">
               {course.activeCoupon!.finalPrice === 0 ? 'Free' : `${formatPercent(savings)} off`}

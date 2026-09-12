@@ -26,20 +26,52 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority: 0.8,
         },
         {
+            url: `${baseUrl}/categories`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.7,
+        },
+        {
+            url: `${baseUrl}/platforms`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.7,
+        },
+        {
             url: `${baseUrl}/about`,
             lastModified: new Date(),
             changeFrequency: 'monthly',
             priority: 0.5,
         },
+        {
+            url: `${baseUrl}/privacy`,
+            lastModified: new Date(),
+            changeFrequency: 'yearly',
+            priority: 0.3,
+        },
+        {
+            url: `${baseUrl}/terms`,
+            lastModified: new Date(),
+            changeFrequency: 'yearly',
+            priority: 0.3,
+        },
     ];
 
-    const [courses, roadmaps] = await Promise.all([
+    const [courses, roadmaps, categories, platforms] = await Promise.all([
         prisma.course.findMany({
             where: { isActive: true },
             select: { slug: true, updatedAt: true },
         }),
         prisma.roadmap.findMany({
             where: { isActive: true, steps: { some: {} } },
+            select: { slug: true, updatedAt: true },
+        }),
+        prisma.category.findMany({
+            where: { courses: { some: { isActive: true } } },
+            select: { slug: true, updatedAt: true },
+        }),
+        prisma.platform.findMany({
+            where: { isActive: true, courses: { some: { isActive: true } } },
             select: { slug: true, updatedAt: true },
         }),
     ]);
@@ -58,5 +90,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.7,
     }));
 
-    return [...staticPages, ...coursePages, ...roadmapPages];
+    const categoryPages: MetadataRoute.Sitemap = categories.map((category) => ({
+        url: `${baseUrl}/categories/${category.slug}`,
+        lastModified: category.updatedAt,
+        changeFrequency: 'daily' as const,
+        priority: 0.6,
+    }));
+
+    const platformPages: MetadataRoute.Sitemap = platforms.map((platform) => ({
+        url: `${baseUrl}/platforms/${platform.slug}`,
+        lastModified: platform.updatedAt,
+        changeFrequency: 'daily' as const,
+        priority: 0.6,
+    }));
+
+    return [
+        ...staticPages,
+        ...coursePages,
+        ...roadmapPages,
+        ...categoryPages,
+        ...platformPages,
+    ];
 }
