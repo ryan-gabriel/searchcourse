@@ -58,6 +58,12 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
   const discounted = course.activeCoupon ? course.activeCoupon.finalPrice < course.originalPrice : false;
   const savings = course.activeCoupon ? discountPercent(course.originalPrice, course.activeCoupon.finalPrice) : 0;
   const srcQuery = src === 'tg' ? '?src=tg' : '?src=web';
+  const dealLabel =
+    discounted && course.activeCoupon
+      ? course.activeCoupon.finalPrice === 0
+        ? 'Free'
+        : formatPrice(course.activeCoupon.finalPrice, course.currency)
+      : formatPrice(course.originalPrice, course.currency);
 
   const jsonLd = [
     buildCourseSchema({
@@ -103,7 +109,7 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <Container className="py-10 sm:py-14">
+      <Container className="pt-10 pb-28 sm:py-14">
         <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
           <ol className="flex flex-wrap items-center gap-1">
             <li><Link href="/" className="focus-ring hover:underline">Home</Link></li>
@@ -214,12 +220,15 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
                 )}
               </div>
 
-              <LinkButton href={`/api/out/${course.id}${srcQuery}`} size="lg" className="mt-6 w-full">
-                Get this deal
-              </LinkButton>
-              <p className="mt-3 text-center text-xs text-muted-foreground">
-                You&apos;ll be redirected to {course.platform.name}. We may earn a commission at no extra cost to you.
-              </p>
+              <div className="hidden lg:block">
+                <LinkButton href={`/api/out/${course.id}${srcQuery}`} size="lg" className="mt-6 w-full">
+                  Get this deal
+                </LinkButton>
+                <p className="mt-3 text-center text-xs text-muted-foreground">
+                  You&apos;ll be redirected to {course.platform.name}. We may earn a commission at no extra cost to
+                  you.
+                </p>
+              </div>
 
               <TelegramCTA variant="inline" source="course" />
 
@@ -254,6 +263,21 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
           </aside>
         </div>
       </Container>
+
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card lg:hidden">
+        <Container className="flex items-center gap-3 py-3">
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Current deal
+            </p>
+            <p className="truncate text-lg font-bold leading-tight text-accent">{dealLabel}</p>
+          </div>
+          <LinkButton href={`/api/out/${course.id}${srcQuery}`} className="shrink-0 px-6">
+            Get this deal
+          </LinkButton>
+        </Container>
+        <div className="h-[env(safe-area-inset-bottom)]" aria-hidden="true" />
+      </div>
     </>
   );
 }
