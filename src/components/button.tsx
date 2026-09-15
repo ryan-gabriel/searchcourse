@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from 'react';
 
-const base = 'inline-flex items-center justify-center gap-2 rounded-md border text-sm font-medium transition-colors focus-ring';
+const base = 'inline-flex items-center justify-center gap-2 rounded-md border text-sm font-medium transition-[color,background-color,border-color,transform] duration-200 focus-ring active:scale-[0.98]';
 const variants = {
   primary: 'border-transparent bg-accent text-accent-foreground hover:bg-accent/90',
   secondary: 'border-border bg-card text-foreground hover:bg-muted',

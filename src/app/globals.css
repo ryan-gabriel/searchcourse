@@ -3,20 +3,21 @@
 @theme {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+  --font-display: var(--font-source-serif), ui-serif, Georgia, serif;
 
-  --color-background: #f3f4f6;
-  --color-foreground: #14181c;
+  --color-background: #f5f2ec;
+  --color-foreground: #201c16;
   --color-card: #ffffff;
-  --color-muted: #e5e7eb;
-  --color-muted-foreground: #4b5563;
-  --color-border: #d1d5db;
-  --color-accent: #cb0b0a;
+  --color-muted: #eae5db;
+  --color-muted-foreground: #5a534a;
+  --color-border: #d8d1c4;
+  --color-accent: #b45309;
   --color-accent-foreground: #ffffff;
-  --color-ring: #cb0b0a;
-  --color-destructive: #8e0413;
-  --color-secondary: #004733;
-  --color-secondary-foreground: #ffffff;
-  --color-support: #568d66;
+  --color-ring: #b45309;
+  --color-destructive: #a62a1e;
+  --color-secondary: #12303f;
+  --color-secondary-foreground: #fffdf8;
+  --color-support: #8a6d3b;
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -34,6 +35,14 @@
     font-family: var(--font-sans);
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
   }
 
   ::selection {

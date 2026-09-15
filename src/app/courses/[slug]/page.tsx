@@ -126,7 +126,7 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
               {course.instructorName ? <span>by {course.instructorName}</span> : null}
               {typeof course.rating === 'number' && course.rating > 0 ? (
                 <span className="inline-flex items-center gap-1 text-foreground">
-                  <Star className="h-4 w-4 fill-destructive text-destructive" aria-hidden="true" />
+                  <Star className="h-4 w-4 fill-accent text-accent" aria-hidden="true" />
                   {course.rating.toFixed(1)}
                   {course.reviewCount > 0 ? ` (${formatCount(course.reviewCount)} reviews)` : ''}
                 </span>
@@ -165,7 +165,7 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
                 {discounted && course.activeCoupon ? (
                   <div className="flex items-baseline gap-2">
                     {course.activeCoupon.finalPrice === 0 ? (
-                      <span className="text-4xl font-bold tracking-tight text-secondary">Free</span>
+                      <span className="text-4xl font-bold tracking-tight text-accent">Free</span>
                     ) : (
                       <span className="text-4xl font-bold tracking-tight text-accent">
                         {formatPrice(course.activeCoupon.finalPrice, course.currency)}

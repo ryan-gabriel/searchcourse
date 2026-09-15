@@ -1,10 +1,18 @@
 import type { Metadata } from 'next';
 import { GeistSans } from 'geist/font/sans';
+import { Source_Serif_4 } from 'next/font/google';
 import './globals.css';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { TelegramCTA } from '@/components/telegram-cta';
 import { SITE_NAME, SITE_TAGLINE, siteUrl } from '@/lib/site';
+
+const SourceSerif4 = Source_Serif_4({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  variable: '--font-source-serif',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
@@ -46,7 +54,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={GeistSans.variable}>
+    <html lang="en" className={`${GeistSans.variable} ${SourceSerif4.variable}`}>
       <body className="flex min-h-screen flex-col">
         <a
           href="#main"
