@@ -1,27 +1,10 @@
 import { z } from "zod";
 import { httpUrlOptionalSchema, httpUrlSchema } from "@/lib/url";
 
-export const CourseLevelEnum = z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED", "ALL_LEVELS"]);
-export type CourseLevel = z.infer<typeof CourseLevelEnum>;
-
 export const CourseLearningOutcomeSchema = z.object({
   id: z.string().cuid().optional(),
   text: z.string().min(1).max(500),
   sortOrder: z.number().int().default(0),
-});
-
-export const CourseSyllabusItemSchema = z.object({
-  id: z.string().cuid().optional(),
-  title: z.string().min(1).max(500),
-  sortOrder: z.number().int().default(0),
-});
-
-export const CourseSyllabusSectionSchema = z.object({
-  id: z.string().cuid().optional(),
-  title: z.string().min(1).max(500),
-  duration: z.string().max(100).optional(),
-  sortOrder: z.number().int().default(0),
-  items: z.array(CourseSyllabusItemSchema).max(500).default([]),
 });
 
 export const CourseOutcomeUpdateSchema = z.object({
@@ -31,23 +14,10 @@ export const CourseOutcomeUpdateSchema = z.object({
   })).max(500),
 });
 
-export const CourseSyllabusUpdateSchema = z.object({
-  sections: z.array(z.object({
-    title: z.string().min(1).max(500),
-    duration: z.string().max(100).optional(),
-    sortOrder: z.number().int(),
-    items: z.array(z.object({
-      title: z.string().min(1).max(500),
-      sortOrder: z.number().int(),
-    })).max(500),
-  })).max(500),
-});
-
 export const CourseSearchSchema = z.object({
   query: z.string().max(200).optional(),
   platform: z.string().max(100).optional(),
   category: z.string().max(100).optional(),
-  level: CourseLevelEnum.optional(),
   minRating: z.number().min(0).max(5).optional(),
   maxPrice: z.number().min(0).optional(),
   hasDiscount: z.boolean().optional(),
@@ -64,20 +34,16 @@ export const CourseCreateSchema = z.object({
   title: z.string().min(3).max(200),
   slug: z.string().regex(/^[a-z0-9-]+$/),
   description: z.string().max(10000).optional().nullable(),
-  shortDescription: z.string().max(320).optional().nullable(),
   headline: z.string().max(500).optional().nullable(),
   language: z.string().max(50).optional().nullable(),
   instructorName: z.string().max(100).optional().nullable(),
-  instructorBio: z.string().max(5000).optional().nullable(),
   thumbnailUrl: httpUrlOptionalSchema,
   originalPrice: z.number().min(0),
   currency: z.string().length(3).default("USD"),
-  level: CourseLevelEnum.default("ALL_LEVELS"),
   rating: z.number().min(0).max(5).optional().nullable(),
   reviewCount: z.number().int().min(0).default(0),
   studentCount: z.number().int().min(0).default(0),
   duration: z.string().max(20).optional().nullable(),
-  lectureCount: z.number().int().min(0).optional().nullable(),
   directUrl: httpUrlSchema,
   affiliateUrl: httpUrlOptionalSchema,
   isActive: z.boolean().default(true),

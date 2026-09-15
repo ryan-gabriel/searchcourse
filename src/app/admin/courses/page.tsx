@@ -6,7 +6,7 @@ import { buttonClass, LinkButton } from '@/components/button';
 import { Pagination } from '@/components/pagination';
 import { EmptyState } from '@/components/states';
 import { CourseForm } from '@/components/admin/course-form';
-import { formatPrice, LEVEL_LABELS } from '@/lib/format';
+import { formatPrice } from '@/lib/format';
 
 export const metadata: Metadata = {
   title: 'Courses',
@@ -95,9 +95,6 @@ export default async function AdminCoursesPage({
                   Rating
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium text-muted-foreground">
-                  Level
-                </th>
-                <th scope="col" className="px-4 py-3 font-medium text-muted-foreground">
                   Active
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium text-muted-foreground">
@@ -128,7 +125,6 @@ export default async function AdminCoursesPage({
                     )}
                   </td>
                   <td className="px-4 py-3">{course.rating != null ? Number(course.rating).toFixed(1) : 'N/A'}</td>
-                  <td className="px-4 py-3">{LEVEL_LABELS[course.level] ?? course.level}</td>
                   <td className="px-4 py-3">
                     <span className="rounded-sm bg-muted px-2 py-0.5 text-xs">{course.isActive ? 'Yes' : 'No'}</span>
                   </td>

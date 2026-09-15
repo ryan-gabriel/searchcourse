@@ -17,7 +17,6 @@ export const GET = withAdmin(async (request: NextRequest) => {
         query: searchParams.get('query') || undefined,
         platform: searchParams.get('platform') || undefined,
         category: searchParams.get('category') || undefined,
-        level: searchParams.get('level') || undefined,
         page: searchParams.get('page') || 1,
         limit: searchParams.get('limit') || 12,
     });

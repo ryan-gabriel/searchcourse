@@ -18,17 +18,14 @@ export interface CourseWithDetails {
     title: string;
     slug: string;
     description: string | null;
-    shortDescription: string | null;
     instructorName: string | null;
     thumbnailUrl: string | null;
     originalPrice: number;
     currency: string;
-    level: string;
     rating: number | null;
     reviewCount: number;
     studentCount: number;
     duration: string | null;
-    lectureCount: number | null;
     directUrl: string;
     affiliateUrl: string | null;
     isActive: boolean;
@@ -86,7 +83,6 @@ export async function searchCourses(
         query,
         platform,   // slug-based for SEO
         category,   // slug-based for SEO
-        level,
         minRating,
         maxPrice,
         hasDiscount,
@@ -114,7 +110,6 @@ export async function searchCourses(
     // Use slug-based filtering via relations
     if (platform) where.platform = { slug: platform };
     if (category) where.category = { slug: category };
-    if (level) where.level = level;
     if (minRating) where.rating = { gte: minRating };
     if (isFeatured !== undefined) where.isFeatured = isFeatured;
     if (isPosted !== undefined) where.isPosted = isPosted;
@@ -186,17 +181,14 @@ export async function searchCourses(
         title: course.title,
         slug: course.slug,
         description: course.description,
-        shortDescription: course.shortDescription,
         instructorName: course.instructorName,
         thumbnailUrl: course.thumbnailUrl,
         originalPrice: Number(course.originalPrice),
         currency: course.currency,
-        level: course.level,
         rating: course.rating ? Number(course.rating) : null,
         reviewCount: course.reviewCount,
         studentCount: course.studentCount,
         duration: course.duration,
-        lectureCount: course.lectureCount,
         directUrl: course.directUrl,
         affiliateUrl: course.affiliateUrl,
         isActive: course.isActive,
@@ -269,17 +261,14 @@ export async function getCourseBySlug(
         title: course.title,
         slug: course.slug,
         description: course.description,
-        shortDescription: course.shortDescription,
         instructorName: course.instructorName,
         thumbnailUrl: course.thumbnailUrl,
         originalPrice: Number(course.originalPrice),
         currency: course.currency,
-        level: course.level,
         rating: course.rating ? Number(course.rating) : null,
         reviewCount: course.reviewCount,
         studentCount: course.studentCount,
         duration: course.duration,
-        lectureCount: course.lectureCount,
         directUrl: course.directUrl,
         affiliateUrl: course.affiliateUrl,
         isActive: course.isActive,
@@ -334,7 +323,7 @@ export async function getCourseById(id: string) {
 
 /**
  * Get course content for the admin content editor
- * Includes learning outcomes and syllabus sections
+ * Includes learning outcomes
  */
 export async function getCourseContent(id: string) {
     return prisma.course.findUnique({
@@ -346,15 +335,6 @@ export async function getCourseContent(id: string) {
             learningOutcomes: {
                 orderBy: { sortOrder: 'asc' },
                 select: { id: true, text: true, sortOrder: true },
-            },
-            syllabusSections: {
-                orderBy: { sortOrder: 'asc' },
-                include: {
-                    items: {
-                        orderBy: { sortOrder: 'asc' },
-                        select: { id: true, title: true, sortOrder: true },
-                    },
-                },
             },
         },
     });
@@ -388,7 +368,7 @@ export async function getTopDiscountCourses(limit: number = 8) {
 
 /**
  * Get course with full details (for course detail page)
- * Includes learning outcomes and syllabus sections
+ * Includes learning outcomes
  */
 export interface CourseLearningOutcomeDTO {
     id: string;
@@ -396,18 +376,8 @@ export interface CourseLearningOutcomeDTO {
     sortOrder: number;
 }
 
-export interface CourseSyllabusSectionDTO {
-    id: string;
-    title: string;
-    duration: string | null;
-    sortOrder: number;
-    items: { id: string; title: string; sortOrder: number }[];
-}
-
 export interface CourseFullDetails extends CourseWithDetails {
-    instructorBio: string | null;
     learningOutcomes: CourseLearningOutcomeDTO[];
-    syllabusSections: CourseSyllabusSectionDTO[];
 }
 
 export async function getCourseWithFullDetails(
@@ -432,15 +402,6 @@ export async function getCourseWithFullDetails(
             orderBy: { sortOrder: 'asc' },
             select: { id: true, text: true, sortOrder: true },
         },
-        syllabusSections: {
-            orderBy: { sortOrder: 'asc' },
-            include: {
-                items: {
-                    orderBy: { sortOrder: 'asc' },
-                    select: { id: true, title: true, sortOrder: true },
-                },
-            },
-        },
     } satisfies Prisma.CourseInclude;
 
     const course = await prisma.course.findUnique({
@@ -450,17 +411,9 @@ export async function getCourseWithFullDetails(
 
     if (!course) return null;
 
-    // Type for the extended course with learning outcomes and syllabus
+    // Type for the extended course with learning outcomes
     type CourseWithExtendedDetails = typeof course & {
-        instructorBio: string | null;
         learningOutcomes: CourseLearningOutcomeDTO[];
-        syllabusSections: ({
-            id: string;
-            title: string;
-            duration: string | null;
-            sortOrder: number;
-            items: { id: string; title: string; sortOrder: number }[];
-        })[];
     };
     const extendedCourse = course as CourseWithExtendedDetails;
 
@@ -469,18 +422,14 @@ export async function getCourseWithFullDetails(
         title: extendedCourse.title,
         slug: extendedCourse.slug,
         description: extendedCourse.description,
-        shortDescription: extendedCourse.shortDescription,
         instructorName: extendedCourse.instructorName,
-        instructorBio: extendedCourse.instructorBio,
         thumbnailUrl: extendedCourse.thumbnailUrl,
         originalPrice: Number(extendedCourse.originalPrice),
         currency: extendedCourse.currency,
-        level: extendedCourse.level,
         rating: extendedCourse.rating ? Number(extendedCourse.rating) : null,
         reviewCount: extendedCourse.reviewCount,
         studentCount: extendedCourse.studentCount,
         duration: extendedCourse.duration,
-        lectureCount: extendedCourse.lectureCount,
         directUrl: extendedCourse.directUrl,
         affiliateUrl: extendedCourse.affiliateUrl,
         isActive: extendedCourse.isActive,
@@ -504,13 +453,6 @@ export async function getCourseWithFullDetails(
             }
             : null,
         learningOutcomes: extendedCourse.learningOutcomes,
-        syllabusSections: (extendedCourse.syllabusSections || []).map((section) => ({
-            id: section.id,
-            title: section.title,
-            duration: section.duration,
-            sortOrder: section.sortOrder,
-            items: section.items,
-        })),
     };
 }
 
@@ -573,49 +515,5 @@ export async function updateCourseLearningOutcomes(
         }
 
         return tx.courseLearningOutcome.findMany({ where: { courseId }, orderBy: { sortOrder: 'asc' } });
-    });
-}
-
-/**
- * Update course syllabus (Full Replace)
- */
-export async function updateCourseSyllabus(
-    courseId: string,
-    sections: {
-        title: string;
-        duration?: string;
-        sortOrder: number;
-        items: { title: string; sortOrder: number }[];
-    }[]
-) {
-    return prisma.$transaction(async (tx) => {
-        await tx.courseSyllabusSection.deleteMany({
-            where: { courseId },
-        });
-
-        for (const section of sections) {
-            await tx.courseSyllabusSection.create({
-                data: {
-                    courseId,
-                    title: section.title,
-                    duration: section.duration,
-                    sortOrder: section.sortOrder,
-                    items: {
-                        createMany: {
-                            data: section.items.map((item) => ({
-                                title: item.title,
-                                sortOrder: item.sortOrder,
-                            })),
-                        },
-                    },
-                },
-            });
-        }
-
-        return tx.courseSyllabusSection.findMany({
-            where: { courseId },
-            include: { items: { orderBy: { sortOrder: 'asc' } } },
-            orderBy: { sortOrder: 'asc' }
-        });
     });
 }

@@ -5,8 +5,7 @@
  * Keeps reference/curated tables: Category, Platform, Roadmap, SiteSettings.
  *
  * Deletes in dependency order (FK-safe):
- *   CourseSyllabusItem -> CourseSyllabusSection -> CourseLearningOutcome
- *   -> RoadmapStep -> ClickEvent -> Coupon -> Course
+ *   CourseLearningOutcome -> RoadmapStep -> ClickEvent -> Coupon -> Course
  *
  * SAFETY GUARDS (required to run):
  * - Must NOT be NODE_ENV=production (blocked by default).
@@ -36,8 +35,6 @@ async function main() {
 
     try {
         const steps: { label: string; run: () => Promise<{ count: number }> }[] = [
-            { label: 'CourseSyllabusItem',   run: () => prisma.courseSyllabusItem.deleteMany() },
-            { label: 'CourseSyllabusSection', run: () => prisma.courseSyllabusSection.deleteMany() },
             { label: 'CourseLearningOutcome', run: () => prisma.courseLearningOutcome.deleteMany() },
             { label: 'RoadmapStep',           run: () => prisma.roadmapStep.deleteMany() },
             { label: 'ClickEvent',            run: () => prisma.clickEvent.deleteMany() },

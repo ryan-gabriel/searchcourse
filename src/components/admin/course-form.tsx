@@ -146,16 +146,8 @@ export function CourseForm({ platforms, categories }: Props) {
       </fieldset>
 
       <fieldset className="rounded-lg border border-border p-5">
-        <legend className="px-2 text-sm font-medium">Level and language</legend>
+        <legend className="px-2 text-sm font-medium">Language</legend>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Level" htmlFor="course-level">
-            <select id="course-level" name="level" defaultValue="ALL_LEVELS" className={inputClass}>
-              <option value="BEGINNER">Beginner</option>
-              <option value="INTERMEDIATE">Intermediate</option>
-              <option value="ADVANCED">Advanced</option>
-              <option value="ALL_LEVELS">All levels</option>
-            </select>
-          </Field>
           <Field label="Language" htmlFor="course-language">
             <input id="course-language" name="language" defaultValue="English" maxLength={50} className={inputClass} />
           </Field>
@@ -170,12 +162,6 @@ export function CourseForm({ platforms, categories }: Props) {
           </Field>
           <Field label="Instructor" htmlFor="course-instructor">
             <input id="course-instructor" name="instructorName" maxLength={100} className={inputClass} />
-          </Field>
-          <Field label="Short description" htmlFor="course-short" hint="Used in search results and metadata.">
-            <textarea id="course-short" name="shortDescription" rows={2} maxLength={320} className={inputClass} />
-          </Field>
-          <Field label="Instructor bio" htmlFor="course-bio">
-            <textarea id="course-bio" name="instructorBio" rows={2} maxLength={5000} className={inputClass} />
           </Field>
         </div>
         <div className="mt-4">
@@ -205,9 +191,6 @@ export function CourseForm({ platforms, categories }: Props) {
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Duration" htmlFor="course-duration">
             <input id="course-duration" name="duration" maxLength={20} className={inputClass} placeholder="12h 30m" />
-          </Field>
-          <Field label="Lecture count" htmlFor="course-lectures">
-            <input id="course-lectures" name="lectureCount" type="number" min={0} className={inputClass} />
           </Field>
           <Field label="Review count" htmlFor="course-reviews">
             <input id="course-reviews" name="reviewCount" type="number" min={0} defaultValue={0} className={inputClass} />
@@ -293,18 +276,14 @@ function buildPayload(form: HTMLFormElement): Record<string, unknown> {
     categoryId: optionalText('categoryId'),
     originalPrice: number('originalPrice', 0),
     currency: text('currency').toUpperCase() || 'USD',
-    level: text('level') || 'ALL_LEVELS',
-    shortDescription: optionalText('shortDescription'),
     description: optionalText('description'),
     headline: optionalText('headline'),
     instructorName: optionalText('instructorName'),
-    instructorBio: optionalText('instructorBio'),
     language: optionalText('language'),
     thumbnailUrl: optionalText('thumbnailUrl'),
     directUrl: text('directUrl'),
     affiliateUrl: optionalText('affiliateUrl'),
     duration: optionalText('duration'),
-    lectureCount: optionalNumber('lectureCount'),
     reviewCount: number('reviewCount', 0),
     studentCount: number('studentCount', 0),
     rating: optionalNumber('rating'),

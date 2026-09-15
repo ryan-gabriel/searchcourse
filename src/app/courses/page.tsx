@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Container } from '@/components/container';
 import { CourseCard } from '@/components/course-card';
 import { EmptyState } from '@/components/states';
@@ -22,10 +23,17 @@ async function getSearchParams(searchParams: Promise<Record<string, string | str
     query: firstString(awaited.query),
     category: firstString(awaited.category),
     platform: firstString(awaited.platform),
-    level: firstString(awaited.level),
+    minRating: firstString(awaited.minRating),
+    maxPrice: firstString(awaited.maxPrice),
     sortBy: firstString(awaited.sortBy),
     page: firstString(awaited.page),
   };
+}
+
+function toNumber(value: string | undefined): number | undefined {
+  if (!value) return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
 }
 
 export async function generateMetadata({
@@ -39,7 +47,7 @@ export async function generateMetadata({
   return {
     title: 'Courses',
     description:
-      'Browse verified online course deals and discounts. Filter by category, platform, and level to find the best value courses.',
+      'Browse verified online course deals and discounts. Filter by category, rating, and price to find the best value courses.',
     alternates: { canonical: decision.canonicalUrl },
     robots: decision.noindex ? { index: false, follow: true } : { index: true, follow: true },
   };
@@ -56,7 +64,8 @@ export default async function CoursesPage({
     query: params.query,
     category: params.category,
     platform: params.platform,
-    level: params.level,
+    minRating: toNumber(params.minRating),
+    maxPrice: toNumber(params.maxPrice),
     sortBy: params.sortBy ?? 'date',
     sortOrder: 'desc',
     page: params.page ?? '1',
@@ -77,7 +86,13 @@ export default async function CoursesPage({
     }))
   );
 
-  const hasActiveFilters = Boolean(search.query || search.category || search.platform || search.level);
+  const hasActiveFilters = Boolean(
+    search.query || search.category || search.platform || search.minRating || search.maxPrice
+  );
+
+  const activeCategory = search.category
+    ? categories.find((c) => c.slug === search.category)
+    : null;
 
   return (
     <>
@@ -94,7 +109,7 @@ export default async function CoursesPage({
           </p>
         </header>
 
-        <form method="get" action="/courses" className="mb-8 flex flex-wrap items-center gap-3">
+        <form method="get" action="/courses" className="mb-6 flex flex-wrap items-center gap-3">
           <label className="sr-only" htmlFor="query">Search courses</label>
           <input
             id="query"
@@ -122,14 +137,22 @@ export default async function CoursesPage({
               options={platforms.map((p) => ({ value: p.slug, label: p.name }))}
             />
             <AutoSubmitSelect
-              name="level"
-              label="Level"
-              defaultValue={search.level ?? ''}
+              name="minRating"
+              label="Rating"
+              defaultValue={search.minRating ? String(search.minRating) : ''}
               options={[
-                { value: 'BEGINNER', label: 'Beginner' },
-                { value: 'INTERMEDIATE', label: 'Intermediate' },
-                { value: 'ADVANCED', label: 'Advanced' },
-                { value: 'ALL_LEVELS', label: 'All levels' },
+                { value: '4.5', label: '4.5 and up' },
+                { value: '4', label: '4.0 and up' },
+              ]}
+            />
+            <AutoSubmitSelect
+              name="maxPrice"
+              label="Price"
+              defaultValue={search.maxPrice !== undefined ? String(search.maxPrice) : ''}
+              options={[
+                { value: '0', label: 'Free' },
+                { value: '25', label: 'Under $25' },
+                { value: '50', label: 'Under $50' },
               ]}
             />
             <AutoSubmitSelect
@@ -147,8 +170,65 @@ export default async function CoursesPage({
           </div>
         </form>
 
+        {categories.length ? (
+          <nav aria-label="Categories" className="mb-8">
+            <ul className="flex flex-wrap items-center gap-2">
+              <li>
+                <Link
+                  href="/courses"
+                  aria-current={search.category ? undefined : 'page'}
+                  className={`focus-ring rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                    search.category
+                      ? 'border-border bg-card text-muted-foreground hover:bg-muted'
+                      : 'border-accent bg-accent text-accent-foreground'
+                  }`}
+                >
+                  All
+                </Link>
+              </li>
+              {categories.slice(0, 12).map((category) => {
+                const active = search.category === category.slug;
+                const href = `/courses?category=${category.slug}`;
+                return (
+                  <li key={category.id}>
+                    <Link
+                      href={href}
+                      aria-current={active ? 'page' : undefined}
+                      className={`focus-ring rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                        active
+                          ? 'border-accent bg-accent text-accent-foreground'
+                          : 'border-border bg-card text-muted-foreground hover:bg-muted'
+                      }`}
+                    >
+                      {category.name}{' '}
+                      <span className="opacity-70">({category._count.courses})</span>
+                    </Link>
+                  </li>
+                );
+              })}
+              {activeCategory && search.category ? (
+                <li>
+                  <Link
+                    href={`/courses?category=${activeCategory.slug}`}
+                    className="focus-ring rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground hover:bg-muted"
+                  >
+                    Show all {activeCategory.name} ({activeCategory._count.courses})
+                  </Link>
+                </li>
+              ) : null}
+            </ul>
+          </nav>
+        ) : null}
+
         {result.data.length ? (
           <>
+            {hasActiveFilters ? (
+              <div className="mb-6">
+                <Link href="/courses" className="focus-ring text-sm font-medium text-accent hover:underline">
+                  Clear filters
+                </Link>
+              </div>
+            ) : null}
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {result.data.map((course, i) => <CourseCard key={course.id} course={course} priority={i < 3} />)}
             </div>
@@ -170,7 +250,8 @@ function buildPageHref(search: Record<string, unknown>, page: number): string {
   if (search.query) params.set('query', String(search.query));
   if (search.category) params.set('category', String(search.category));
   if (search.platform) params.set('platform', String(search.platform));
-  if (search.level) params.set('level', String(search.level));
+  if (search.minRating) params.set('minRating', String(search.minRating));
+  if (search.maxPrice !== undefined && search.maxPrice !== '') params.set('maxPrice', String(search.maxPrice));
   if (search.sortBy && search.sortBy !== 'date') params.set('sortBy', String(search.sortBy));
   if (page > 1) params.set('page', String(page));
   const qs = params.toString();

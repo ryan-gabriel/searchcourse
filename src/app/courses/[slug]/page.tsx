@@ -9,7 +9,7 @@ import { TelegramCTA } from '@/components/telegram-cta';
 import { getCourseWithFullDetails } from '@/services';
 import { buildCourseSchema, buildBreadcrumbSchema } from '@/lib/seo/schema';
 import { buildEditorialNote } from '@/lib/seo/editorial';
-import { discountPercent, formatPercent, formatPrice, formatCount, formatDate, LEVEL_LABELS } from '@/lib/format';
+import { discountPercent, formatPercent, formatPrice, formatCount, formatDate } from '@/lib/format';
 import { SITE_NAME, siteUrl } from '@/lib/site';
 
 const getCourse = cache(getCourseWithFullDetails);
@@ -28,7 +28,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const description =
-    course.shortDescription ||
     course.headline ||
     `${course.title} by ${course.instructorName ?? 'a professional instructor'} on ${course.platform.name}. See the current verified deal on SearchCourse.`;
 
@@ -100,8 +99,6 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
 
   const facts = [
     { label: 'Duration', value: course.duration ?? 'See platform' },
-    { label: 'Lectures', value: course.lectureCount ? formatCount(course.lectureCount) : 'See platform' },
-    { label: 'Level', value: LEVEL_LABELS[course.level] ?? course.level },
     { label: 'Language', value: course.language ?? 'English' },
   ];
 
@@ -156,31 +153,6 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
                     </li>
                   ))}
                 </ul>
-              </section>
-            ) : null}
-
-            {course.syllabusSections.length ? (
-              <section className="mt-10" aria-labelledby="syllabus-title">
-                <h2 id="syllabus-title" className="text-xl font-semibold tracking-tight">Course content</h2>
-                <ol className="mt-4 space-y-2">
-                  {course.syllabusSections.map((section) => (
-                    <li key={section.id} className="rounded-lg border border-border bg-card p-4">
-                      <div className="flex items-center justify-between gap-4">
-                        <h3 className="font-medium">{section.title}</h3>
-                        {section.duration ? (
-                          <span className="shrink-0 text-sm text-muted-foreground">{section.duration}</span>
-                        ) : null}
-                      </div>
-                      {section.items.length ? (
-                        <ul className="mt-3 space-y-1 border-t border-border pt-3 text-sm text-muted-foreground">
-                          {section.items.map((item) => (
-                            <li key={item.id}>{item.title}</li>
-                          ))}
-                        </ul>
-                      ) : null}
-                    </li>
-                  ))}
-                </ol>
               </section>
             ) : null}
           </div>
@@ -245,7 +217,6 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
                   <div key={fact.label} className="flex items-center justify-between gap-3">
                     <dt className="inline-flex items-center gap-2 text-muted-foreground">
                       {fact.label === 'Duration' ? <Clock className="h-4 w-4" aria-hidden="true" /> : null}
-                      {fact.label === 'Lectures' ? <BadgePercent className="h-4 w-4" aria-hidden="true" /> : null}
                       {fact.label}
                     </dt>
                     <dd className="font-medium">{fact.value}</dd>

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Star } from 'lucide-react';
 import { CourseThumb } from '@/components/course-thumb';
-import { discountPercent, formatPercent, formatPrice, formatStudents, LEVEL_LABELS } from '@/lib/format';
+import { discountPercent, formatPercent, formatPrice, formatStudents } from '@/lib/format';
 
 export interface CourseCardCourse {
   id: string;
@@ -11,7 +11,6 @@ export interface CourseCardCourse {
   instructorName: string | null;
   originalPrice: number;
   currency: string;
-  level: string;
   rating: number | null;
   reviewCount: number;
   studentCount: number;
@@ -64,7 +63,6 @@ export function CourseCard({ course, priority = false }: { course: CourseCardCou
             ) : (
               <span className="text-muted-foreground">{formatStudents(course.studentCount)} students</span>
             )}
-            <span className="text-muted-foreground">· {LEVEL_LABELS[course.level] ?? course.level}</span>
           </div>
         </div>
 
