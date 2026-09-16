@@ -6,6 +6,7 @@
 
 import { DASHBOARD, TIME } from '@/lib/constants';
 import prisma from '@/lib/prisma';
+import { activeCouponWhere } from '@/lib/prisma-helpers';
 
 // ============================================
 // TYPES
@@ -94,8 +95,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
         prisma.coupon.count(),
         prisma.coupon.count({
             where: {
-                isActive: true,
-                OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+                ...activeCouponWhere(),
             },
         }),
         prisma.coupon.count({

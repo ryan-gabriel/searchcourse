@@ -6,6 +6,7 @@
 
 import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
+import { activeCouponWhere } from '@/lib/prisma-helpers';
 import type {
     RoadmapSearchParams,
     RoadmapCreateInput,
@@ -172,10 +173,7 @@ export async function getRoadmapBySlug(
                                 select: { name: true, slug: true },
                             },
                             coupons: {
-                                where: {
-                                    isActive: true,
-                                    OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
-                                },
+                                where: activeCouponWhere(),
                                 orderBy: { discountValue: 'desc' },
                                 take: 1,
                             },

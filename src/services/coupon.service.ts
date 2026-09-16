@@ -6,6 +6,7 @@
 
 import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
+import { notExpiredCouponClause } from '@/lib/prisma-helpers';
 import type {
     CouponCreateInput,
     CouponUpdateInput,
@@ -75,10 +76,7 @@ export async function searchCoupons(params: CouponSearchParams) {
         if (isExpired) {
             where.expiresAt = { lt: new Date() };
         } else {
-            where.OR = [
-                { expiresAt: null },
-                { expiresAt: { gt: new Date() } },
-            ];
+            where.OR = notExpiredCouponClause();
         }
     }
 

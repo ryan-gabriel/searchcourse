@@ -7,6 +7,7 @@
 
 import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
+import { activeCouponWhere } from '@/lib/prisma-helpers';
 import type { CourseSearchParams, CourseCreateInput, CourseUpdateInput } from '@/validations';
 
 // ============================================
@@ -118,8 +119,7 @@ export async function searchCourses(
     if (maxPrice !== undefined || hasDiscount) {
         where.coupons = {
             some: {
-                isActive: true,
-                OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+                ...activeCouponWhere(),
                 ...(maxPrice !== undefined && { finalPrice: { lte: maxPrice } }),
             },
         };
@@ -163,10 +163,7 @@ export async function searchCourses(
                     select: { id: true, name: true, slug: true },
                 },
                 coupons: {
-                    where: {
-                        isActive: true,
-                        OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
-                    },
+                    where: activeCouponWhere(),
                     orderBy: { discountValue: 'desc' },
                     take: 1,
                 },
@@ -244,10 +241,7 @@ export async function getCourseBySlug(
                 select: { id: true, name: true, slug: true },
             },
             coupons: {
-                where: {
-                    isActive: true,
-                    OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
-                },
+                where: activeCouponWhere(),
                 orderBy: { discountValue: 'desc' },
                 take: 1,
             },
@@ -309,10 +303,7 @@ export async function getCourseById(id: string) {
             language: true,
             isPosted: true,
             coupons: {
-                where: {
-                    isActive: true,
-                    OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
-                },
+                where: activeCouponWhere(),
                 orderBy: { discountValue: 'desc' },
                 take: 1,
                 select: { code: true },
@@ -391,10 +382,7 @@ export async function getCourseWithFullDetails(
             select: { id: true, name: true, slug: true },
         },
         coupons: {
-            where: {
-                isActive: true,
-                OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
-            },
+            where: activeCouponWhere(),
             orderBy: { discountValue: 'desc' },
             take: 1,
         },
