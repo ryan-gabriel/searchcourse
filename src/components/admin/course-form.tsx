@@ -3,6 +3,7 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { buttonClass } from '@/components/button';
+import { inputClass } from '@/components/admin/simple-table';
 
 export type CourseFormOption = {
   id: string;
@@ -15,8 +16,6 @@ type Props = {
 };
 
 type Status = 'idle' | 'saving' | 'saved' | 'error';
-
-const inputClass = 'focus-ring w-full rounded-md border border-border bg-card px-4 py-2 text-sm';
 
 function Field({
   label,

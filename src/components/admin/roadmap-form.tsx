@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/button';
+import { inputClass } from '@/components/admin/simple-table';
 
 const levelOptions = [
   { value: 'BEGINNER', label: 'Beginner' },
@@ -17,9 +18,6 @@ const flagFields = [
   { name: 'hasFreeResources', label: 'Free resources' },
   { name: 'isShortPath', label: 'Short path' },
 ] as const;
-
-const inputClass =
-  'w-full rounded-md border border-border bg-card px-4 py-2 text-sm focus-ring';
 
 export function RoadmapForm() {
   const router = useRouter();
