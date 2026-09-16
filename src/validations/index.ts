@@ -5,3 +5,4 @@ export * from "./click.schema";
 export * from "./platform.schema";
 export * from "./category.schema";
 export * from "./settings.schema";
+export * from "./auth.schema";

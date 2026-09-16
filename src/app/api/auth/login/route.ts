@@ -11,16 +11,11 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { createSupabaseServerClient } from '@/lib/supabase';
+import { LoginSchema } from '@/validations';
 import { rateLimiters, getRateLimitHeaders, getClientIp } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
-
-const LoginSchema = z.object({
-  email: z.string().email().max(254),
-  password: z.string().min(1).max(1024),
-});
 
 export async function POST(request: NextRequest) {
   // Any JSON parse failure is a malformed request, not an auth attempt.

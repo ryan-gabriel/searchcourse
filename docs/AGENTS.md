@@ -26,7 +26,7 @@ Requires Node >= 22.
 - Path alias `@/*` → `src/*`.
 - Prisma 7 uses the `pg` driver adapter (`PrismaPg` in `src/lib/prisma.ts`), not the default engine. `DATABASE_URL` is read at runtime and configured in `prisma.config.ts`.
 - Jobs (`src/jobs/`, `src/jobs/scrapers/`) are self-contained tsx scripts AND mirrored as `CRON_SECRET`-guarded endpoints under `src/app/api/jobs/*`. Both entrypoints are valid; `SCRAPE_DRY_RUN=1` logs parsed items without writing to the DB.
-- Admin auth is Supabase Auth with an `is_admin` claim in `user_metadata` — there is intentionally no admin table.
+- Admin auth is Supabase Auth with an `is_admin` claim in `app_metadata` — there is intentionally no admin table.
 - SEO helpers live in `src/lib/seo/`.
 
 ## Gotchas

@@ -37,6 +37,16 @@ export const RoadmapStepUpdateSchema = RoadmapStepCreateSchema.partial().extend(
 });
 export type RoadmapStepUpdateInput = z.infer<typeof RoadmapStepUpdateSchema>;
 
+export const StepOrderSchema = z.object({
+  stepOrder: z.array(
+    z.object({
+      id: z.string().cuid(),
+      orderIndex: z.number().int().min(0),
+    })
+  ),
+});
+export type StepOrderInput = z.infer<typeof StepOrderSchema>;
+
 export const RoadmapSearchSchema = z.object({
   query: z.string().max(100).optional(),
   isActive: z.coerce.boolean().optional(),

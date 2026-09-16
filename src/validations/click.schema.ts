@@ -21,3 +21,9 @@ export const ClickAnalyticsSchema = z.object({
   groupBy: z.enum(["day", "week", "month", "source", "country"]).default("day"),
 });
 export type ClickAnalyticsParams = z.infer<typeof ClickAnalyticsSchema>;
+
+export const EventsSearchSchema = z.object({
+  page: z.coerce.number().int().min(1).max(1_000_000).default(1),
+  limit: z.coerce.number().int().min(1).max(200).default(20),
+});
+export type EventsSearchParams = z.infer<typeof EventsSearchSchema>;

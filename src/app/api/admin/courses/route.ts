@@ -13,7 +13,7 @@ import { withAdmin } from '@/lib/admin-route';
 export const GET = withAdmin(async (request: NextRequest) => {
     const { searchParams } = new URL(request.url);
 
-    const params = CourseSearchSchema.parse({
+    const parsed = CourseSearchSchema.safeParse({
         query: searchParams.get('query') || undefined,
         platform: searchParams.get('platform') || undefined,
         category: searchParams.get('category') || undefined,
@@ -21,7 +21,11 @@ export const GET = withAdmin(async (request: NextRequest) => {
         limit: searchParams.get('limit') || 12,
     });
 
-    const result = await searchCourses(params);
+    if (!parsed.success) {
+        return NextResponse.json({ error: parsed.error.message }, { status: 400 });
+    }
+
+    const result = await searchCourses(parsed.data);
     return NextResponse.json(result);
 }, 'Failed to fetch courses');
 

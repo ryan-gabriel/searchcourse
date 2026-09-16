@@ -5,14 +5,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { z } from 'zod';
+import { listClickEvents } from '@/services/click.service';
+import { EventsSearchSchema } from '@/validations';
 import { withAdmin } from '@/lib/admin-route';
-
-const EventsSearchSchema = z.object({
-    page: z.coerce.number().int().min(1).max(1_000_000).default(1),
-    limit: z.coerce.number().int().min(1).max(200).default(20),
-});
 
 export const GET = withAdmin(async (request: NextRequest) => {
     const { searchParams } = new URL(request.url);
@@ -21,37 +16,6 @@ export const GET = withAdmin(async (request: NextRequest) => {
         limit: searchParams.get('limit') || '20',
     });
 
-    const skip = (page - 1) * limit;
-
-    const [events, total] = await Promise.all([
-        prisma.clickEvent.findMany({
-            orderBy: { createdAt: 'desc' },
-            skip,
-            take: limit,
-            include: {
-                course: {
-                    select: {
-                        id: true,
-                        title: true,
-                        slug: true,
-                    },
-                },
-            },
-        }),
-        prisma.clickEvent.count(),
-    ]);
-
-    const totalPages = Math.ceil(total / limit);
-
-    return NextResponse.json({
-        data: events,
-        pagination: {
-            page,
-            limit,
-            total,
-            totalPages,
-            hasNext: page < totalPages,
-            hasPrev: page > 1,
-        },
-    });
+    const result = await listClickEvents({ page, limit });
+    return NextResponse.json(result);
 }, 'Failed to fetch events');
