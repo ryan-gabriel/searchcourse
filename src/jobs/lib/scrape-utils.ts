@@ -122,6 +122,10 @@ export function deriveCoupon({
  * Falls back to the `<meta name="description">` content when no heading
  * is present. Returns null when neither is found.
  */
+export function isCardExpired(text: string): boolean {
+    return /expired|ended/i.test(text);
+}
+
 export function extractCouponamiDescription(
     html: string | null | undefined
 ): string | null {

@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 import type { UdemyFeedItem } from '../lib/pipeline';
-import { findUdemyCouponUrl, extractCourseSlug } from '../lib/scrape-utils';
+import { findUdemyCouponUrl, extractCourseSlug, isCardExpired } from '../lib/scrape-utils';
 import {
     parseTutorialbarPost,
     mergePostDetails,
@@ -9,10 +9,6 @@ import { fetchHtml, followRedirects, sleep } from './http';
 import type { ScrapeOptions } from './discudemy';
 
 const LISTING_BASE = 'https://www.tutorialbar.com';
-
-export function isTutorialbarCardExpired(cardText: string): boolean {
-    return cardText.includes('Deal Expired') || cardText.includes('Deal Ended');
-}
 
 function parsePriceTag(text: string): number {
     const digits = text.replace(/[^0-9.,-]/g, '').replace(/,/g, '');
@@ -46,7 +42,7 @@ export async function scrapeTutorialbar(
 
         $('div.coupon-card').each((_, el) => {
             const card = $(el);
-            if (isTutorialbarCardExpired(card.text())) return;
+            if (isCardExpired(card.text())) return;
             const href =
                 card.find('a[href^="/course/"]').first().attr('href') || '';
             const slug = href.replace(/^\/course\//, '').split(/[/?#]/)[0];

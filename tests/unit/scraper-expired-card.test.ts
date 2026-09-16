@@ -1,35 +1,29 @@
 import { describe, it, expect } from "vitest";
-import { isTutorialbarCardExpired } from "@/jobs/scrapers/tutorialbar";
-import { isDiscudemyCardExpired } from "@/jobs/scrapers/discudemy";
+import { isCardExpired } from "@/jobs/lib/scrape-utils";
 
-describe("isTutorialbarCardExpired (expired badge skip)", () => {
-    it("flags a card with the 'Deal Expired' badge", () => {
-        expect(isTutorialbarCardExpired("Python Course $84.99 Free Get Coupon Deal Expired")).toBe(true);
+describe("isCardExpired", () => {
+    it("flags a card with 'Deal Expired'", () => {
+        expect(isCardExpired("Python Course $84.99 Free Get Coupon Deal Expired")).toBe(true);
     });
 
     it("flags a card with 'Deal Ended'", () => {
-        expect(isTutorialbarCardExpired("Google Cloud Practice Tests IT & Software Deal Ended")).toBe(true);
+        expect(isCardExpired("Google Cloud Practice Tests IT & Software Deal Ended")).toBe(true);
+    });
+
+    it("flags a card containing just 'Expired'", () => {
+        expect(isCardExpired("$199->$0 Expired")).toBe(true);
+    });
+
+    it("flags a card containing just 'Ended'", () => {
+        expect(isCardExpired("Today $199->$0 Ended")).toBe(true);
     });
 
     it("accepts a live card", () => {
-        expect(isTutorialbarCardExpired("Revenue Operations $84.99 Free Get Coupon")).toBe(false);
+        expect(isCardExpired("Revenue Operations $84.99 Free Get Coupon")).toBe(false);
+        expect(isCardExpired("Today $199->$0 English Business")).toBe(false);
     });
 
-    it("accepts a card with unrelated 'Expired' word form (e.g. 'expiration')", () => {
-        expect(isTutorialbarCardExpired("Course with expiration date info $84.99 Free Get Coupon")).toBe(false);
-    });
-});
-
-describe("isDiscudemyCardExpired (expired marker skip)", () => {
-    it("flags a card containing 'Expired'", () => {
-        expect(isDiscudemyCardExpired("$199->$0 Expired")).toBe(true);
-    });
-
-    it("flags a card containing 'Ended'", () => {
-        expect(isDiscudemyCardExpired("Today $199->$0 Ended")).toBe(true);
-    });
-
-    it("accepts a live card", () => {
-        expect(isDiscudemyCardExpired("Today $199->$0 English Business")).toBe(false);
+    it("accepts a card with unrelated 'expired' substring like 'expiration'", () => {
+        expect(isCardExpired("Course with expiration date info $84.99 Free Get Coupon")).toBe(false);
     });
 });

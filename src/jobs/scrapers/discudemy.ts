@@ -4,6 +4,7 @@ import {
     findUdemyCouponUrl,
     extractCourseSlug,
     extractCouponamiDescription,
+    isCardExpired,
 } from '../lib/scrape-utils';
 import { fetchHtml, sleep } from './http';
 
@@ -16,10 +17,6 @@ export interface ScrapeOptions {
 const LISTING_BASE = 'https://www.discudemy.com';
 const POST_BASE = 'https://www.couponami.com';
 const GO_BASE = 'https://www.couponami.com/go';
-
-export function isDiscudemyCardExpired(cardText: string): boolean {
-    return /expired|ended/i.test(cardText);
-}
 
 function lastSlug(url: string): string | null {
     try {
@@ -94,7 +91,7 @@ export async function scrapeDiscudemy(
 
         $('section.card').each((_, el) => {
             const card = $(el);
-            if (isDiscudemyCardExpired(card.text())) return;
+            if (isCardExpired(card.text())) return;
             const titleEl = card.find('a.card-header').first();
             const title = titleEl.text().trim();
             const href = titleEl.attr('href') || '';
