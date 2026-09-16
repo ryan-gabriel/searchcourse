@@ -2,16 +2,11 @@ import type { Metadata } from 'next';
 import { EventsTable } from '@/components/admin/events-table';
 import { RangeSelect } from '@/components/admin/range-select';
 import { formatCount, formatDate } from '@/lib/format';
+import { RANGE_TO_DAYS, analyticsDaysFor, isAnalyticsRange } from '@/lib/analytics';
 import { getClickAnalytics } from '@/services';
 
 export const metadata: Metadata = {
   title: 'Analytics',
-};
-
-const RANGE_TO_DAYS: Record<string, number | undefined> = {
-  '1d': 1,
-  '7d': 7,
-  '30d': 30,
 };
 
 function formatSource(source: string): string {
@@ -24,12 +19,10 @@ export default async function AnalyticsPage({
   searchParams: Promise<{ range?: string }>;
 }) {
   const { range } = await searchParams;
-  const selectedRange = range === '1d' || range === '7d' || range === '30d' ? range : '';
-  const days = RANGE_TO_DAYS[selectedRange];
+  const days = analyticsDaysFor(range);
+  const daysIncluded = isAnalyticsRange(range) ? String(RANGE_TO_DAYS[range]) : 'All';
 
   const analytics = await getClickAnalytics(days);
-
-  const daysIncluded = selectedRange === '1d' ? '1' : selectedRange === '7d' ? '7' : selectedRange === '30d' ? '30' : 'All';
 
   const statCards = [
     { label: 'Clicks', value: formatCount(analytics.totalClicks) },
@@ -46,7 +39,7 @@ export default async function AnalyticsPage({
       <p className="mt-1 text-sm text-muted-foreground">Affiliate click tracking</p>
 
       <div className="mt-8 space-y-8">
-        <RangeSelect defaultValue={selectedRange} />
+        <RangeSelect defaultValue={isAnalyticsRange(range) ? range : ''} />
 
         <dl className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {statCards.map((card) => (
