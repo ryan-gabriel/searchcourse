@@ -21,6 +21,7 @@ export const CouponUpdateSchema = CouponCreateSchema.partial().extend({
 export type CouponUpdateInput = z.infer<typeof CouponUpdateSchema>;
 
 export const CouponSearchSchema = z.object({
+  query: z.string().max(200).optional(),
   courseId: z.string().cuid().optional(),
   isActive: z.coerce.boolean().optional(),
   minDiscount: z.number().min(0).max(100).optional(),

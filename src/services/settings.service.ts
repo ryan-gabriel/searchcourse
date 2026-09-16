@@ -5,20 +5,9 @@
  */
 
 import prisma from '@/lib/prisma';
+import type { SiteSettingsUpdateInput } from '@/validations';
 
 export const SETTINGS_ID = 'site-settings';
-
-export interface SiteSettingsUpdateInput {
-    coursesVerified?: string;
-    studentSavings?: string;
-    uptime?: string;
-    acceptanceRate?: string;
-    hostingCost?: string;
-    priceMonitoring?: string;
-    missionTitle?: string;
-    missionSubtitle?: string;
-    missionDescription?: string;
-}
 
 /**
  * Get site settings (creates default if missing)

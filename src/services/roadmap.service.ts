@@ -74,6 +74,10 @@ export async function searchRoadmaps(params: RoadmapSearchParams) {
         isFeatured,
         level,
         category,
+        hasJobGuarantee,
+        hasCertificate,
+        hasFreeResources,
+        isShortPath,
         hasCourses,
         page,
         limit
@@ -91,9 +95,13 @@ export async function searchRoadmaps(params: RoadmapSearchParams) {
     if (isActive !== undefined) where.isActive = isActive;
     if (isFeatured !== undefined) where.isFeatured = isFeatured;
 
-    // New filter fields
     if (level) where.level = level;
     if (category) where.category = { slug: category };
+
+    if (hasJobGuarantee !== undefined) where.hasJobGuarantee = hasJobGuarantee;
+    if (hasCertificate !== undefined) where.hasCertificate = hasCertificate;
+    if (hasFreeResources !== undefined) where.hasFreeResources = hasFreeResources;
+    if (isShortPath !== undefined) where.isShortPath = isShortPath;
 
     if (hasCourses) {
         where.steps = { some: {} };

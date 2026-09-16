@@ -8,6 +8,7 @@ import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { notExpiredCouponClause } from '@/lib/prisma-helpers';
 import type {
+    CouponSearchParams,
     CouponCreateInput,
     CouponUpdateInput,
 } from '@/validations';
@@ -36,15 +37,6 @@ export interface CouponWithCourse {
     };
 }
 
-export interface CouponSearchParams {
-    query?: string;
-    courseId?: string;
-    isActive?: boolean;
-    isExpired?: boolean;
-    page: number;
-    limit: number;
-}
-
 // ============================================
 // SERVICE FUNCTIONS
 // ============================================
@@ -52,8 +44,16 @@ export interface CouponSearchParams {
 /**
  * Search coupons with pagination
  */
-export async function searchCoupons(params: CouponSearchParams) {
-    const { query, courseId, isActive, isExpired, page, limit } = params;
+export async function searchCoupons(params: Partial<CouponSearchParams>) {
+    const {
+        query,
+        courseId,
+        isActive,
+        minDiscount,
+        notExpired,
+        limit = 20,
+        page = 1,
+    } = params;
 
     const where: Prisma.CouponWhereInput = {};
 
@@ -72,12 +72,12 @@ export async function searchCoupons(params: CouponSearchParams) {
         where.isActive = isActive;
     }
 
-    if (isExpired !== undefined) {
-        if (isExpired) {
-            where.expiresAt = { lt: new Date() };
-        } else {
-            where.OR = notExpiredCouponClause();
-        }
+    if (minDiscount !== undefined) {
+        where.discountValue = { gte: minDiscount };
+    }
+
+    if (notExpired !== false) {
+        where.AND = [{ OR: notExpiredCouponClause() }];
     }
 
     const skip = (page - 1) * limit;
