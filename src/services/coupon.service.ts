@@ -161,29 +161,6 @@ export async function getCouponById(id: string) {
     } as CouponWithCourse;
 }
 
-/**
- * Get active coupons for a course
- */
-export async function getActiveCouponsForCourse(courseId: string) {
-    const coupons = await prisma.coupon.findMany({
-        where: {
-            courseId,
-            isActive: true,
-            OR: [
-                { expiresAt: null },
-                { expiresAt: { gt: new Date() } },
-            ],
-        },
-        orderBy: { discountValue: 'desc' },
-    });
-
-    return coupons.map((c) => ({
-        ...c,
-        discountValue: Number(c.discountValue),
-        finalPrice: Number(c.finalPrice),
-    }));
-}
-
 // ============================================
 // ADMIN FUNCTIONS
 // ============================================
@@ -201,19 +178,4 @@ export async function updateCoupon({ id, ...data }: CouponUpdateInput) {
 
 export async function deleteCoupon(id: string) {
     return prisma.coupon.delete({ where: { id } });
-}
-
-/**
- * Deactivate expired coupons
- */
-export async function deactivateExpiredCoupons() {
-    const result = await prisma.coupon.updateMany({
-        where: {
-            isActive: true,
-            expiresAt: { lt: new Date() },
-        },
-        data: { isActive: false },
-    });
-
-    return result.count;
 }
