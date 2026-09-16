@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { slugify } from '@/lib/slug.utils';
 import { Container } from './container';
 
 export function EmptyState({
@@ -80,8 +81,4 @@ export function SectionShell({
 
 export function PageContainer({ children }: { children: ReactNode }) {
   return <Container className="py-10 sm:py-14">{children}</Container>;
-}
-
-function slugify(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }

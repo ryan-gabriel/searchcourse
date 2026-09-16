@@ -15,6 +15,7 @@
  */
 
 import { prisma } from "@/lib/prisma";
+import { slugify } from "@/lib/slug.utils";
 
 // Curated aliases: scraped category string -> canonical category slug.
 // Covers the two sources' known vocabularies so auto-created categories
@@ -119,17 +120,6 @@ const CANONICAL_CATEGORIES: {
   { name: 'Gaming', slug: 'gaming', iconName: 'Gamepad2', sortOrder: 105, description: 'Game development and design' },
   { name: 'Test Prep', slug: 'test-prep', iconName: 'GraduationCap', sortOrder: 110, description: 'Certifications and exam preparation' },
 ];
-
-function slugify(name: string): string {
-  return name
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/&/g, 'and')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 100) || 'uncategorized';
-}
 
 // Cache categories to avoid repeated DB queries
 let categoryCache: { id: string; name: string; slug: string }[] | null = null;
