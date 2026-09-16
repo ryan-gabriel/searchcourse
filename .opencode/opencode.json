@@ -4,7 +4,6 @@
     "./.opencode/plugins/graphify.js",
     ["opencode-headroom", {
       "ccr_db_path": "~/.local/share/opencode/headroom.db"
-    }],
-    "open-mem"
+    }]
   ]
 }

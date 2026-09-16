@@ -38,16 +38,12 @@ yarn-error.log*
 # worktrees
 .worktrees/
 
-# open-mem: auto-generated folder context — root AGENTS.md is local-only.
 # Project guidance is versioned at docs/AGENTS.md
 **/AGENTS.md
 !docs/AGENTS.md
 
 # graphify knowledge graph (auto-generated; rebuild with: graphify update .)
 graphify-out/
-
-# open-mem session memory (auto-generated)
-.open-mem/
 
 # installed agent skills
 .agents/
