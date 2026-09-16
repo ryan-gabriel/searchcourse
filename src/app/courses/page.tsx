@@ -5,6 +5,7 @@ import { CourseCard } from '@/components/course-card';
 import { EmptyState } from '@/components/states';
 import { Pagination } from '@/components/pagination';
 import { AutoSubmitSelect } from '@/components/auto-submit-select';
+import { JsonLd } from '@/components/json-ld';
 import { searchCourses, getAllPlatforms, getAllCategories } from '@/services';
 import { CourseSearchSchema } from '@/validations';
 import { resolveCoursesIndexing } from '@/lib/seo/canonical';
@@ -96,7 +97,7 @@ export default async function CoursesPage({
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JsonLd data={jsonLd} />
 
       <Container className="py-10 sm:py-12">
         <header className="mb-8">

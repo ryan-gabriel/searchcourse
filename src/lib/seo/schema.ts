@@ -5,6 +5,23 @@
 
 export type JsonLd = Record<string, unknown>;
 
+/**
+ * Serialize a JSON-LD structure for safe inline embedding in <script>.
+ *
+ * `JSON.stringify` does not escape `<`, `>`, `&`, or single quotes, so
+ * scraped/untrusted strings (course titles, descriptions) could smuggle a
+ * `</script>` out of the block and execute as HTML. Escaping the dangerous
+ * characters to `\uXXXX` keeps the payload valid JSON for parsers while
+ * making it inert to the HTML parser.
+ */
+export function safeJsonLd(data: JsonLd | JsonLd[]): string {
+    return JSON.stringify(data)
+        .replace(/</g, '\\u003c')
+        .replace(/>/g, '\\u003e')
+        .replace(/&/g, '\\u0026')
+        .replace(/'/g, '\\u0027');
+}
+
 interface CourseSchemaInput {
     name: string;
     description: string;

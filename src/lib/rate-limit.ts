@@ -13,6 +13,25 @@ export interface RateLimitResult {
   resetTime: number;
 }
 
+interface HeadersLike {
+  get(name: string): string | null;
+}
+
+/**
+ * Best-effort client IP extraction.
+ *
+ * `x-forwarded-for` is only trusted when the hosting provider (Vercel,
+ * Cloudflare) overwrites it on ingress; never trust an arbitrary proxy that
+ * may not rewrite the header. `cf-connecting-ip` is set by Cloudflare when
+ * present. Defaults to "unknown" so callers still get deterministic keys.
+ */
+export function getClientIp(headers: HeadersLike): string {
+  const cf = headers.get("cf-connecting-ip");
+  if (cf) return cf;
+  const first = headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return first || headers.get("x-real-ip") || "unknown";
+}
+
 const defaultConfig: RateLimitConfig = {
   limit: RATE_LIMIT.DEFAULT_LIMIT,
   windowMs: RATE_LIMIT.WINDOW_MS,
@@ -74,7 +93,15 @@ function rateLimitClick(identifier: string) {
   });
 }
 
+function rateLimitLogin(identifier: string) {
+  return rateLimit(identifier, "login", {
+    limit: RATE_LIMIT.LOGIN_LIMIT,
+    windowMs: RATE_LIMIT.WINDOW_MS,
+  });
+}
+
 export const rateLimiters = {
   search: rateLimitSearch,
   click: rateLimitClick,
+  login: rateLimitLogin,
 };

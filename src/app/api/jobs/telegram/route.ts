@@ -2,9 +2,11 @@
  * Cron-triggered Telegram Broadcast Endpoint
  *
  * Runs the Telegram broadcast job when triggered by an external cron
- * (e.g. cron-job.org). Protected by CRON_SECRET passed as ?key=.
+ * (e.g. cron-job.org). Protected by CRON_SECRET sent in the `x-cron-secret`
+ * request header (not the URL, so it stays out of access logs).
  *
- * GET /api/jobs/telegram?key=YOUR_CRON_SECRET
+ * GET /api/jobs/telegram
+ * Header: x-cron-secret: YOUR_CRON_SECRET
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -16,7 +18,7 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 export async function GET(request: NextRequest) {
-    const key = request.nextUrl.searchParams.get('key');
+    const key = request.headers.get('x-cron-secret');
     if (!isCronAuthorized(key)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

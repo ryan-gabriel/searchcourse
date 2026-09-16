@@ -3,6 +3,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import type { User } from "@supabase/supabase-js";
+import { hasAdminClaim } from "@/lib/admin-check";
 
 export async function createSupabaseServerClient() {
   const cookieStore = await cookies();
@@ -38,11 +39,11 @@ export async function getUser(): Promise<User | null> {
 
 export async function isAdmin(): Promise<boolean> {
   const user = await getUser();
-  return user?.user_metadata?.is_admin === true;
+  return hasAdminClaim(user);
 }
 
 export async function getAdminUser(): Promise<User | null> {
   const user = await getUser();
-  if (user?.user_metadata?.is_admin === true) return user;
+  if (hasAdminClaim(user)) return user;
   return null;
 }

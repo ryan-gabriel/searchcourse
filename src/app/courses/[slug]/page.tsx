@@ -6,6 +6,7 @@ import { Star, Check, Clock, Users, BadgePercent, Info } from 'lucide-react';
 import { Container } from '@/components/container';
 import { LinkButton } from '@/components/button';
 import { TelegramCTA } from '@/components/telegram-cta';
+import { JsonLd } from '@/components/json-ld';
 import { getCourseWithFullDetails } from '@/services';
 import { buildCourseSchema, buildBreadcrumbSchema } from '@/lib/seo/schema';
 import { buildEditorialNote } from '@/lib/seo/editorial';
@@ -104,7 +105,7 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JsonLd data={jsonLd} />
 
       <Container className="pt-10 pb-28 sm:py-14">
         <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">

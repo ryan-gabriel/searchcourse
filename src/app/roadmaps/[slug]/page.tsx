@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowRight, Clock, Star } from 'lucide-react';
 import { Container } from '@/components/container';
+import { JsonLd } from '@/components/json-ld';
 import { getRoadmapBySlug } from '@/services';
 import { buildItemListSchema, buildBreadcrumbSchema } from '@/lib/seo/schema';
 import { discountPercent, formatPercent, formatPrice } from '@/lib/format';
@@ -61,7 +62,7 @@ export default async function RoadmapDetailPage({ params }: Props) {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JsonLd data={jsonLd} />
 
       <Container className="py-10 sm:py-14">
         <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">

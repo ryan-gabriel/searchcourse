@@ -298,6 +298,7 @@ model ClickEvent {
 }
 
 // ============================================
-// NOTE: Admin authentication is now handled by Supabase Auth
-// with is_admin claim in user_metadata. No AdminUser table needed.
+// NOTE: Admin authentication is handled by Supabase Auth with the
+// is_admin claim in app_metadata (set via the Supabase Admin API/dashboard,
+// NOT the client-writable user_metadata). No AdminUser table needed.
 // ============================================

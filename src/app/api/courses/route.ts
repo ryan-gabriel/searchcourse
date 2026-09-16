@@ -8,13 +8,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { searchCourses } from '@/services';
 import { CourseSearchSchema } from '@/validations';
-import { rateLimiters, getRateLimitHeaders } from '@/lib/rate-limit';
+import { rateLimiters, getRateLimitHeaders, getClientIp } from '@/lib/rate-limit';
 
 // export const runtime = 'edge'; // Disabled due to Prisma/Crypto compatibility
 
 export async function GET(request: NextRequest) {
     // Rate limiting
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown';
+    const ip = getClientIp(request.headers);
     const rateLimitResult = rateLimiters.search(ip);
 
     if (!rateLimitResult.success) {

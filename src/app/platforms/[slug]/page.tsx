@@ -5,6 +5,7 @@ import { CourseCard } from '@/components/course-card';
 import { EmptyState } from '@/components/states';
 import { Pagination } from '@/components/pagination';
 import { LinkButton } from '@/components/button';
+import { JsonLd } from '@/components/json-ld';
 import { getPlatformBySlug, searchCourses } from '@/services';
 import { buildItemListSchema, buildBreadcrumbSchema } from '@/lib/seo/schema';
 import { siteUrl } from '@/lib/site';
@@ -72,7 +73,7 @@ export default async function PlatformPage({ params, searchParams }: Props) {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JsonLd data={jsonLd} />
 
       <Container className="py-10 sm:py-12">
         <header className="mb-8">

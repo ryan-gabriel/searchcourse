@@ -5,6 +5,7 @@ import { CourseCard } from '@/components/course-card';
 import { RoadmapCard } from '@/components/roadmap-card';
 import { LinkButton } from '@/components/button';
 import { EmptyState } from '@/components/states';
+import { JsonLd } from '@/components/json-ld';
 import { getFeaturedCourses, getTopDiscountCourses, getFeaturedRoadmaps, getHomepageStats } from '@/services';
 import { buildWebSiteSchema, buildOrganizationSchema } from '@/lib/seo/schema';
 import { SITE_NAME, siteUrl } from '@/lib/site';
@@ -31,10 +32,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
 
       <section className="border-b border-border bg-card" aria-labelledby="hero-title">
         <Container className="py-16 sm:py-24">

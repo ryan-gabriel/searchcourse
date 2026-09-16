@@ -2,7 +2,7 @@
  * Admin API Authorization Guard
  *
  * Verifies the caller is an authenticated Supabase user with the
- * `is_admin: true` claim in user_metadata before any admin mutation/read.
+ * `is_admin: true` claim in app_metadata before any admin mutation/read.
  * Must be called at the top of every /api/admin/* route handler.
  */
 

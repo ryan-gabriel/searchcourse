@@ -1,9 +1,13 @@
 import axios from 'axios';
+import { isSafeFetchUrl } from '../lib/url-guard';
 
 export const USER_AGENT =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 
 export async function fetchHtml(url: string): Promise<string | null> {
+    // SSRF guard: refuse to fetch anything outside the allowlisted scrape
+    // sources before the HTTP request is made.
+    if (!isSafeFetchUrl(url)) return null;
     try {
         const res = await axios.get<string>(url, {
             headers: {
@@ -29,6 +33,9 @@ export async function followRedirects(
 
     try {
         while (remaining-- > 0) {
+            // Each hop is validated against the scrape-source allowlist, so a
+            // Location: header pointing anywhere off-platform is refused.
+            if (!isSafeFetchUrl(url)) return null;
             const res = await axios.get(url, {
                 headers: { 'User-Agent': USER_AGENT },
                 maxRedirects: 0,

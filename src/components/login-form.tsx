@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 
 export function LoginForm() {
   const router = useRouter();
@@ -16,18 +15,26 @@ export function LoginForm() {
     setError(null);
     setLoading(true);
 
-    const supabase = createSupabaseBrowserClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-    setLoading(false);
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        setError(data?.error ?? 'Sign-in failed. Please try again.');
+        return;
+      }
 
-    if (error) {
-      setError(error.message);
-      return;
+      router.push('/admin');
+      router.refresh();
+    } catch {
+      setError('Sign-in failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
-
-    router.push('/admin');
-    router.refresh();
   }
 
   return (

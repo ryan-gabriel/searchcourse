@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildCourseSchema, buildBreadcrumbSchema, buildWebSiteSchema, buildItemListSchema, buildOrganizationSchema } from '@/lib/seo/schema';
+import { buildCourseSchema, buildBreadcrumbSchema, buildWebSiteSchema, buildItemListSchema, buildOrganizationSchema, safeJsonLd } from '@/lib/seo/schema';
 import { resolveCoursesIndexing } from '@/lib/seo/canonical';
 import { buildEditorialNote } from '@/lib/seo/editorial';
 
@@ -250,6 +250,43 @@ describe('buildOrganizationSchema', () => {
         const schema = buildOrganizationSchema(BASE);
         expect(schema['@type']).toBe('Organization');
         expect(schema.logo).toBe(`${BASE}/icon-512.png`);
+    });
+});
+
+describe('safeJsonLd', () => {
+    it('escapes <script> so scraped strings cannot break out of the block', () => {
+        const out = safeJsonLd({ name: '</script><script>alert(1)</script>' });
+        expect(out).not.toContain('</script>');
+        expect(out).toContain('\\u003c/script\\u003e');
+    });
+
+    it('escapes & and single quotes for HTML-safety', () => {
+        const out = safeJsonLd({ name: "Tom & Jerry's" });
+        expect(out).not.toContain("'");
+        expect(out).not.toContain('&');
+        expect(out).toContain('Tom \\u0026 Jerry\\u0027s');
+    });
+
+    it('round-trips to the original object as valid JSON after unescaping', () => {
+        const data = {
+            name: '</script><script>alert(1)</script>',
+            description: "It's a &amp; b",
+        };
+        const out = safeJsonLd(data);
+        const parsed = JSON.parse(
+            out
+                .replace(/\\u003c/g, '<')
+                .replace(/\\u003e/g, '>')
+                .replace(/\\u0026/g, '&')
+                .replace(/\\u0027/g, "'")
+        );
+        expect(parsed).toEqual(data);
+    });
+
+    it('handles arrays of objects', () => {
+        const out = safeJsonLd([{ name: '<' }, { name: '>' }]);
+        expect(out).toContain('\\u003c');
+        expect(out).toContain('\\u003e');
     });
 });
 

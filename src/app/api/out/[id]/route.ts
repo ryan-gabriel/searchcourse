@@ -8,12 +8,15 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { getCourseById, recordClick } from '@/services';
-import { rateLimiters, getRateLimitHeaders } from '@/lib/rate-limit';
+import { rateLimiters, getRateLimitHeaders, getClientIp } from '@/lib/rate-limit';
 import { hashIP } from '@/lib/utils';
-import { ClickSourceEnum } from '@/validations';
+import { ClickCreateSchema } from '@/validations';
 
 export const runtime = 'nodejs';
+
+const CourseIdParamSchema = z.string().cuid();
 
 interface RouteContext {
     params: Promise<{ id: string }>;
@@ -94,8 +97,15 @@ export async function GET(
 ) {
     const { id } = await context.params;
 
+    // Validate the course id up-front so a malformed param never reaches the
+    // DB layer.
+    const idResult = CourseIdParamSchema.safeParse(id);
+    if (!idResult.success) {
+        return NextResponse.redirect(new URL('/', request.url));
+    }
+
     // Rate limiting
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown';
+    const ip = getClientIp(request.headers);
     const rateLimitResult = rateLimiters.click(ip);
 
     if (!rateLimitResult.success) {
@@ -114,20 +124,26 @@ export async function GET(
 
     // Determine source from query param
     const source = request.nextUrl.searchParams.get('src');
-    const clickSource = source === 'tg' ? 'TELEGRAM' : 'WEB';
+    const clickSource: 'WEB' | 'TELEGRAM' = source === 'tg' ? 'TELEGRAM' : 'WEB';
 
     // Record click (fire-and-forget for performance)
     const ipHash = await hashIP(ip);
     const country = request.headers.get('cf-ipcountry') || undefined;
 
-    recordClick({
+    // Headers are attacker-controlled; cap their length to the schema's
+    // VarChar(512) columns so a giant User-Agent can't fail the insert and
+    // silently break analytics.
+    const clickData = ClickCreateSchema.safeParse({
         courseId: id,
-        source: ClickSourceEnum.parse(clickSource),
-        userAgent: request.headers.get('user-agent') || undefined,
-        referer: request.headers.get('referer') || undefined,
+        source: clickSource,
+        userAgent: request.headers.get('user-agent')?.slice(0, 512) || undefined,
+        referer: request.headers.get('referer')?.slice(0, 512) || undefined,
         ipHash,
         country,
-    }).catch(console.error); // Don't block on analytics
+    });
+    if (clickData.success) {
+        recordClick(clickData.data).catch(console.error); // Don't block on analytics
+    }
 
     // Determine redirect URL
     // Use affiliate URL if available, otherwise direct URL
