@@ -5,7 +5,7 @@
  */
 
 import { DASHBOARD, TIME } from '@/lib/constants';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { activeCouponWhere } from '@/lib/prisma-helpers';
 
 // ============================================

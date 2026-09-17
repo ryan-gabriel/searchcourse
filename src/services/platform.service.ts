@@ -5,7 +5,8 @@
  */
 
 import { Prisma } from '@prisma/client';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
+import { paginate } from '@/lib/pagination';
 import type {
     PlatformCreateInput,
     PlatformUpdateInput,
@@ -68,19 +69,7 @@ export async function searchPlatforms(params: PlatformSearchParams) {
         prisma.platform.count({ where }),
     ]);
 
-    const totalPages = Math.ceil(total / limit);
-
-    return {
-        data: platforms as PlatformWithCounts[],
-        pagination: {
-            page,
-            limit,
-            total,
-            totalPages,
-            hasNext: page < totalPages,
-            hasPrev: page > 1,
-        },
-    };
+    return paginate(platforms as PlatformWithCounts[], page, limit, total);
 }
 
 /**

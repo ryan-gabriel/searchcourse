@@ -4,7 +4,8 @@
  * Analytics and tracking for affiliate click events.
  */
 
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
+import { paginate } from '@/lib/pagination';
 import type { ClickCreateInput, EventsSearchParams } from '@/validations';
 
 /**
@@ -38,17 +39,5 @@ export async function listClickEvents({ page, limit }: EventsSearchParams) {
         prisma.clickEvent.count(),
     ]);
 
-    const totalPages = Math.ceil(total / limit);
-
-    return {
-        data: events,
-        pagination: {
-            page,
-            limit,
-            total,
-            totalPages,
-            hasNext: page < totalPages,
-            hasPrev: page > 1,
-        },
-    };
+    return paginate(events, page, limit, total);
 }

@@ -4,7 +4,7 @@
  * Manages global site settings (singleton).
  */
 
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import type { SiteSettingsUpdateInput } from '@/validations';
 
 export const SETTINGS_ID = 'site-settings';

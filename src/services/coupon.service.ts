@@ -5,8 +5,9 @@
  */
 
 import { Prisma } from '@prisma/client';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { notExpiredCouponClause } from '@/lib/prisma-helpers';
+import { paginate } from '@/lib/pagination';
 import type {
     CouponSearchParams,
     CouponCreateInput,
@@ -102,8 +103,6 @@ export async function searchCoupons(params: Partial<CouponSearchParams>) {
         prisma.coupon.count({ where }),
     ]);
 
-    const totalPages = Math.ceil(total / limit);
-
     // Transform Decimal to number
     const data = coupons.map((c) => ({
         ...c,
@@ -115,17 +114,7 @@ export async function searchCoupons(params: Partial<CouponSearchParams>) {
         },
     })) as CouponWithCourse[];
 
-    return {
-        data,
-        pagination: {
-            page,
-            limit,
-            total,
-            totalPages,
-            hasNext: page < totalPages,
-            hasPrev: page > 1,
-        },
-    };
+    return paginate(data, page, limit, total);
 }
 
 /**

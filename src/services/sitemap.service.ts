@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export async function getSitemapEntries() {
     const [courses, roadmaps, categories, platforms] = await Promise.all([

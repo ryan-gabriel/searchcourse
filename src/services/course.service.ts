@@ -6,8 +6,9 @@
  */
 
 import { Prisma } from '@prisma/client';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { activeCouponWhere } from '@/lib/prisma-helpers';
+import { paginate, type Paginated } from '@/lib/pagination';
 import type { CourseSearchParams } from '@/validations';
 
 // ============================================
@@ -58,17 +59,7 @@ export interface CourseWithDetails {
     } | null;
 }
 
-export interface PaginatedResult<T> {
-    data: T[];
-    pagination: {
-        page: number;
-        limit: number;
-        total: number;
-        totalPages: number;
-        hasNext: boolean;
-        hasPrev: boolean;
-    };
-}
+export type PaginatedResult<T> = Paginated<T>;
 
 type CourseRow = {
     id: string;
@@ -256,19 +247,7 @@ export async function searchCourses(
     // Transform response
     const data: CourseWithDetails[] = courses.map(toCourseWithDetails);
 
-    const totalPages = Math.ceil(total / limit);
-
-    return {
-        data,
-        pagination: {
-            page,
-            limit,
-            total,
-            totalPages,
-            hasNext: page < totalPages,
-            hasPrev: page > 1,
-        },
-    };
+    return paginate(data, page, limit, total);
 }
 
 /**

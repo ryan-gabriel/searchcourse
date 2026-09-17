@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@/lib/prisma", () => ({
-  default: {
+vi.mock("@/lib/prisma", () => {
+  const prisma = {
     course: {
       findMany: vi.fn(),
       count: vi.fn(),
@@ -18,10 +18,11 @@ vi.mock("@/lib/prisma", () => ({
     siteSettings: {
       upsert: vi.fn(),
     },
-  },
-}));
+  };
+  return { default: prisma, prisma };
+});
 
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { searchCourses, getCourseBySlug } from "@/services/course.service";
 import { searchCoupons } from "@/services/coupon.service";
 import { searchRoadmaps } from "@/services/roadmap.service";

@@ -6,7 +6,7 @@
  * place.
  */
 
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import type { RoadmapStepCreateInput } from '@/validations';
 
 export async function addRoadmapStep(data: RoadmapStepCreateInput) {

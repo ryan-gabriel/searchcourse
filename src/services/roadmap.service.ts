@@ -5,8 +5,9 @@
  */
 
 import { Prisma } from '@prisma/client';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { activeCouponWhere } from '@/lib/prisma-helpers';
+import { paginate } from '@/lib/pagination';
 import type {
     RoadmapSearchParams,
     RoadmapCreateInput,
@@ -122,44 +123,34 @@ export async function searchRoadmaps(params: RoadmapSearchParams) {
         prisma.roadmap.count({ where }),
     ]);
 
-    const totalPages = Math.ceil(total / limit);
-
     // Define type for the roadmap with included relations
     type RoadmapWithCount = Awaited<ReturnType<typeof prisma.roadmap.findMany>>[number] & {
         _count: { steps: number };
         category?: { id: string; name: string; slug: string } | null;
     };
 
-    return {
-        data: (roadmaps as RoadmapWithCount[]).map((r) => ({
-            id: r.id,
-            title: r.title,
-            slug: r.slug,
-            subtitle: r.subtitle,
-            description: r.description,
-            iconName: r.iconName,
-            estimatedHours: r.estimatedHours,
-            sortOrder: r.sortOrder,
-            courseCount: r._count.steps,
-            level: r.level,
-            skillTags: r.skillTags,
-            hasJobGuarantee: r.hasJobGuarantee,
-            hasCertificate: r.hasCertificate,
-            hasFreeResources: r.hasFreeResources,
-            isShortPath: r.isShortPath,
-            category: r.category,
-            isActive: r.isActive,
-            isFeatured: r.isFeatured,
-        })),
-        pagination: {
-            page,
-            limit,
-            total,
-            totalPages,
-            hasNext: page < totalPages,
-            hasPrev: page > 1,
-        },
-    };
+    const data = (roadmaps as RoadmapWithCount[]).map((r) => ({
+        id: r.id,
+        title: r.title,
+        slug: r.slug,
+        subtitle: r.subtitle,
+        description: r.description,
+        iconName: r.iconName,
+        estimatedHours: r.estimatedHours,
+        sortOrder: r.sortOrder,
+        courseCount: r._count.steps,
+        level: r.level,
+        skillTags: r.skillTags,
+        hasJobGuarantee: r.hasJobGuarantee,
+        hasCertificate: r.hasCertificate,
+        hasFreeResources: r.hasFreeResources,
+        isShortPath: r.isShortPath,
+        category: r.category,
+        isActive: r.isActive,
+        isFeatured: r.isFeatured,
+    }));
+
+    return paginate(data, page, limit, total);
 }
 
 /**

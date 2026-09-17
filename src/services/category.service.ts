@@ -5,7 +5,8 @@
  */
 
 import { Prisma } from '@prisma/client';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
+import { paginate } from '@/lib/pagination';
 import type {
     CategoryCreateInput,
     CategoryUpdateInput,
@@ -64,19 +65,7 @@ export async function searchCategories(params: CategorySearchParams) {
         prisma.category.count({ where }),
     ]);
 
-    const totalPages = Math.ceil(total / limit);
-
-    return {
-        data: categories as CategoryWithCounts[],
-        pagination: {
-            page,
-            limit,
-            total,
-            totalPages,
-            hasNext: page < totalPages,
-            hasPrev: page > 1,
-        },
-    };
+    return paginate(categories as CategoryWithCounts[], page, limit, total);
 }
 
 /**
