@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { pageField, limitField } from "./shared";
 
 export const ClickSourceEnum = z.enum(["WEB", "TELEGRAM"]);
 export type ClickSource = z.infer<typeof ClickSourceEnum>;
@@ -23,7 +24,7 @@ export const ClickAnalyticsSchema = z.object({
 export type ClickAnalyticsParams = z.infer<typeof ClickAnalyticsSchema>;
 
 export const EventsSearchSchema = z.object({
-  page: z.coerce.number().int().min(1).max(1_000_000).default(1),
-  limit: z.coerce.number().int().min(1).max(200).default(20),
+  page: pageField,
+  limit: limitField(200, 20),
 });
 export type EventsSearchParams = z.infer<typeof EventsSearchSchema>;

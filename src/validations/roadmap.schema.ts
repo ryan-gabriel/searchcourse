@@ -1,8 +1,9 @@
 import { z } from "zod";
+import { slugPattern, pageField, limitField } from "./shared";
 
 export const RoadmapCreateSchema = z.object({
   title: z.string().min(3).max(200),
-  slug: z.string().regex(/^[a-z0-9-]+$/),
+  slug: z.string().regex(slugPattern),
   description: z.string().max(5000).optional().nullable(),
   iconName: z.string().max(50).optional().nullable(),
   estimatedHours: z.number().int().min(0).optional().nullable(),
@@ -58,7 +59,7 @@ export const RoadmapSearchSchema = z.object({
   hasFreeResources: z.coerce.boolean().optional(),
   isShortPath: z.coerce.boolean().optional(),
   hasCourses: z.coerce.boolean().optional(),
-  page: z.coerce.number().int().min(1).max(1_000_000).default(1),
-  limit: z.coerce.number().int().min(1).max(20).default(10),
+  page: pageField,
+  limit: limitField(20, 10),
 });
 export type RoadmapSearchParams = z.infer<typeof RoadmapSearchSchema>;

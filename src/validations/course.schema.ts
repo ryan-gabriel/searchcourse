@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { httpUrlOptionalSchema, httpUrlSchema } from "@/lib/url";
+import { slugPattern, pageField, limitField } from "./shared";
 
 export const CourseLearningOutcomeSchema = z.object({
   id: z.string().cuid().optional(),
@@ -22,8 +23,8 @@ export const CourseSearchSchema = z.object({
   maxPrice: z.number().min(0).optional(),
   hasDiscount: z.boolean().optional(),
   isFeatured: z.boolean().optional(),
-  page: z.coerce.number().int().min(1).max(1_000_000).default(1),
-  limit: z.coerce.number().int().min(1).max(500).default(12),
+  page: pageField,
+  limit: limitField(500, 12),
   sortBy: z.enum(["rating", "price", "date", "discount", "popular"]).default("date"),
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
@@ -32,7 +33,7 @@ export type CourseSearchParams = z.infer<typeof CourseSearchSchema>;
 export const CourseCreateSchema = z.object({
   externalId: z.string().max(100).optional().nullable(),
   title: z.string().min(3).max(200),
-  slug: z.string().regex(/^[a-z0-9-]+$/),
+  slug: z.string().regex(slugPattern),
   description: z.string().max(10000).optional().nullable(),
   headline: z.string().max(500).optional().nullable(),
   language: z.string().max(50).optional().nullable(),
