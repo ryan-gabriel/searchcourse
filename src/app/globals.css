@@ -1,23 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
-  --font-display: var(--font-source-serif), ui-serif, Georgia, serif;
+  --font-sans: var(--font-work-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
 
-  --color-background: #f5f2ec;
-  --color-foreground: #201c16;
-  --color-card: #ffffff;
-  --color-muted: #eae5db;
-  --color-muted-foreground: #5a534a;
-  --color-border: #d8d1c4;
-  --color-accent: #b45309;
+  --color-background: #f6f4ee;
+  --color-foreground: #1a1713;
+  --color-card: #fdfcf9;
+  --color-muted: #eceadf;
+  --color-muted-foreground: #5d564a;
+  --color-border: #dcd7ca;
+  --color-accent: #0e6b3d;
   --color-accent-foreground: #ffffff;
-  --color-ring: #b45309;
+  --color-ring: #0e6b3d;
   --color-destructive: #a62a1e;
-  --color-secondary: #12303f;
-  --color-secondary-foreground: #fffdf8;
-  --color-support: #8a6d3b;
+  --color-secondary: #1a1713;
+  --color-secondary-foreground: #f6f4ee;
+  --color-support: #5d564a;
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -59,6 +58,98 @@
   .focus-ring:focus-visible {
     outline-color: var(--color-ring);
     outline-offset: 2px;
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Scroll reveal: hidden state only applies once JS has flagged the
+     document (html.js), so no-JS visitors still see all content. */
+  html.js [data-reveal]:not(.is-revealed) {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  html.js [data-reveal].is-revealed {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.45s ease-out var(--reveal-delay, 0ms),
+      transform 0.45s ease-out var(--reveal-delay, 0ms);
+  }
+
+  @keyframes hero-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .hero-in {
+    animation: hero-in 0.6s ease-out both;
+    animation-delay: var(--hero-delay, 0ms);
+  }
+
+  @keyframes ticker-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  .ticker-track {
+    animation: ticker-scroll 42s linear infinite;
+  }
+  .ticker-track:hover,
+  .ticker-track:focus-within {
+    animation-play-state: paused;
+  }
+
+  /* Coupon perforation: dashed tear line with punched notches. The notches
+     read as half-circles because the parent card clips them (overflow hidden). */
+  .ticket-tear {
+    position: relative;
+    height: 0;
+    border-top: 2px dashed var(--color-border);
+  }
+  .ticket-tear::before,
+  .ticket-tear::after {
+    content: "";
+    position: absolute;
+    top: -1px;
+    width: 16px;
+    height: 16px;
+    border-radius: 9999px;
+    background: var(--notch-bg, var(--color-background));
+    border: 2px solid var(--color-border);
+  }
+  .ticket-tear::before {
+    left: -8px;
+  }
+  .ticket-tear::after {
+    right: -8px;
+  }
+
+  .stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1.5px dashed var(--color-accent);
+    color: var(--color-accent);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .stamp .tnum {
+    letter-spacing: 0;
+    text-transform: none;
   }
 }
 

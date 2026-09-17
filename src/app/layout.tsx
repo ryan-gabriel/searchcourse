@@ -1,16 +1,24 @@
 import type { Metadata } from 'next';
-import { GeistSans } from 'geist/font/sans';
-import { Source_Serif_4 } from 'next/font/google';
+import { Work_Sans } from 'next/font/google';
+import { Fraunces as FrauncesFont } from 'next/font/google';
 import './globals.css';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { TelegramCTA } from '@/components/telegram-cta';
 import { SITE_NAME, SITE_TAGLINE, siteUrl } from '@/lib/site';
 
-const SourceSerif4 = Source_Serif_4({
+const WorkSans = Work_Sans({
   weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
-  variable: '--font-source-serif',
+  variable: '--font-work-sans',
+  display: 'swap',
+});
+
+const Fraunces = FrauncesFont({
+  weight: ['500', '600', '700'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  variable: '--font-fraunces',
   display: 'swap',
 });
 
@@ -54,8 +62,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${SourceSerif4.variable}`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${WorkSans.variable} ${Fraunces.variable}`}
+    >
       <body className="flex min-h-screen flex-col">
+        <script
+          dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }}
+        />
         <a
           href="#main"
           className="focus-ring sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:text-accent-foreground"
