@@ -19,7 +19,7 @@ export default async function PlatformsPage() {
   return (
     <Container className="py-10 sm:py-12">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Learning platforms</h1>
+        <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Learning platforms</h1>
         <p className="mt-2 max-w-2xl text-muted-foreground">
           Each platform page collects the current verified deals available on that platform.
         </p>
@@ -30,7 +30,7 @@ export default async function PlatformsPage() {
           <li key={platform.id}>
             <Link
               href={`/platforms/${platform.slug}`}
-              className="focus-ring block rounded-lg border border-border bg-card p-5 transition-shadow hover:shadow-md"
+              className="focus-ring block min-h-11 rounded-lg border border-border bg-card p-5 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-12px_rgba(26,23,19,0.28)]"
             >
               <span className="font-semibold">{platform.name}</span>
               <span className="mt-1 block text-sm text-muted-foreground">

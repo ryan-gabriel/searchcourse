@@ -10,11 +10,20 @@ import { SITE_NAME } from '@/lib/site';
 const NAV = [
   { href: '/courses', label: 'Courses' },
   { href: '/roadmaps', label: 'Roadmaps' },
+  { href: '/categories', label: 'Categories' },
   { href: '/about', label: 'About' },
 ];
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -28,8 +37,12 @@ export function SiteHeader() {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-secondary/20 bg-secondary">
-      <Container className="flex h-21 items-center justify-between gap-6">
+    <header
+      className={`sticky top-0 z-40 border-b border-secondary/20 bg-secondary transition-shadow duration-300 ${
+        scrolled || menuOpen ? 'shadow-[0_4px_16px_-8px_rgba(26,23,19,0.5)]' : ''
+      }`}
+    >
+      <Container className="flex h-20 items-center justify-between gap-6">
         <Link
           href="/"
           className="focus-ring inline-flex items-center rounded-md"
@@ -42,23 +55,23 @@ export function SiteHeader() {
             width={180}
             height={50}
             priority
-            className="h-16.5 w-auto sm:h-18"
+            className="h-16 w-auto sm:h-17"
           />
         </Link>
 
-        <nav aria-label="Primary" className="hidden items-center gap-1 sm:gap-2 md:flex">
+        <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
           {NAV.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="focus-ring rounded-md px-3 py-2 text-sm font-medium text-secondary-foreground/75 hover:bg-secondary/80 hover:text-secondary-foreground"
+              className="focus-ring rounded-md px-3 py-2 text-sm font-medium text-secondary-foreground/75 transition-colors hover:bg-secondary/80 hover:text-secondary-foreground"
             >
               {item.label}
             </Link>
           ))}
           <Link
             href="/login"
-            className="focus-ring rounded-md px-3 py-2 text-sm font-medium text-secondary-foreground hover:bg-secondary/80"
+            className="focus-ring rounded-md px-3 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
           >
             Sign in
           </Link>
@@ -89,7 +102,7 @@ export function SiteHeader() {
               key={item.href}
               href={item.href}
               onClick={closeMenu}
-              className="focus-ring rounded-md px-3 py-3 text-base font-medium text-secondary-foreground/75 hover:bg-secondary/80 hover:text-secondary-foreground"
+              className="focus-ring rounded-md px-3 py-3 text-base font-medium text-secondary-foreground/75 transition-colors hover:bg-secondary/80 hover:text-secondary-foreground"
             >
               {item.label}
             </Link>
@@ -97,7 +110,7 @@ export function SiteHeader() {
           <Link
             href="/login"
             onClick={closeMenu}
-            className="focus-ring rounded-md px-3 py-3 text-base font-medium text-secondary-foreground hover:bg-secondary/80"
+            className="focus-ring rounded-md px-3 py-3 text-base font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
           >
             Sign in
           </Link>

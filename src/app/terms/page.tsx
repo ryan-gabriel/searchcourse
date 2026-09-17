@@ -46,7 +46,7 @@ export default function TermsPage() {
             <h2 className="text-xl font-semibold tracking-tight text-foreground">Your purchases</h2>
             <p>
               All course purchases are made on the course platform&apos;s own website and are governed by that
-              platform&apos;s terms, refund policy, and license agreement — not by SearchCourse.
+              platform&apos;s terms, refund policy, and license agreement, not by SearchCourse.
             </p>
           </section>
 

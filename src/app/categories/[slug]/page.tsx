@@ -1,12 +1,14 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Container } from '@/components/container';
+import { ContextImage } from '@/components/context-image';
 import { CourseCard } from '@/components/course-card';
 import { EmptyState } from '@/components/states';
 import { Pagination } from '@/components/pagination';
 import { LinkButton } from '@/components/button';
 import { JsonLd } from '@/components/json-ld';
 import { getCategoryBySlug, searchCourses } from '@/services';
+import { imageForCategory } from '@/lib/category-images';
 import { buildItemListSchema, buildBreadcrumbSchema } from '@/lib/seo/schema';
 import { siteUrl } from '@/lib/site';
 
@@ -75,16 +77,31 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     <>
       <JsonLd data={jsonLd} />
 
+      <div className="border-b border-border bg-secondary">
+        <div className="relative h-40 overflow-hidden sm:h-56">
+          <ContextImage
+            src={imageForCategory(category.name)}
+            alt={`${category.name} courses`}
+            sizes="100vw"
+            priority
+            className="opacity-60"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-secondary/90 via-secondary/40 to-transparent" aria-hidden="true" />
+        </div>
+      </div>
+
       <Container className="py-10 sm:py-12">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">{category.name} course deals</h1>
-          <p className="mt-2 max-w-2xl text-muted-foreground">
-            {category.description ??
-              `Verified ${category.name.toLowerCase()} courses with active coupons. Prices are re-checked as coupons are validated.`}
-          </p>
-          <p className="mt-3 text-sm text-muted-foreground">
-            {result.pagination.total} course{result.pagination.total === 1 ? '' : 's'} with active deals
-          </p>
+        <header className="mb-8 -mt-14 sm:-mt-16">
+          <div className="inline-block max-w-2xl rounded-lg border border-border bg-card p-6 shadow-[0_10px_24px_-12px_rgba(26,23,19,0.28)]">
+            <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">{category.name} course deals</h1>
+            <p className="mt-2 text-muted-foreground">
+              {category.description ??
+                `Verified ${category.name.toLowerCase()} courses with active coupons. Prices are re-checked as coupons are validated.`}
+            </p>
+            <p className="tnum mt-3 text-sm text-muted-foreground">
+              {result.pagination.total} course{result.pagination.total === 1 ? '' : 's'} with active deals
+            </p>
+          </div>
         </header>
 
         {result.data.length ? (

@@ -39,7 +39,7 @@ export default async function RoadmapsPage({
 
       <Container className="py-10 sm:py-12">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">Learning roadmaps</h1>
+          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Learning roadmaps</h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">
             Follow a structured sequence of courses instead of guessing what to learn next. Every path is built around
             current verified deals.

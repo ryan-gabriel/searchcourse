@@ -101,7 +101,7 @@ export default async function CoursesPage({
 
       <Container className="py-10 sm:py-12">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
             {hasActiveFilters ? 'Filtered courses' : 'Course deals'}
           </h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">
@@ -178,7 +178,7 @@ export default async function CoursesPage({
                 <Link
                   href="/courses"
                   aria-current={search.category ? undefined : 'page'}
-                  className={`focus-ring rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                  className={`focus-ring inline-flex min-h-11 items-center rounded-full border px-4 py-2 text-xs font-medium transition-colors ${
                     search.category
                       ? 'border-border bg-card text-muted-foreground hover:bg-muted'
                       : 'border-accent bg-accent text-accent-foreground'
@@ -195,7 +195,7 @@ export default async function CoursesPage({
                     <Link
                       href={href}
                       aria-current={active ? 'page' : undefined}
-                      className={`focus-ring rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                      className={`focus-ring inline-flex min-h-11 items-center rounded-full border px-4 py-2 text-xs font-medium transition-colors ${
                         active
                           ? 'border-accent bg-accent text-accent-foreground'
                           : 'border-border bg-card text-muted-foreground hover:bg-muted'
@@ -211,7 +211,7 @@ export default async function CoursesPage({
                 <li>
                   <Link
                     href={`/courses?category=${activeCategory.slug}`}
-                    className="focus-ring rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground hover:bg-muted"
+                    className="focus-ring inline-flex min-h-11 items-center rounded-full border border-border bg-card px-4 py-2 text-xs font-medium text-muted-foreground hover:bg-muted"
                   >
                     Show all {activeCategory.name} ({activeCategory._count.courses})
                   </Link>

@@ -30,7 +30,7 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-semibold tracking-tight text-foreground">Click tracking</h2>
             <p>
               When you follow a &ldquo;Get this deal&rdquo; link, we record the course, the referral source, the date,
-              and an approximate country derived from your IP address. This data is aggregate analytics — it cannot be
+              and an approximate country derived from your IP address. This data is aggregate analytics, so it cannot be
               tied back to you as an individual.
             </p>
           </section>

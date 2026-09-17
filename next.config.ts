@@ -35,6 +35,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "img-c.udemycdn.com", port: "", pathname: "/**" },
       { protocol: "https", hostname: "d3njjcbhbojbot.cloudfront.net", port: "", pathname: "/**" },
+      { protocol: "https", hostname: "images.unsplash.com", port: "", pathname: "/**" },
     ],
   },
   headers: async () => [

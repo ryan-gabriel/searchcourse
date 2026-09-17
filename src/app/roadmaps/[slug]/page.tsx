@@ -76,7 +76,7 @@ export default async function RoadmapDetailPage({ params }: Props) {
         </nav>
 
         <header className="max-w-3xl">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{roadmap.title}</h1>
+          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">{roadmap.title}</h1>
           {roadmap.description ? (
             <p className="mt-4 leading-relaxed text-muted-foreground">{roadmap.description}</p>
           ) : null}
@@ -93,14 +93,14 @@ export default async function RoadmapDetailPage({ params }: Props) {
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Total cost of this path</h2>
-              <div className="mt-2 flex items-baseline gap-2">
-                <span className="text-2xl font-bold sm:text-3xl">
+              <div className="tnum mt-2 flex items-baseline gap-2">
+                <span className="text-2xl font-bold text-accent sm:text-3xl">
                   {formatPrice(roadmap.totalDiscountedPrice)}
                 </span>
                 {roadmap.totalSavings > 0 ? (
                   <>
                     <span className="text-muted-foreground line-through">{formatPrice(roadmap.totalOriginalPrice)}</span>
-                    <span className="rounded-sm bg-accent px-2 py-1 text-sm font-semibold text-accent-foreground">
+                    <span className="stamp tnum bg-card">
                       Save {formatPercent(discountPercent(roadmap.totalOriginalPrice, roadmap.totalDiscountedPrice))}
                     </span>
                   </>
@@ -121,7 +121,7 @@ export default async function RoadmapDetailPage({ params }: Props) {
 
         {roadmap.steps.length ? (
           <section className="mt-12" aria-labelledby="steps-title">
-            <h2 id="steps-title" className="text-2xl font-semibold tracking-tight">The path, step by step</h2>
+            <h2 id="steps-title" className="font-display text-2xl font-semibold tracking-tight">The path, step by step</h2>
             <ol className="mt-6 space-y-6">
               {roadmap.steps.map((step) => {
                 const stepDiscounted = step.course.activeCoupon

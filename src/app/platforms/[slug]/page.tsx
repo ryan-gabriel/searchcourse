@@ -77,7 +77,7 @@ export default async function PlatformPage({ params, searchParams }: Props) {
 
       <Container className="py-10 sm:py-12">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">{platform.name} course deals</h1>
+          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">{platform.name} course deals</h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">
             Verified {platform.name} courses with active coupons. Prices are re-checked as coupons are validated.
           </p>

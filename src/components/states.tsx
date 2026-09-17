@@ -13,7 +13,8 @@ export function EmptyState({
 }) {
   return (
     <div className="rounded-lg border border-dashed border-border bg-card px-6 py-16 text-center">
-      <h2 className="text-lg font-semibold">{title}</h2>
+      <p aria-hidden="true" className="font-display text-4xl text-muted-foreground/40">%</p>
+      <h2 className="mt-3 text-lg font-semibold">{title}</h2>
       <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">{body}</p>
       {action ? <div className="mt-6">{action}</div> : null}
     </div>
@@ -70,7 +71,7 @@ export function SectionShell({
     <section className={className} aria-labelledby={slugify(title)}>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h2 id={slugify(title)} className="text-2xl font-semibold tracking-tight">{title}</h2>
+          <h2 id={slugify(title)} className="font-display text-2xl font-semibold tracking-tight">{title}</h2>
           {description ? <p className="mt-1 text-sm text-muted-foreground">{description}</p> : null}
         </div>
       </div>

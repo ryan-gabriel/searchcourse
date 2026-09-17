@@ -159,10 +159,12 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
           </div>
 
           <aside className="lg:sticky lg:top-24 lg:self-start" aria-label="Deal details">
-            <div className="rounded-lg border border-border bg-card p-6">
+            <div className="overflow-hidden rounded-lg border border-border bg-card p-6">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Current deal</h2>
 
-              <div className="mt-4">
+              <div className="ticket-tear -mx-6 mt-4" />
+
+              <div className="tnum mt-5">
                 {discounted && course.activeCoupon ? (
                   <div className="flex items-baseline gap-2">
                     {course.activeCoupon.finalPrice === 0 ? (
@@ -184,7 +186,8 @@ export default async function CourseDetailPage({ params, searchParams }: Props) 
                 {discounted ? (
                   <p className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-accent">
                     <BadgePercent className="h-4 w-4" aria-hidden="true" />
-                    {formatPercent(savings)} off, verified {formatDate(course.lastVerifiedAt)}
+                    <span className="tnum">{formatPercent(savings)} off</span>
+                    <span className="stamp tnum ml-1 bg-card">Verified {formatDate(course.lastVerifiedAt)}</span>
                   </p>
                 ) : (
                   <p className="mt-2 text-sm text-muted-foreground">

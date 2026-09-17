@@ -17,7 +17,7 @@ export function Pagination({
   return (
     <nav className="mt-10 flex items-center justify-center gap-1" aria-label="Pagination">
       {page > 1 ? (
-        <Link href={buildHref(page - 1)} className="focus-ring inline-flex items-center gap-1 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted">
+        <Link href={buildHref(page - 1)} className="focus-ring inline-flex min-h-11 items-center gap-1 rounded-md border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-muted">
           <ChevronLeft className="h-4 w-4" aria-hidden="true" />
           Previous
         </Link>
@@ -28,7 +28,7 @@ export function Pagination({
           p === page ? (
             <span
               key={p}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-accent font-medium text-accent-foreground"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-md bg-accent font-medium text-accent-foreground"
               aria-current="page"
             >
               {p}
@@ -37,7 +37,7 @@ export function Pagination({
             <Link
               key={p}
               href={buildHref(p)}
-              className="focus-ring inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground hover:bg-muted"
+              className="focus-ring inline-flex h-11 w-11 items-center justify-center rounded-md text-foreground hover:bg-muted"
             >
               {p}
             </Link>
@@ -50,7 +50,7 @@ export function Pagination({
       </span>
 
       {page < totalPages ? (
-        <Link href={buildHref(page + 1)} className="focus-ring inline-flex items-center gap-1 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted">
+        <Link href={buildHref(page + 1)} className="focus-ring inline-flex min-h-11 items-center gap-1 rounded-md border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-muted">
           Next
           <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </Link>
