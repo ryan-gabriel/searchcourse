@@ -70,6 +70,87 @@ export interface PaginatedResult<T> {
     };
 }
 
+type CourseRow = {
+    id: string;
+    title: string;
+    slug: string;
+    description: string | null;
+    instructorName: string | null;
+    thumbnailUrl: string | null;
+    originalPrice: unknown;
+    currency: string;
+    rating: unknown;
+    reviewCount: number;
+    studentCount: number;
+    duration: string | null;
+    directUrl: string;
+    affiliateUrl: string | null;
+    isActive: boolean;
+    isFeatured: boolean;
+    isPosted: boolean;
+    externalId: string | null;
+    headline: string | null;
+    language: string | null;
+    lastVerifiedAt: Date;
+    createdAt: Date;
+    platform: CourseWithDetails['platform'];
+    category: CourseWithDetails['category'];
+    coupons: {
+        id: string;
+        code: string | null;
+        discountValue: unknown;
+        discountType: string;
+        finalPrice: unknown;
+        expiresAt: Date | null;
+    }[];
+};
+
+/**
+ * Map a course row (with platform/category/active coupon included) to the
+ * CourseWithDetails DTO. Single source for the Decimal -> number coercion and
+ * activeCoupon shaping used by every course read path.
+ */
+function toCourseWithDetails(course: CourseRow): CourseWithDetails {
+    const coupon = course.coupons[0];
+
+    return {
+        id: course.id,
+        title: course.title,
+        slug: course.slug,
+        description: course.description,
+        instructorName: course.instructorName,
+        thumbnailUrl: course.thumbnailUrl,
+        originalPrice: Number(course.originalPrice),
+        currency: course.currency,
+        rating: course.rating ? Number(course.rating) : null,
+        reviewCount: course.reviewCount,
+        studentCount: course.studentCount,
+        duration: course.duration,
+        directUrl: course.directUrl,
+        affiliateUrl: course.affiliateUrl,
+        isActive: course.isActive,
+        isFeatured: course.isFeatured,
+        isPosted: course.isPosted,
+        externalId: course.externalId,
+        headline: course.headline,
+        language: course.language,
+        lastVerifiedAt: course.lastVerifiedAt,
+        createdAt: course.createdAt,
+        platform: course.platform,
+        category: course.category,
+        activeCoupon: coupon
+            ? {
+                id: coupon.id,
+                code: coupon.code,
+                discountValue: Number(coupon.discountValue),
+                discountType: coupon.discountType,
+                finalPrice: Number(coupon.finalPrice),
+                expiresAt: coupon.expiresAt,
+            }
+            : null,
+    };
+}
+
 // ============================================
 // SERVICE FUNCTIONS
 // ============================================
@@ -173,42 +254,7 @@ export async function searchCourses(
     ]);
 
     // Transform response
-    const data: CourseWithDetails[] = courses.map((course) => ({
-        id: course.id,
-        title: course.title,
-        slug: course.slug,
-        description: course.description,
-        instructorName: course.instructorName,
-        thumbnailUrl: course.thumbnailUrl,
-        originalPrice: Number(course.originalPrice),
-        currency: course.currency,
-        rating: course.rating ? Number(course.rating) : null,
-        reviewCount: course.reviewCount,
-        studentCount: course.studentCount,
-        duration: course.duration,
-        directUrl: course.directUrl,
-        affiliateUrl: course.affiliateUrl,
-        isActive: course.isActive,
-        isFeatured: course.isFeatured,
-        isPosted: course.isPosted,
-        externalId: course.externalId,
-        headline: course.headline,
-        language: course.language,
-        lastVerifiedAt: course.lastVerifiedAt,
-        createdAt: course.createdAt,
-        platform: course.platform,
-        category: course.category,
-        activeCoupon: course.coupons[0]
-            ? {
-                id: course.coupons[0].id,
-                code: course.coupons[0].code,
-                discountValue: Number(course.coupons[0].discountValue),
-                discountType: course.coupons[0].discountType,
-                finalPrice: Number(course.coupons[0].finalPrice),
-                expiresAt: course.coupons[0].expiresAt,
-            }
-            : null,
-    }));
+    const data: CourseWithDetails[] = courses.map(toCourseWithDetails);
 
     const totalPages = Math.ceil(total / limit);
 
@@ -250,42 +296,7 @@ export async function getCourseBySlug(
 
     if (!course) return null;
 
-    return {
-        id: course.id,
-        title: course.title,
-        slug: course.slug,
-        description: course.description,
-        instructorName: course.instructorName,
-        thumbnailUrl: course.thumbnailUrl,
-        originalPrice: Number(course.originalPrice),
-        currency: course.currency,
-        rating: course.rating ? Number(course.rating) : null,
-        reviewCount: course.reviewCount,
-        studentCount: course.studentCount,
-        duration: course.duration,
-        directUrl: course.directUrl,
-        affiliateUrl: course.affiliateUrl,
-        isActive: course.isActive,
-        isFeatured: course.isFeatured,
-        isPosted: course.isPosted,
-        externalId: course.externalId,
-        headline: course.headline,
-        language: course.language,
-        lastVerifiedAt: course.lastVerifiedAt,
-        createdAt: course.createdAt,
-        platform: course.platform,
-        category: course.category,
-        activeCoupon: course.coupons[0]
-            ? {
-                id: course.coupons[0].id,
-                code: course.coupons[0].code,
-                discountValue: Number(course.coupons[0].discountValue),
-                discountType: course.coupons[0].discountType,
-                finalPrice: Number(course.coupons[0].finalPrice),
-                expiresAt: course.coupons[0].expiresAt,
-            }
-            : null,
-    };
+    return toCourseWithDetails(course);
 }
 
 /**
@@ -406,40 +417,7 @@ export async function getCourseWithFullDetails(
     const extendedCourse = course as CourseWithExtendedDetails;
 
     return {
-        id: extendedCourse.id,
-        title: extendedCourse.title,
-        slug: extendedCourse.slug,
-        description: extendedCourse.description,
-        instructorName: extendedCourse.instructorName,
-        thumbnailUrl: extendedCourse.thumbnailUrl,
-        originalPrice: Number(extendedCourse.originalPrice),
-        currency: extendedCourse.currency,
-        rating: extendedCourse.rating ? Number(extendedCourse.rating) : null,
-        reviewCount: extendedCourse.reviewCount,
-        studentCount: extendedCourse.studentCount,
-        duration: extendedCourse.duration,
-        directUrl: extendedCourse.directUrl,
-        affiliateUrl: extendedCourse.affiliateUrl,
-        isActive: extendedCourse.isActive,
-        isFeatured: extendedCourse.isFeatured,
-        isPosted: extendedCourse.isPosted,
-        externalId: extendedCourse.externalId,
-        headline: extendedCourse.headline,
-        language: extendedCourse.language,
-        lastVerifiedAt: extendedCourse.lastVerifiedAt,
-        createdAt: extendedCourse.createdAt,
-        platform: extendedCourse.platform,
-        category: extendedCourse.category,
-        activeCoupon: extendedCourse.coupons[0]
-            ? {
-                id: extendedCourse.coupons[0].id,
-                code: extendedCourse.coupons[0].code,
-                discountValue: Number(extendedCourse.coupons[0].discountValue),
-                discountType: extendedCourse.coupons[0].discountType,
-                finalPrice: Number(extendedCourse.coupons[0].finalPrice),
-                expiresAt: extendedCourse.coupons[0].expiresAt,
-            }
-            : null,
+        ...toCourseWithDetails(extendedCourse),
         learningOutcomes: extendedCourse.learningOutcomes,
     };
 }

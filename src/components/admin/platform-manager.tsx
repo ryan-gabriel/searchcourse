@@ -1,17 +1,9 @@
 'use client';
 
-import { Fragment, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { PencilLine } from 'lucide-react';
+import { useState } from 'react';
 import { buttonClass } from '@/components/button';
-import { Pagination } from '@/components/pagination';
-import {
-  ConfirmButton,
-  editButtonClass,
-  inputClass,
-  labelClass,
-  readApiError,
-} from '@/components/admin/simple-table';
+import { inputClass, labelClass, readApiError } from '@/components/admin/simple-table';
+import { AdminManager } from '@/components/admin/admin-manager';
 
 export interface PlatformRow {
   id: string;
@@ -34,104 +26,56 @@ export function PlatformManager({
   totalPages: number;
   buildHref: (page: number) => string;
 }) {
-  const router = useRouter();
-  const [editingId, setEditingId] = useState<string | null>(null);
-
-  async function remove(id: string) {
-    const response = await fetch(`/api/admin/platforms/${id}`, { method: 'DELETE' });
-    if (response.ok) {
-      router.refresh();
-    } else {
-      window.alert(await readApiError(response));
-    }
-  }
-
   return (
-    <div className="mt-8 space-y-8">
-      {rows.length ? (
-        <div className="overflow-x-auto rounded-lg border border-border bg-card">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border">
-                <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Name</th>
-                <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Slug</th>
-                <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Base URL</th>
-                <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Courses</th>
-                <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Status</th>
-                <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row) => (
-                <Fragment key={row.id}>
-                  <tr className="border-b border-border">
-                    <td className="px-4 py-3">
-                      <div className="font-medium">{row.name}</div>
-                      {row.logoUrl ? (
-                        <div className="max-w-[220px] truncate font-mono text-xs text-muted-foreground">{row.logoUrl}</div>
-                      ) : null}
-                    </td>
-                    <td className="px-4 py-3 font-mono text-xs">{row.slug}</td>
-                    <td className="px-4 py-3">
-                      <a
-                        href={row.baseUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title={row.baseUrl}
-                        className="focus-ring block max-w-[220px] truncate font-mono text-xs text-muted-foreground hover:text-foreground hover:underline"
-                      >
-                        {row.baseUrl}
-                      </a>
-                    </td>
-                    <td className="px-4 py-3">{row.courseCount}</td>
-                    <td className="px-4 py-3">
-                      <span className="rounded-sm bg-muted px-2 py-0.5 text-xs">
-                        {row.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <button type="button" onClick={() => setEditingId(row.id)} className={editButtonClass}>
-                          <PencilLine className="h-4 w-4" aria-hidden="true" />
-                          Edit
-                        </button>
-                        <ConfirmButton
-                          message={`Delete platform "${row.name}"? This cannot be undone.`}
-                          onConfirm={() => remove(row.id)}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                  {editingId === row.id ? (
-                    <tr className="border-b border-border bg-muted">
-                      <td colSpan={6} className="px-4 py-5">
-                        <PlatformForm
-                          row={row}
-                          onDone={() => {
-                            setEditingId(null);
-                            router.refresh();
-                          }}
-                          onCancel={() => setEditingId(null)}
-                        />
-                      </td>
-                    </tr>
-                  ) : null}
-                </Fragment>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : null}
-
-      <Pagination page={page} totalPages={totalPages} buildHref={buildHref} />
-
-      <section aria-labelledby="create-platform-heading">
-        <h2 id="create-platform-heading" className="text-xl font-semibold tracking-tight">Add a platform</h2>
-        <div className="mt-4 max-w-xl rounded-lg border border-border bg-card p-6">
-          <PlatformForm onDone={() => router.refresh()} />
-        </div>
-      </section>
-    </div>
+    <AdminManager
+      rows={rows}
+      page={page}
+      totalPages={totalPages}
+      buildHref={buildHref}
+      createHeading="Add a platform"
+      deleteEndpoint={(id) => `/api/admin/platforms/${id}`}
+      deleteMessage={(row) => `Delete platform "${row.name}"? This cannot be undone.`}
+      columns={[
+        {
+          header: 'Name',
+          render: (row) => (
+            <>
+              <div className="font-medium">{row.name}</div>
+              {row.logoUrl ? (
+                <div className="max-w-[220px] truncate font-mono text-xs text-muted-foreground">{row.logoUrl}</div>
+              ) : null}
+            </>
+          ),
+        },
+        { header: 'Slug', render: (row) => <span className="font-mono text-xs">{row.slug}</span> },
+        {
+          header: 'Base URL',
+          render: (row) => (
+            <a
+              href={row.baseUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={row.baseUrl}
+              className="focus-ring block max-w-[220px] truncate font-mono text-xs text-muted-foreground hover:text-foreground hover:underline"
+            >
+              {row.baseUrl}
+            </a>
+          ),
+        },
+        { header: 'Courses', render: (row) => row.courseCount },
+        {
+          header: 'Status',
+          render: (row) => (
+            <span className="rounded-sm bg-muted px-2 py-0.5 text-xs">
+              {row.isActive ? 'Active' : 'Inactive'}
+            </span>
+          ),
+        },
+      ]}
+      renderForm={({ row, onDone, onCancel }) => (
+        <PlatformForm row={row} onDone={onDone} onCancel={onCancel} />
+      )}
+    />
   );
 }
 

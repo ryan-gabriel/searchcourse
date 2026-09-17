@@ -72,29 +72,19 @@ export default async function CouponsPage({
         <button type="submit" className={buttonClass('secondary')}>Apply</button>
       </form>
 
-      {rows.length ? (
-        <CouponManager
-          rows={rows}
-          courses={courses}
-          page={search.page}
-          totalPages={result.pagination.totalPages}
-          buildHref={buildHref}
+      {rows.length ? null : (
+        <EmptyState
+          title="No coupons found"
+          body="Nothing matches the current filter. Add a new coupon below, or clear the filter."
         />
-      ) : (
-        <>
-          <EmptyState
-            title="No coupons found"
-            body="Nothing matches the current filter. Add a new coupon below, or clear the filter."
-          />
-          <CouponManager
-            rows={rows}
-            courses={courses}
-            page={search.page}
-            totalPages={result.pagination.totalPages}
-            buildHref={buildHref}
-          />
-        </>
       )}
+      <CouponManager
+        rows={rows}
+        courses={courses}
+        page={search.page}
+        totalPages={result.pagination.totalPages}
+        buildHref={buildHref}
+      />
     </>
   );
 }

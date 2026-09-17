@@ -1,17 +1,9 @@
 'use client';
 
-import { Fragment, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { PencilLine } from 'lucide-react';
+import { useState } from 'react';
 import { buttonClass } from '@/components/button';
-import { Pagination } from '@/components/pagination';
-import {
-  ConfirmButton,
-  editButtonClass,
-  inputClass,
-  labelClass,
-  readApiError,
-} from '@/components/admin/simple-table';
+import { inputClass, labelClass, readApiError } from '@/components/admin/simple-table';
+import { AdminManager } from '@/components/admin/admin-manager';
 
 export interface CategoryRow {
   id: string;
@@ -34,83 +26,25 @@ export function CategoryManager({
   totalPages: number;
   buildHref: (page: number) => string;
 }) {
-  const router = useRouter();
-  const [editingId, setEditingId] = useState<string | null>(null);
-
-  async function remove(id: string) {
-    const response = await fetch(`/api/admin/categories/${id}`, { method: 'DELETE' });
-    if (response.ok) {
-      router.refresh();
-    } else {
-      window.alert(await readApiError(response));
-    }
-  }
-
   return (
-    <div className="mt-8 space-y-8">
-      {rows.length ? (
-        <div className="overflow-x-auto rounded-lg border border-border bg-card">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border">
-                <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Name</th>
-                <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Slug</th>
-                <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Courses</th>
-                <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Sort</th>
-                <th scope="col" className="px-4 py-3 text-left font-medium text-muted-foreground">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row) => (
-                <Fragment key={row.id}>
-                  <tr className="border-b border-border">
-                    <td className="px-4 py-3 font-medium">{row.name}</td>
-                    <td className="px-4 py-3 font-mono text-xs">{row.slug}</td>
-                    <td className="px-4 py-3">{row.courseCount}</td>
-                    <td className="px-4 py-3">{row.sortOrder}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <button type="button" onClick={() => setEditingId(row.id)} className={editButtonClass}>
-                          <PencilLine className="h-4 w-4" aria-hidden="true" />
-                          Edit
-                        </button>
-                        <ConfirmButton
-                          message={`Delete category "${row.name}"? This cannot be undone.`}
-                          onConfirm={() => remove(row.id)}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                  {editingId === row.id ? (
-                    <tr className="border-b border-border bg-muted">
-                      <td colSpan={5} className="px-4 py-5">
-                        <CategoryForm
-                          row={row}
-                          onDone={() => {
-                            setEditingId(null);
-                            router.refresh();
-                          }}
-                          onCancel={() => setEditingId(null)}
-                        />
-                      </td>
-                    </tr>
-                  ) : null}
-                </Fragment>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : null}
-
-      <Pagination page={page} totalPages={totalPages} buildHref={buildHref} />
-
-      <section aria-labelledby="create-category-heading">
-        <h2 id="create-category-heading" className="text-xl font-semibold tracking-tight">Add a category</h2>
-        <div className="mt-4 max-w-xl rounded-lg border border-border bg-card p-6">
-          <CategoryForm onDone={() => router.refresh()} />
-        </div>
-      </section>
-    </div>
+    <AdminManager
+      rows={rows}
+      page={page}
+      totalPages={totalPages}
+      buildHref={buildHref}
+      createHeading="Add a category"
+      deleteEndpoint={(id) => `/api/admin/categories/${id}`}
+      deleteMessage={(row) => `Delete category "${row.name}"? This cannot be undone.`}
+      columns={[
+        { header: 'Name', render: (row) => <span className="font-medium">{row.name}</span> },
+        { header: 'Slug', render: (row) => <span className="font-mono text-xs">{row.slug}</span> },
+        { header: 'Courses', render: (row) => row.courseCount },
+        { header: 'Sort', render: (row) => row.sortOrder },
+      ]}
+      renderForm={({ row, onDone, onCancel }) => (
+        <CategoryForm row={row} onDone={onDone} onCancel={onCancel} />
+      )}
+    />
   );
 }
 
