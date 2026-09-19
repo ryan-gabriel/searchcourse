@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit",
     "scrape": "tsx src/jobs/scrape-coupons.ts",
     "seed:categories": "tsx src/jobs/seed-categories.ts",
+    "seed:content": "tsx src/jobs/seed-content.ts",
     "reset": "tsx src/jobs/reset.ts",
     "telegram": "tsx src/jobs/telegram.ts",
     "cleanup": "tsx src/jobs/cleanup.ts",
