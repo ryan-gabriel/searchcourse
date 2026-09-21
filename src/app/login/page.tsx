@@ -3,12 +3,10 @@ import { redirect } from 'next/navigation';
 import { Container } from '@/components/container';
 import { LoginForm } from '@/components/login-form';
 import { isAdmin } from '@/lib/supabase';
-import { siteUrl } from '@/lib/site';
 
 export const metadata: Metadata = {
   title: 'Sign in',
   description: 'Sign in to the SearchCourse admin console.',
-  alternates: { canonical: siteUrl('/login') },
   robots: { index: false, follow: false },
 };
 

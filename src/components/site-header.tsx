@@ -69,12 +69,6 @@ export function SiteHeader() {
               {item.label}
             </Link>
           ))}
-          <Link
-            href="/login"
-            className="focus-ring rounded-md px-3 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
-          >
-            Sign in
-          </Link>
         </nav>
 
         <button
@@ -107,13 +101,6 @@ export function SiteHeader() {
               {item.label}
             </Link>
           ))}
-          <Link
-            href="/login"
-            onClick={closeMenu}
-            className="focus-ring rounded-md px-3 py-3 text-base font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
-          >
-            Sign in
-          </Link>
         </Container>
       </nav>
     </header>
