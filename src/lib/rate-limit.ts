@@ -100,8 +100,16 @@ function rateLimitLogin(identifier: string) {
   });
 }
 
+function rateLimitFeedback(identifier: string) {
+  return rateLimit(identifier, "feedback", {
+    limit: RATE_LIMIT.FEEDBACK_LIMIT,
+    windowMs: RATE_LIMIT.WINDOW_MS,
+  });
+}
+
 export const rateLimiters = {
   search: rateLimitSearch,
   click: rateLimitClick,
   login: rateLimitLogin,
+  feedback: rateLimitFeedback,
 };

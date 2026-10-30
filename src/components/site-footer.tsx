@@ -34,6 +34,7 @@ export function SiteFooter() {
             <p className="text-xs font-semibold uppercase tracking-wide text-secondary-foreground/50">Site</p>
             <ul className="mt-3 space-y-2 text-sm">
               <li><Link href="/about" className="focus-ring rounded-sm text-secondary-foreground/75 transition-colors hover:text-secondary-foreground">About</Link></li>
+              <li><Link href="/feedback" className="focus-ring rounded-sm text-secondary-foreground/75 transition-colors hover:text-secondary-foreground">Feedback</Link></li>
               <li>
                 <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer" className="focus-ring rounded-sm text-secondary-foreground/75 transition-colors hover:text-secondary-foreground">
                   Telegram channel

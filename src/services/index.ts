@@ -12,4 +12,5 @@ export * from './category.service';
 export * from './coupon.service';
 export * from './admin.service';
 export * from './settings.service';
+export * from './feedback.service';
 export * from './sitemap.service';

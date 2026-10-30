@@ -5,5 +5,6 @@ export * from "./click.schema";
 export * from "./platform.schema";
 export * from "./category.schema";
 export * from "./settings.schema";
+export * from "./feedback.schema";
 export * from "./auth.schema";
 export * from "./shared";

@@ -271,6 +271,45 @@ model CourseLearningOutcome {
 }
 
 // ============================================
+// FEEDBACK
+// ============================================
+
+enum FeedbackType {
+  REVIEW
+  SUGGESTION
+}
+
+enum FeedbackSource {
+  WEB
+  TELEGRAM
+}
+
+/// User-submitted reviews and suggestions
+model Feedback {
+  id       String         @id @default(cuid())
+  type     FeedbackType   @default(SUGGESTION)
+  source   FeedbackSource @default(WEB)
+  message  String         @db.Text
+
+  // Optional submitter details (web form)
+  name    String? @db.VarChar(100)
+  email   String? @db.VarChar(254)
+  pageUrl String? @db.VarChar(512)
+
+  // Telegram metadata (null for web submissions)
+  telegramUserId   String? @db.VarChar(32)
+  telegramUsername String? @db.VarChar(64)
+  telegramChatId   String? @db.VarChar(32)
+  telegramUpdateId String? @db.VarChar(32) @unique // dedupe webhook retries
+
+  createdAt DateTime @default(now())
+
+  @@index([createdAt(sort: Desc)])
+  @@index([type])
+  @@index([source])
+}
+
+// ============================================
 // ANALYTICS
 // ============================================
 

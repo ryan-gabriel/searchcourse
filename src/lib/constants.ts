@@ -4,6 +4,7 @@ export const RATE_LIMIT = {
   SEARCH_LIMIT: Number(process.env.RATE_LIMIT_SEARCH) || 30,
   CLICK_LIMIT: Number(process.env.RATE_LIMIT_CLICK) || 60,
   LOGIN_LIMIT: Number(process.env.RATE_LIMIT_LOGIN) || 10,
+  FEEDBACK_LIMIT: Number(process.env.RATE_LIMIT_FEEDBACK) || 5,
   CACHE_MAX: 10_000,
 } as const;
 

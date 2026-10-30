@@ -27,6 +27,15 @@ export default function PrivacyPage() {
           </section>
 
           <section>
+            <h2 className="text-xl font-semibold tracking-tight text-foreground">Feedback you send</h2>
+            <p>
+              If you use the feedback form or message our Telegram bot, we store the message you write, when it was
+              sent, and any name or email address you choose to include. We use it only to review and improve
+              SearchCourse. Messages are not published, and optional contact details are never sold.
+            </p>
+          </section>
+
+          <section>
             <h2 className="text-xl font-semibold tracking-tight text-foreground">Click tracking</h2>
             <p>
               When you follow a &ldquo;Get this deal&rdquo; link, we record the course, the referral source, the date,
@@ -55,8 +64,10 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-semibold tracking-tight text-foreground">Your rights</h2>
             <p>
-              You may request deletion or a copy of any data attributable to you by contacting us. Because we store no
-              identifying information, in most cases there is nothing attributable to a single individual.
+              You may request deletion or a copy of any data attributable to you by contacting us. If you sent feedback
+              with your email address, we can remove that message on request. Because we store no identifying
+              information for ordinary browsing, in most cases there is nothing else attributable to a single
+              individual.
             </p>
           </section>
         </div>

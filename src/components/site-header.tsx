@@ -12,6 +12,7 @@ const NAV = [
   { href: '/roadmaps', label: 'Roadmaps' },
   { href: '/categories', label: 'Categories' },
   { href: '/about', label: 'About' },
+  { href: '/feedback', label: 'Feedback' },
 ];
 
 export function SiteHeader() {

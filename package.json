@@ -16,6 +16,7 @@
     "seed:content": "tsx src/jobs/seed-content.ts",
     "reset": "tsx src/jobs/reset.ts",
     "telegram": "tsx src/jobs/telegram.ts",
+    "telegram:setup": "tsx src/jobs/telegram-setup.ts",
     "cleanup": "tsx src/jobs/cleanup.ts",
     "postinstall": "prisma generate",
     "test": "vitest run",

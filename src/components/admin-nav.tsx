@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, BookOpen, Route, Tags, Ticket, Monitor, BarChart3, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Route, Tags, Ticket, Monitor, BarChart3, Settings, LogOut, MessageSquare } from 'lucide-react';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 
 const items = [
@@ -13,6 +13,7 @@ const items = [
   { href: '/admin/coupons', label: 'Coupons', icon: Ticket },
   { href: '/admin/platforms', label: 'Platforms', icon: Monitor },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: '/admin/feedback', label: 'Feedback', icon: MessageSquare },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
