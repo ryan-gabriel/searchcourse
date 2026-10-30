@@ -24,6 +24,51 @@ export async function fetchHtml(url: string): Promise<string | null> {
     }
 }
 
+export async function fetchJson<T>(url: string): Promise<T | null> {
+    // Same SSRF guard as fetchHtml: JSON endpoints must be allowlisted too.
+    if (!isSafeFetchUrl(url)) return null;
+    try {
+        const res = await axios.get<T>(url, {
+            headers: {
+                'User-Agent': USER_AGENT,
+                Accept: 'application/json',
+            },
+            timeout: 20000,
+            maxRedirects: 5,
+        });
+        if (res.status !== 200) return null;
+        return res.data;
+    } catch {
+        return null;
+    }
+}
+
+export async function postJson<T>(
+    url: string,
+    body: unknown
+): Promise<T | null> {
+    if (!isSafeFetchUrl(url)) return null;
+    try {
+        const res = await axios.post<T>(
+            url,
+            body,
+            {
+                headers: {
+                    'User-Agent': USER_AGENT,
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                timeout: 20000,
+                maxRedirects: 5,
+            }
+        );
+        if (res.status !== 200) return null;
+        return res.data;
+    } catch {
+        return null;
+    }
+}
+
 export async function followRedirects(
     startUrl: string,
     maxRedirects = 5

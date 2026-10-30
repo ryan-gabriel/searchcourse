@@ -6,7 +6,7 @@
  *
  * Environment Variables:
  * - DATABASE_URL
- * - SCRAPE_ENABLED_SOURCES (csv, default "discudemy,tutorialbar")
+ * - SCRAPE_ENABLED_SOURCES (csv, default "discudemy,tutorialbar,real-discount,courson")
  * - SCRAPE_MAX_PAGES        (listing pages per source, default 2)
  * - SCRAPE_MAX_POSTS        (max posts processed per source, default 6)
  * - SCRAPE_SLEEP_MS         (delay between requests, default 300)
@@ -23,8 +23,13 @@ import {
 } from './lib/pipeline';
 import { scrapeDiscudemy } from './scrapers/discudemy';
 import { scrapeTutorialbar } from './scrapers/tutorialbar';
+import { scrapeRealDiscount } from './scrapers/real-discount';
+import { scrapeCourson } from './scrapers/courson';
 
-const ENABLED_SOURCES = (process.env.SCRAPE_ENABLED_SOURCES || 'discudemy,tutorialbar')
+const ENABLED_SOURCES = (
+    process.env.SCRAPE_ENABLED_SOURCES ||
+    'discudemy,tutorialbar,real-discount,courson'
+)
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean);
@@ -40,6 +45,8 @@ const SCRAPERS: Record<string, (options: {
 }) => Promise<UdemyFeedItem[]>> = {
     discudemy: scrapeDiscudemy,
     tutorialbar: scrapeTutorialbar,
+    'real-discount': scrapeRealDiscount,
+    courson: scrapeCourson,
 };
 
 export async function runScrape() {

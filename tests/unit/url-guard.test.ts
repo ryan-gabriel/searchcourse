@@ -2,15 +2,18 @@ import { describe, expect, it } from 'vitest';
 import { isSafeFetchUrl } from '@/jobs/lib/url-guard';
 
 describe('isSafeFetchUrl', () => {
-    it('allows the three scrape-source domains including www subdomains', () => {
+    it('allows the scrape-source domains including www subdomains', () => {
         expect(isSafeFetchUrl('https://www.discudemy.com/all')).toBe(true);
         expect(isSafeFetchUrl('https://discudemy.com/all')).toBe(true);
         expect(isSafeFetchUrl('https://www.couponami.com/go/x')).toBe(true);
         expect(isSafeFetchUrl('https://www.tutorialbar.com/course/x')).toBe(true);
+        expect(isSafeFetchUrl('https://real.discount/courses')).toBe(true);
+        expect(isSafeFetchUrl('https://courson.xyz/load-more-coupons')).toBe(true);
     });
 
     it('allows subdomains of the scrape-source domains', () => {
         expect(isSafeFetchUrl('https://api.couponami.com/v1')).toBe(true);
+        expect(isSafeFetchUrl('https://cdn.real.discount/api/courses')).toBe(true);
     });
 
     it('rejects unrelated hosts', () => {
@@ -22,6 +25,8 @@ describe('isSafeFetchUrl', () => {
     it('rejects hostnames that merely resemble the allowlist', () => {
         expect(isSafeFetchUrl('https://discudemy.com.evil.example/')).toBe(false);
         expect(isSafeFetchUrl('https://notdiscudemy.com/')).toBe(false);
+        expect(isSafeFetchUrl('https://real.discount.evil.example/')).toBe(false);
+        expect(isSafeFetchUrl('https://notcourson.xyz/')).toBe(false);
     });
 
     it('rejects IP literals and private/link-local ranges', () => {

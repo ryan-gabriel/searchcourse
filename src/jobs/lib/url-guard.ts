@@ -12,6 +12,8 @@ const ALLOWED_FETCH_HOSTS = [
     'discudemy.com',
     'couponami.com',
     'tutorialbar.com',
+    'real.discount',
+    'courson.xyz',
 ];
 
 // RFC1918, loopback, link-local, CGNAT, documentation, and multicast ranges

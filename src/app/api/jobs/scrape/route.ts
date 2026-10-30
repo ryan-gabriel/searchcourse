@@ -1,10 +1,10 @@
 /**
  * Cron-triggered Scrape Job Endpoint
  *
- * Runs the coupon scraper (discudemy/tutorialbar) when triggered by an
- * external cron (e.g. cron-job.org). Protected by CRON_SECRET sent in the
- * `x-cron-secret` request header (not the URL, so it stays out of access
- * logs).
+ * Runs the coupon scraper (discudemy/tutorialbar/real-discount/courson)
+ * when triggered by an external cron (e.g. cron-job.org). Protected by
+ * CRON_SECRET sent in the `x-cron-secret` request header (not the URL, so
+ * it stays out of access logs).
  *
  * GET /api/jobs/scrape
  * Header: x-cron-secret: YOUR_CRON_SECRET
