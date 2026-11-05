@@ -1,0 +1,80 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e6]:
+        - link "Logo" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "Single logo" [ref=e8]
+        - navigation [ref=e9]:
+          - list [ref=e10]:
+            - listitem [ref=e11]:
+              - link "Courses" [ref=e12] [cursor=pointer]:
+                - /url: /courses
+            - listitem [ref=e13]:
+              - link "Blog" [ref=e14] [cursor=pointer]:
+                - /url: /blog
+            - listitem [ref=e15]:
+              - link "Topics" [ref=e16] [cursor=pointer]:
+                - /url: /topics
+            - listitem [ref=e17]:
+              - link "Categories" [ref=e18] [cursor=pointer]:
+                - /url: /categories
+            - listitem [ref=e19]:
+              - link "Add Course" [ref=e20] [cursor=pointer]:
+                - /url: /add
+        - generic [ref=e21]:
+          - link "Promote Course" [ref=e22] [cursor=pointer]:
+            - /url: /promote
+          - button "settings" [ref=e23] [cursor=pointer]
+          - generic [ref=e28] [cursor=pointer]:
+            - button [ref=e29]
+            - generic [ref=e32]: ⌘K
+          - link "Sign in" [ref=e33] [cursor=pointer]:
+            - /url: /auth/firebase/sign-in
+    - main [ref=e34]:
+      - progressbar [ref=e36]
+    - contentinfo [ref=e38]:
+      - separator [ref=e39]
+      - generic [ref=e40]:
+        - link "Logo" [ref=e41] [cursor=pointer]:
+          - /url: /
+          - img "Single logo" [ref=e42]
+        - generic [ref=e43]:
+          - generic [ref=e44]:
+            - paragraph [ref=e45]: Get Free Online Courses with Certificates, Udemy Coupon, Udemy Coupon Codes, Free Udemy Online Courses, Udemy Free Courses, Online Sales and More...
+            - generic [ref=e46]:
+              - link [ref=e47] [cursor=pointer]:
+                - /url: https://www.facebook.com/discount.real
+              - link [ref=e50] [cursor=pointer]:
+                - /url: https://t.me/real_discount
+          - generic [ref=e54]:
+            - generic [ref=e55]:
+              - generic [ref=e56]: Real Discount
+              - link "Contact us" [ref=e57] [cursor=pointer]:
+                - /url: /contact-us
+              - link "Udemy Coupon Code" [ref=e58] [cursor=pointer]:
+                - /url: /udemy-coupon-code
+              - link "About Us" [ref=e59] [cursor=pointer]:
+                - /url: /about-us
+              - link "Blog" [ref=e60] [cursor=pointer]:
+                - /url: /blog
+              - link "Privacy Policy" [ref=e61] [cursor=pointer]:
+                - /url: /privacy-policy
+              - link "Delete Account" [ref=e62] [cursor=pointer]:
+                - /url: /delete-account
+            - generic [ref=e63]:
+              - generic [ref=e64]: Contact
+              - link "support@real.discount" [ref=e65] [cursor=pointer]:
+                - /url: /courses
+              - link [ref=e66] [cursor=pointer]:
+                - /url: https://play.google.com/store/apps/details?id=com.realdiscount.rd
+              - button [ref=e73] [cursor=pointer]
+              - button [ref=e77] [cursor=pointer]
+        - paragraph [ref=e81]: © All rights reserved.
+  - insertion [ref=e83]:
+    - generic [ref=e86]:
+      - heading "These are topics related to the article that might interest you" [level=2] [ref=e88]: Discover more
+      - link "AI Courses" [ref=e89] [cursor=pointer]
+      - link "Udemy Discount Codes" [ref=e94] [cursor=pointer]
+      - link "Online Courses" [ref=e99] [cursor=pointer]
+  - contentinfo
