@@ -1,12 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { NextRequest } from 'next/server';
+import { redirect } from 'next/navigation';
 
 vi.mock('@/services', () => ({
     getCourseBySlug: vi.fn(),
 }));
 
+vi.mock('next/navigation', () => ({
+    redirect: vi.fn((url: string) => {
+        throw new Error(`NEXT_REDIRECT:${url}`);
+    }),
+}));
+
 import { getCourseBySlug } from '@/services';
-import { GET } from '@/app/go/[slug]/route';
+import GoPage from '@/app/go/[slug]/page';
 
 const mockGetCourseBySlug = vi.mocked(getCourseBySlug);
 
@@ -21,26 +27,19 @@ describe('GET /go/[slug]', () => {
             slug: 'microsoft-excel-basics',
         } as never);
 
-        const req = new NextRequest('https://searchcourse.vercel.app/go/microsoft-excel-basics');
         const ctx = { params: Promise.resolve({ slug: 'microsoft-excel-basics' }) };
 
-        const res = await GET(req, ctx as never);
-
-        expect(res.status).toBe(307);
-        expect(res.headers.get('location')).toBe(
-            'https://searchcourse.vercel.app/courses/microsoft-excel-basics?src=tg'
+        await expect(GoPage(ctx as never)).rejects.toThrow(
+            'NEXT_REDIRECT:https://searchcourse.vercel.app/courses/microsoft-excel-basics?src=tg'
         );
         expect(mockGetCourseBySlug).toHaveBeenCalledWith('microsoft-excel-basics');
     });
 
-    it('returns 404 when the course is not found', async () => {
+    it('redirects to courses when the course is not found', async () => {
         mockGetCourseBySlug.mockResolvedValue(null);
 
-        const req = new NextRequest('https://searchcourse.vercel.app/go/nope');
         const ctx = { params: Promise.resolve({ slug: 'nope' }) };
 
-        const res = await GET(req, ctx as never);
-
-        expect(res.status).toBe(404);
+        await expect(GoPage(ctx as never)).rejects.toThrow('NEXT_REDIRECT:/courses');
     });
 });
