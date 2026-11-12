@@ -10,7 +10,7 @@ import { imageForCategory } from '@/lib/category-images';
 import { buildBreadcrumbSchema } from '@/lib/seo/schema';
 import { siteUrl } from '@/lib/site';
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Categories',

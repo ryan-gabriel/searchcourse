@@ -5,6 +5,8 @@ import { Reveal } from '@/components/reveal';
 import { getAboutPageStats, getMissionContent } from '@/services';
 import { siteUrl } from '@/lib/site';
 
+export const dynamic = 'force-dynamic';
+
 const ABOUT_IMAGE =
   'https://images.unsplash.com/photo-1499750310159-5b5b4d1ea2c9?q=80&w=1200&auto=format&fit=crop';
 

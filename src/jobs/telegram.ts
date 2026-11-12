@@ -26,11 +26,12 @@ import { shouldBroadcastCoupon } from "@/lib/broadcastGuard";
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
-if (!BOT_TOKEN || !CHAT_ID) {
+const isBuild = process.env.NEXT_PHASE === 'phase-production-build';
+if ((!BOT_TOKEN || !CHAT_ID) && !isBuild) {
     throw new Error('❌ TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are required');
 }
 
-const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
+const TELEGRAM_API = BOT_TOKEN ? `https://api.telegram.org/bot${BOT_TOKEN}` : '';
 
 // Broadcast coupon guard (hours). Skip coupons expiring within
 // BROADCAST_MIN_EXPIRY_HOURS, and coupons whose feed snapshot

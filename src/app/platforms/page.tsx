@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   alternates: { canonical: siteUrl('/platforms') },
 };
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 export default async function PlatformsPage() {
   const platforms = await getAllPlatforms();
