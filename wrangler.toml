@@ -1,0 +1,9 @@
+name = "searchcourse"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".open-next"
+
+# Optional: Hyperdrive binding for DB connection pooling (create via dashboard/CLI)
+# [[hyperdrive]]
+# binding = "HYPERDRIVE"
+# id = "<your-hyperdrive-id>"
