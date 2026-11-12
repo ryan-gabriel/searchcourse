@@ -13,6 +13,10 @@ test-results/
 /out/
 next-env.d.ts
 
+# cloudflare opennext build output
+.open-next/
+.wrangler/
+
 # production
 build/
 
