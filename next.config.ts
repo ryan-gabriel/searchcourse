@@ -32,6 +32,7 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react'],
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       { protocol: "https", hostname: "img-c.udemycdn.com", port: "", pathname: "/**" },
       { protocol: "https", hostname: "d3njjcbhbojbot.cloudfront.net", port: "", pathname: "/**" },
