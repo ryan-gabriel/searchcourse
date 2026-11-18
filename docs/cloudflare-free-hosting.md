@@ -60,7 +60,7 @@ Keep using cron-job.org (free) hitting `https://<host>/api/jobs/scrape-coupons` 
 `next/image` with remotePatterns already configured (Udemy CDNs). On Cloudflare, `next/image` optimization runs via OpenNext's image handler using Cloudflare Images? Actually OpenNext uses a worker-based image optimizer; free tier may charge after 100k transforms. Acceptable for low traffic. Alternatively disable optimization (`images.unoptimized = true`) to be safe on free tier.
 
 ### 6. Build & deploy
-- `npm run build:cf` then `npm run deploy:cf` (or connect GitHub repo to Cloudflare Pages for auto-deploy on push).
+- Cloudflare Pages dashboard settings: Build command = `npm run build:cf`, Build output directory = `.open-next`, Deploy command = (empty, Pages deploys output dir) OR `npm run deploy:cf`. Do NOT use `npx wrangler deploy` — that is a Workers command and conflicts with a Pages project.
 - Run migrations: `npx prisma migrate deploy` against production DB before first deploy (use direct URL).
 
 ### 7. Gotchas / things to verify
